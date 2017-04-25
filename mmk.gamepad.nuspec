@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+	<metadata>
+		<id>mmk.gamepad</id>
+		<version>0.0.0</version>
+		<authors>MaulingMonkey</authors>
+		<owners>MaulingMonkey</owners>
+		<description>MaulingMonKey's Gamepad Input API.</description>
+		<copyright>Copyright © MaulingMonkey 2017</copyright>
+		<tags>typescript input gamepad</tags>
+	</metadata>
+	<files>
+		<file src="src\**\*.ts"                     target="Content\Scripts\mmk.gamepad"/>
+		<file src="Scripts\mmk.gamepad\**\*.js"     target="Content\Scripts\mmk.gamepad"/>
+		<file src="Scripts\mmk.gamepad\**\*.js.map" target="Content\Scripts\mmk.gamepad"/>
+	</files>
+</package>

@@ -1,0 +1,10 @@
+Thumbs.db
+
+*.sdf
+*.opendb
+*.user
+
+packages/
+.vs/
+bin/
+obj/

@@ -10,7 +10,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <TypeScriptToolsVersion>1.7</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -24,14 +24,28 @@
   <ItemGroup>
     <Content Include="demo\res\mmk.gamepad.css" />
     <Content Include="demo\index.html" />
+    <Content Include="Scripts\d3\d3.js" />
+    <Content Include="Scripts\d3\d3.min.js" />
     <Content Include="Scripts\mmk.gamepad\mmk.gamepad.js" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\mmk.gamepad.ts" />
+    <TypeScriptCompile Include="Scripts\typings\d3\d3.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\d3\plugins\d3.superformula.d.ts" />
+    <TypeScriptCompile Include="src\demo.ts" />
+    <TypeScriptCompile Include="src\impl\cloneGamepad.ts" />
+    <TypeScriptCompile Include="src\impl\flattenPremapGamepad.ts" />
+    <TypeScriptCompile Include="src\impl\parseGamepadId.ts" />
+    <TypeScriptCompile Include="src\impl\getRawGamepads.ts" />
+    <TypeScriptCompile Include="src\impl\poll.ts" />
+    <TypeScriptCompile Include="src\tryRemapStdLayout.ts" />
+    <TypeScriptCompile Include="src\defs\Raven.d.ts" />
+    <TypeScriptCompile Include="src\isSupported.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\mmk.gamepad\mmk.gamepad.js.map" />
+    <Content Include="Scripts\d3\LICENSE" />
+    <Content Include="packages.config" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

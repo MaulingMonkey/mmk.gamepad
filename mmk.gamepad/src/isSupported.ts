@@ -14,4 +14,9 @@
 */
 
 namespace mmk.gamepad {
+	export function isSupported(): boolean {
+		if ('getGamepads' in navigator) return true;
+		if ('onconnectedgamepad' in window) return true;
+		return false;
+	}
 }

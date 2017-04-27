@@ -314,18 +314,11 @@ var mmk;
 (function (mmk) {
     var gamepad;
     (function (gamepad_4) {
-        var log = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i - 0] = arguments[_i];
-            }
-        };
         var assert = console.assert;
         function remapXformHat(condition) {
             return function (src, remap) {
                 var i = src ? Math.round((src.value + 1) / 2 * 7) : 8;
                 var v = condition(i);
-                console.log("hat:", i, " -> ", v);
                 return { value: v ? 1.0 : 0.0, pressed: v };
             };
         }
@@ -448,14 +441,30 @@ var mmk;
                 return;
             if ((gamepad.mapping !== "standard") && !findStdRemap(gamepad)) {
                 console.warn("No remap for gamepad:  ", getRemapKey(gamepad), "   " + gamepad.id);
-            }
-            if (("Raven" in window) && Raven.isSetup()) {
+                if (("Raven" in window) && Raven.isSetup()) {
+                    var clone_1 = gamepad_4.cloneGamepad(gamepad);
+                    var cloneNoData_1 = {};
+                    Object.keys(clone_1).forEach(function (key) {
+                        if ("axes buttons".split(' ').indexOf(key) === -1)
+                            cloneNoData_1[key] = clone_1[key];
+                    });
+                    Raven.captureMessage("No remap for gamepad", {
+                        level: "warning",
+                        tags: {
+                            remapKey: getRemapKey(gamepad),
+                            gamepadId: gamepad.id
+                        }, extra: {
+                            axes: clone_1.axes,
+                            buttons: clone_1.buttons.map(function (b) { return JSON.stringify(b); }),
+                            gamepad: cloneNoData_1,
+                            remapKey: getRemapKey(gamepad)
+                        }
+                    });
+                }
             }
         }
         addEventListener("load", function () {
-            gamepad_4.addRawConnectedListener(function (gamepad) {
-                telemetryReportGamepad(gamepad);
-            });
+            gamepad_4.addRawConnectedListener(telemetryReportGamepad);
         });
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));

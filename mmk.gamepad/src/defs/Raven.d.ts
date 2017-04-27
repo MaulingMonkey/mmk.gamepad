@@ -55,7 +55,7 @@ interface RavenConfig {
 
 interface RavenMessageParams {
 	fingerprint?: string[]; // Default: ["{{ default }}"]
-	level?:       string; // "info", "warning", or "error"
+	level?:       "info" | "warning" | "error";
 	logger?:      string; // default: "javascript"
 	tags?:        {}; // ...restrict to k/v pairs?
 	extra?:       {};
@@ -64,7 +64,7 @@ interface RavenMessageParams {
 interface RavenBreadcrumb {
 	message:   string;
 	category?: string;
-	level?:    string; // "error", "warn", "info", or "debug"
+	level?:    "error" | "warn" | "info" | "debug";
 	data?:     {};
 }
 

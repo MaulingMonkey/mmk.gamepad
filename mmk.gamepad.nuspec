@@ -12,7 +12,7 @@
 		<tags>typescript input gamepad</tags>
 	</metadata>
 	<files>
-		<file src="mmk.gamepad\src\**\*.ts"                     target="Content\Scripts\mmk.gamepad"/>
+		<file src="mmk.gamepad\Scripts\mmk.gamepad\**\*.d.ts"   target="Content\Scripts\mmk.gamepad"/>
 		<file src="mmk.gamepad\Scripts\mmk.gamepad\**\*.js"     target="Content\Scripts\mmk.gamepad"/>
 		<file src="mmk.gamepad\Scripts\mmk.gamepad\**\*.js.map" target="Content\Scripts\mmk.gamepad"/>
 	</files>

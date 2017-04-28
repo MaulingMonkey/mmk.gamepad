@@ -17,7 +17,7 @@ namespace mmk.gamepad {
 	//var log = console.log;
 	var log = (...args) => {};
 
-	type RawGamepadCallback = (gamepad: Gamepad) => void;
+	export type RawGamepadCallback = (gamepad: Gamepad) => void;
 
 	var rawConnectedCallbacks : RawGamepadCallback[] = [];
 	var rawDisconnectedCallbacks : RawGamepadCallback[] = [];

@@ -90,7 +90,7 @@
     <TypeScriptModuleKind>None</TypeScriptModuleKind>
     <TypeScriptOutFile>Scripts\mmk.gamepad\mmk.gamepad.js</TypeScriptOutFile>
     <TypeScriptOutDir />
-    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptGeneratesDeclarations>True</TypeScriptGeneratesDeclarations>
     <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
     <TypeScriptMapRoot />
     <TypeScriptSourceRoot />

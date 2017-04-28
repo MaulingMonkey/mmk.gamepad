@@ -89,15 +89,14 @@ var mmk;
                 _loop_2(i);
             }
         }
-        addEventListener("load", function () {
-            var demo = document.getElementById("mmk-gamepad-demo");
-            if (!demo)
-                return;
-            if (!('d3' in window))
-                return;
-            refresh();
-            setInterval(refresh, 100);
-        });
+        if ('d3' in window)
+            addEventListener("load", function () {
+                var demo = document.getElementById("mmk-gamepad-demo");
+                if (!demo)
+                    return;
+                refresh();
+                setInterval(refresh, 100);
+            });
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));
 var mmk;
@@ -154,82 +153,6 @@ var mmk;
 var mmk;
 (function (mmk) {
     var gamepad;
-    (function (gamepad_3) {
-        var log = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i - 0] = arguments[_i];
-            }
-        };
-        var connectionCallbackGamepads = [];
-        var rawConnectedCallbacks = [];
-        var rawDisconnectedCallbacks = [];
-        function addRawConnectedListener(callback) {
-            oldPads.forEach(function (gp) { if (gp !== undefined)
-                callback(gp); });
-            rawConnectedCallbacks.push(callback);
-        }
-        gamepad_3.addRawConnectedListener = addRawConnectedListener;
-        function addRawDisconnectedListener(callback) {
-            rawDisconnectedCallbacks.push(callback);
-        }
-        gamepad_3.addRawDisconnectedListener = addRawDisconnectedListener;
-        function getRawGamepads() {
-            if ('getGamepads' in navigator) {
-                var gp = navigator.getGamepads();
-                var a = [];
-                for (var i = 0; i < gp.length; ++i)
-                    a.push(gp[i]);
-                return a;
-            }
-            else {
-                return connectionCallbackGamepads;
-            }
-        }
-        gamepad_3.getRawGamepads = getRawGamepads;
-        var oldPads = [];
-        addEventListener("load", function () {
-            gamepad_3.poll(function () {
-                var newPads = getRawGamepads();
-                var n = Math.max(oldPads.length, newPads.length);
-                var _loop_3 = function(i) {
-                    var oldPad = oldPads[i];
-                    var newPad = newPads[i];
-                    oldPads[i] = newPads[i];
-                    if (oldPad === newPad) {
-                        return "continue";
-                    }
-                    else if (!oldPad && !newPad) {
-                        return "continue";
-                    }
-                    else if (!oldPad) {
-                        log("fake connectedgamepad:", newPad);
-                        rawConnectedCallbacks.forEach(function (cb) { return cb(newPad); });
-                    }
-                    else if (!newPad) {
-                        log("fake disconnectedgamepad:", oldPad);
-                        rawDisconnectedCallbacks.forEach(function (cb) { return cb(oldPad); });
-                    }
-                    else if ((oldPad.id !== newPad.id) || (oldPad.index !== newPad.index)) {
-                        log("fake disconnectedgamepad:", oldPad);
-                        log("fake connectedgamepad:", newPad);
-                        rawDisconnectedCallbacks.forEach(function (cb) { return cb(oldPad); });
-                        rawConnectedCallbacks.forEach(function (cb) { return cb(newPad); });
-                    }
-                    else {
-                    }
-                };
-                for (var i = 0; i < n; ++i) {
-                    var state_3 = _loop_3(i);
-                    if (state_3 === "continue") continue;
-                }
-            });
-        });
-    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
-})(mmk || (mmk = {}));
-var mmk;
-(function (mmk) {
-    var gamepad;
     (function (gamepad) {
         function parseGamepadId_Blink(id) {
             var mNameParen = /^(.+?)(?: \((.*)\))$/i.exec(id);
@@ -280,6 +203,84 @@ var mmk;
 var mmk;
 (function (mmk) {
     var gamepad;
+    (function (gamepad_3) {
+        var log = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+        };
+        var rawConnectedCallbacks = [];
+        var rawDisconnectedCallbacks = [];
+        function addRawConnectedListener(callback) {
+            oldPads.forEach(function (gp) { if (gp !== undefined)
+                callback(gp); });
+            rawConnectedCallbacks.push(callback);
+        }
+        gamepad_3.addRawConnectedListener = addRawConnectedListener;
+        function addRawDisconnectedListener(callback) {
+            rawDisconnectedCallbacks.push(callback);
+        }
+        gamepad_3.addRawDisconnectedListener = addRawDisconnectedListener;
+        function getRawGamepads() {
+            if ('getGamepads' in navigator) {
+                var gp = navigator.getGamepads();
+                var a = [];
+                for (var i = 0; i < gp.length; ++i)
+                    a.push(gp[i]);
+                return a;
+            }
+            else {
+                return [];
+            }
+        }
+        gamepad_3.getRawGamepads = getRawGamepads;
+        var oldPads = [];
+        if (!("addEventListener" in window))
+            console.warn("addEventListener unavailable, assuming this browser doesn't support the gamepads API anyways");
+        else
+            addEventListener("load", function () {
+                gamepad_3.poll(function () {
+                    var newPads = getRawGamepads();
+                    var n = Math.max(oldPads.length, newPads.length);
+                    var _loop_3 = function(i) {
+                        var oldPad = oldPads[i];
+                        var newPad = newPads[i];
+                        oldPads[i] = newPads[i];
+                        if (oldPad === newPad) {
+                            return "continue";
+                        }
+                        else if (!oldPad && !newPad) {
+                            return "continue";
+                        }
+                        else if (!oldPad) {
+                            log("fake connectedgamepad:", newPad);
+                            rawConnectedCallbacks.forEach(function (cb) { return cb(newPad); });
+                        }
+                        else if (!newPad) {
+                            log("fake disconnectedgamepad:", oldPad);
+                            rawDisconnectedCallbacks.forEach(function (cb) { return cb(oldPad); });
+                        }
+                        else if ((oldPad.id !== newPad.id) || (oldPad.index !== newPad.index)) {
+                            log("fake disconnectedgamepad:", oldPad);
+                            log("fake connectedgamepad:", newPad);
+                            rawDisconnectedCallbacks.forEach(function (cb) { return cb(oldPad); });
+                            rawConnectedCallbacks.forEach(function (cb) { return cb(newPad); });
+                        }
+                        else {
+                        }
+                    };
+                    for (var i = 0; i < n; ++i) {
+                        var state_3 = _loop_3(i);
+                        if (state_3 === "continue") continue;
+                    }
+                });
+            });
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+var mmk;
+(function (mmk) {
+    var gamepad;
     (function (gamepad) {
         function poll(action) {
             if ('requestAnimationFrame' in window) {
@@ -294,20 +295,6 @@ var mmk;
             }
         }
         gamepad.poll = poll;
-    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
-})(mmk || (mmk = {}));
-var mmk;
-(function (mmk) {
-    var gamepad;
-    (function (gamepad) {
-        function isSupported() {
-            if ('getGamepads' in navigator)
-                return true;
-            if ('onconnectedgamepad' in window)
-                return true;
-            return false;
-        }
-        gamepad.isSupported = isSupported;
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));
 var mmk;
@@ -463,9 +450,24 @@ var mmk;
                 }
             }
         }
-        addEventListener("load", function () {
-            gamepad_4.addRawConnectedListener(telemetryReportGamepad);
-        });
+        if ("addEventListener" in window)
+            addEventListener("load", function () {
+                gamepad_4.addRawConnectedListener(telemetryReportGamepad);
+            });
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        function isSupported() {
+            if ('getGamepads' in navigator)
+                return true;
+            if ('onconnectedgamepad' in window)
+                return true;
+            return false;
+        }
+        gamepad.isSupported = isSupported;
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));
 //# sourceMappingURL=mmk.gamepad.js.map

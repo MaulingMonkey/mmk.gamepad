@@ -103,10 +103,9 @@ namespace mmk.gamepad {
 		}
 	}
 
-	addEventListener("load", function(){
+	if ('d3' in window) addEventListener("load", function(){
 		let demo = document.getElementById("mmk-gamepad-demo");
 		if (!demo) return;
-		if (!('d3' in window)) return;
 
 		refresh();
 		setInterval(refresh, 100);

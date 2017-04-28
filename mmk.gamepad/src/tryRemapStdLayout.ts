@@ -198,10 +198,9 @@ namespace mmk.gamepad {
 				});
 			}
 		}
-
 	}
 
-	addEventListener("load", function(){
+	if ("addEventListener" in window) addEventListener("load", function(){
 		addRawConnectedListener(telemetryReportGamepad);
 	});
 }

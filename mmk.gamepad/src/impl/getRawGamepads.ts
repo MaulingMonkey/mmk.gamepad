@@ -17,8 +17,6 @@ namespace mmk.gamepad {
 	//var log = console.log;
 	var log = (...args) => {};
 
-	var connectionCallbackGamepads : Gamepad[] = [];
-
 	type RawGamepadCallback = (gamepad: Gamepad) => void;
 
 	var rawConnectedCallbacks : RawGamepadCallback[] = [];
@@ -39,12 +37,14 @@ namespace mmk.gamepad {
 			for (let i=0; i<gp.length; ++i) a.push(gp[i]);
 			return a;
 		} else {
-			return connectionCallbackGamepads;
+			return [];
 		}
 	}
 
 	var oldPads : Gamepad[] = [];
-	addEventListener("load", function(){
+
+	if (!("addEventListener" in window)) console.warn("addEventListener unavailable, assuming this browser doesn't support the gamepads API anyways");
+	else addEventListener("load", function(){
 		poll(function(){
 			let newPads = getRawGamepads();
 			let n = Math.max(oldPads.length, newPads.length);

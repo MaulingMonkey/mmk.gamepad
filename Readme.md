@@ -90,5 +90,5 @@ else          { ... } // Fallback to non-standard mapping prompts etc...
 * Provide connected/disconnected events (e.g. Chrome doesn't generate any, and we may want to hide browser-level duplicates or powered off controllers etc.)
 * Test more browsers (<strike>Firefox? Mozilla? Edge? Opera?</strike>)  **Huzzah!**
 * Test more OSes (Linux? OS X?)
-* Publish nuget
+* <strike>Publish nuget</strike>
 * Track active controllers

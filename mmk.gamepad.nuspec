@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>mmk.gamepad</id>
-		<version>0.0.0</version>
+		<version>0.0.1</version>
 		<authors>MaulingMonkey</authors>
 		<owners>MaulingMonkey</owners>
 		<projectUrl>https://github.com/MaulingMonkey/mmk.gamepad</projectUrl>

@@ -66,7 +66,9 @@ else          { ... } // Fallback to non-standard mapping prompts etc...
 # Installation
 
 ## Via NuGet
-<strike>Add [mmk.gamepad](https://www.nuget.org/packages/mmk.gamepad/) to your project via nuget.  Done!</strike>  **TODO:  Soon (tm)**
+* Add [mmk.gamepad](https://www.nuget.org/packages/mmk.gamepad/) to your project via nuget.
+* Reference `<script src="Scripts/mmk.gamepad/mmk.gamepad.js"></script>` on your page.
+* Done!
 
 
 

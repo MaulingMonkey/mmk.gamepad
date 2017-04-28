@@ -7,13 +7,13 @@
 		<owners>MaulingMonkey</owners>
 		<projectUrl>https://github.com/MaulingMonkey/mmk.gamepad</projectUrl>
 		<licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-		<description>MaulingMonKey's Gamepad Input API.</description>
+		<description>MaulingMonKey's typescript gamepad API for consistent cross-browser and cross-gamepad binding, polling for input, etc.</description>
 		<copyright>Copyright © MaulingMonkey 2017</copyright>
 		<tags>typescript input gamepad</tags>
 	</metadata>
 	<files>
-		<file src="src\**\*.ts"                     target="Content\Scripts\mmk.gamepad"/>
-		<file src="Scripts\mmk.gamepad\**\*.js"     target="Content\Scripts\mmk.gamepad"/>
-		<file src="Scripts\mmk.gamepad\**\*.js.map" target="Content\Scripts\mmk.gamepad"/>
+		<file src="mmk.gamepad\src\**\*.ts"                     target="Content\Scripts\mmk.gamepad"/>
+		<file src="mmk.gamepad\Scripts\mmk.gamepad\**\*.js"     target="Content\Scripts\mmk.gamepad"/>
+		<file src="mmk.gamepad\Scripts\mmk.gamepad\**\*.js.map" target="Content\Scripts\mmk.gamepad"/>
 	</files>
 </package>

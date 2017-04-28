@@ -5,6 +5,8 @@
 		<version>0.0.0</version>
 		<authors>MaulingMonkey</authors>
 		<owners>MaulingMonkey</owners>
+		<projectUrl>https://github.com/MaulingMonkey/mmk.gamepad</projectUrl>
+		<licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
 		<description>MaulingMonKey's Gamepad Input API.</description>
 		<copyright>Copyright © MaulingMonkey 2017</copyright>
 		<tags>typescript input gamepad</tags>

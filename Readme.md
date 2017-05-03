@@ -55,7 +55,7 @@ snapshot[0]  = mmk.gamepad.cloneGamepad(snapshot[0]); // Hey why not
 
 // Works despite the lack of "connectedgamepad" and "disconnectedgamepad" events:
 mmk.gamepad.addRawConnectedListener   ( function(gamepad) { console.log("Connected gamepad:",   gamepad); } );
-mmk.gamepad.addRawDisconnectedListener( function(gamepad) { console.log("Disonnected gamepad:", gamepad); } );
+mmk.gamepad.addRawDisconnectedListener( function(gamepad) { console.log("Disconnected gamepad:", gamepad); } );
 // (note that addRawConnectedListener will immediately invoke your callback on already connected gamepads!)
 
 var standard = mmk.gamepad.tryRemapStdLayout(snapshot[0]);

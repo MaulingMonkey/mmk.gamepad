@@ -2,7 +2,7 @@
 
 MaulingMonKey's typescript gamepad API for consistent cross-browser and cross-gamepad binding, polling for input, etc.
 
-Demo: http://maulingmonkey.com/mmk.gamepad/mmk.gamepad/demo/
+Demo: http://maulingmonkey.com/mmk.gamepad/demo/
 
 License: [Apache 2.0](LICENSE.txt)
 

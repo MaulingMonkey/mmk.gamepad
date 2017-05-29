@@ -95,7 +95,7 @@ var mmk;
                 if (!demo)
                     return;
                 refresh();
-                setInterval(refresh, 100);
+                gamepad_1.poll(refresh);
             });
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));

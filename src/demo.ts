@@ -108,6 +108,6 @@ namespace mmk.gamepad {
 		if (!demo) return;
 
 		refresh();
-		setInterval(refresh, 100);
+		poll(refresh);
 	});
 }

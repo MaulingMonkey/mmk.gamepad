@@ -3,10 +3,11 @@ var mmk;
     var gamepad;
     (function (gamepad_1) {
         function getEntries() {
+            var standardize = document.getElementById("standardize").checked;
             return gamepad_1.getRawGamepads().filter(function (gp) { return !!gp; }).map(function (gp) {
                 return {
                     original: gp,
-                    display: gamepad_1.tryRemapStdLayout(gp) || gp,
+                    display: (standardize && gamepad_1.tryRemapStdLayout(gp)) || gp,
                     parsedIds: gamepad_1.parseGamepadId(gp.id)
                 };
             });
@@ -153,56 +154,6 @@ var mmk;
 var mmk;
 (function (mmk) {
     var gamepad;
-    (function (gamepad) {
-        function parseGamepadId_Blink(id) {
-            var mNameParen = /^(.+?)(?: \((.*)\))$/i.exec(id);
-            if (!mNameParen)
-                return undefined;
-            var parsed = { name: mNameParen[1], vendor: undefined, product: undefined, hint: "blink" };
-            var mVendorProduct = /(?:^| )Vendor: ([0-9a-f]{4}) Product: ([0-9a-f]{4})$/i.exec(mNameParen[2]);
-            if (mVendorProduct) {
-                parsed.vendor = mVendorProduct[1];
-                parsed.product = mVendorProduct[2];
-            }
-            return parsed;
-        }
-        function parseGamepadId_Gecko(id) {
-            if (id === "xinput")
-                return { name: "xinput", vendor: undefined, product: undefined, hint: "gecko" };
-            var m = /^([0-9a-f]{4})-([0-9a-f]{4})-(.+)$/gi.exec(id);
-            if (m)
-                return { name: m[3], vendor: m[1], product: m[2], hint: "gecko" };
-            return undefined;
-        }
-        function parseGamepadId_Unknown(id) {
-            return { name: id, vendor: undefined, product: undefined, hint: "unknown" };
-        }
-        function parseGamepadId(id) {
-            if (!id)
-                return undefined;
-            var parsed = parseGamepadId_Blink(id) || parseGamepadId_Gecko(id) || parseGamepadId_Unknown(id);
-            return parsed;
-        }
-        gamepad.parseGamepadId = parseGamepadId;
-        var parsedIdExamples = [
-            ["Xbox 360 Controller (XInput STANDARD GAMEPAD)", { name: "Xbox 360 Controller", vendor: undefined, product: undefined, hint: "blink" }],
-            ["DUALSHOCK®4 USB Wireless Adaptor (Vendor: 054c Product: 0ba0)", { name: "DUALSHOCK®4 USB Wireless Adaptor", vendor: "054c", product: "0ba0", hint: "blink" }],
-            ["Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 09cc)", { name: "Wireless Controller", vendor: "054c", product: "09cc", hint: "blink" }],
-            ["xinput", { name: "xinput", vendor: undefined, product: undefined, hint: "gecko" }],
-            ["054c-0ba0-DUALSHOCK®4 USB Wireless Adaptor", { name: "DUALSHOCK®4 USB Wireless Adaptor", vendor: "054c", product: "0ba0", hint: "gecko" }],
-            ["054c-09cc-Wireless Controller", { name: "Wireless Controller", vendor: "054c", product: "09cc", hint: "gecko" }],
-            [undefined, undefined]
-        ];
-        parsedIdExamples.forEach(function (example) {
-            var parsed = JSON.stringify(parseGamepadId(example[0]));
-            var expected = JSON.stringify(example[1]);
-            console.assert(parsed === expected, "Expected parsed:", parsed, "equal to expected:", expected);
-        });
-    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
-})(mmk || (mmk = {}));
-var mmk;
-(function (mmk) {
-    var gamepad;
     (function (gamepad_3) {
         var log = function () {
             var args = [];
@@ -282,6 +233,56 @@ var mmk;
 (function (mmk) {
     var gamepad;
     (function (gamepad) {
+        function parseGamepadId_Blink(id) {
+            var mNameParen = /^(.+?)(?: \((.*)\))$/i.exec(id);
+            if (!mNameParen)
+                return undefined;
+            var parsed = { name: mNameParen[1], vendor: undefined, product: undefined, hint: "blink" };
+            var mVendorProduct = /(?:^| )Vendor: ([0-9a-f]{4}) Product: ([0-9a-f]{4})$/i.exec(mNameParen[2]);
+            if (mVendorProduct) {
+                parsed.vendor = mVendorProduct[1];
+                parsed.product = mVendorProduct[2];
+            }
+            return parsed;
+        }
+        function parseGamepadId_Gecko(id) {
+            if (id === "xinput")
+                return { name: "xinput", vendor: undefined, product: undefined, hint: "gecko" };
+            var m = /^([0-9a-f]{4})-([0-9a-f]{4})-(.+)$/gi.exec(id);
+            if (m)
+                return { name: m[3], vendor: m[1], product: m[2], hint: "gecko" };
+            return undefined;
+        }
+        function parseGamepadId_Unknown(id) {
+            return { name: id, vendor: undefined, product: undefined, hint: "unknown" };
+        }
+        function parseGamepadId(id) {
+            if (!id)
+                return undefined;
+            var parsed = parseGamepadId_Blink(id) || parseGamepadId_Gecko(id) || parseGamepadId_Unknown(id);
+            return parsed;
+        }
+        gamepad.parseGamepadId = parseGamepadId;
+        var parsedIdExamples = [
+            ["Xbox 360 Controller (XInput STANDARD GAMEPAD)", { name: "Xbox 360 Controller", vendor: undefined, product: undefined, hint: "blink" }],
+            ["DUALSHOCK®4 USB Wireless Adaptor (Vendor: 054c Product: 0ba0)", { name: "DUALSHOCK®4 USB Wireless Adaptor", vendor: "054c", product: "0ba0", hint: "blink" }],
+            ["Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 09cc)", { name: "Wireless Controller", vendor: "054c", product: "09cc", hint: "blink" }],
+            ["xinput", { name: "xinput", vendor: undefined, product: undefined, hint: "gecko" }],
+            ["054c-0ba0-DUALSHOCK®4 USB Wireless Adaptor", { name: "DUALSHOCK®4 USB Wireless Adaptor", vendor: "054c", product: "0ba0", hint: "gecko" }],
+            ["054c-09cc-Wireless Controller", { name: "Wireless Controller", vendor: "054c", product: "09cc", hint: "gecko" }],
+            [undefined, undefined]
+        ];
+        parsedIdExamples.forEach(function (example) {
+            var parsed = JSON.stringify(parseGamepadId(example[0]));
+            var expected = JSON.stringify(example[1]);
+            console.assert(parsed === expected, "Expected parsed:", parsed, "equal to expected:", expected);
+        });
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
         function poll(action) {
             if ('requestAnimationFrame' in window) {
                 var perFrame = function () {
@@ -300,6 +301,20 @@ var mmk;
 var mmk;
 (function (mmk) {
     var gamepad;
+    (function (gamepad) {
+        function isSupported() {
+            if ('getGamepads' in navigator)
+                return true;
+            if ('onconnectedgamepad' in window)
+                return true;
+            return false;
+        }
+        gamepad.isSupported = isSupported;
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+var mmk;
+(function (mmk) {
+    var gamepad;
     (function (gamepad_4) {
         var assert = console.assert;
         function remapXformHat(condition) {
@@ -311,9 +326,17 @@ var mmk;
         }
         var axisXforms = {};
         var buttonXforms = {
-            "11_01": function (src, remap) {
+            "11-01": function (src, remap) {
                 var v = src ? (src.value + 1) / 2 : 0;
                 return { value: v, pressed: !remap.param ? src.pressed : (v > remap.param) };
+            },
+            "axis-negative-01": function (src, remap) {
+                var v = (src && src.value < 0.0) ? -src.value : 0.0;
+                return { value: v, pressed: v > (remap.param ? remap.param : 0.0) };
+            },
+            "axis-positive-01": function (src, remap) {
+                var v = (src && src.value > 0.0) ? +src.value : 0.0;
+                return { value: v, pressed: v > (remap.param ? remap.param : 0.0) };
             },
             "hat-up-bit": remapXformHat(function (i) { return (i === 7) || (i === 0) || (i === 1); }),
             "hat-right-bit": remapXformHat(function (i) { return (1 <= i) && (i <= 3); }),
@@ -322,10 +345,11 @@ var mmk;
         };
         var stdRemaps = {
             "054c-0ba0-blink-10-14": {
+                tested: ["Windows 7 / Opera 52.0.2871.99"],
                 axes: [{ src: "a0" }, { src: "a1" }, { src: "a2" }, { src: "a5" }],
                 buttons: [
                     { src: "b1" }, { src: "b2" }, { src: "b0" }, { src: "b3" },
-                    { src: "b4" }, { src: "b5" }, { src: "a3", xform: "11_01", param: 0.125 }, { src: "a4", xform: "11_01", param: 0.125 },
+                    { src: "b4" }, { src: "b5" }, { src: "a3", xform: "11-01", param: 0.125 }, { src: "a4", xform: "11-01", param: 0.125 },
                     { src: "b8" }, { src: "b9" }, { src: "b10" }, { src: "b11" },
                     { src: "a9", xform: "hat-up-bit" }, { src: "a9", xform: "hat-down-bit" }, { src: "a9", xform: "hat-left-bit" }, { src: "a9", xform: "hat-right-bit" },
                     { src: "b12" },
@@ -333,23 +357,62 @@ var mmk;
                 ]
             },
             "054c-0ba0-gecko-8-18": {
+                tested: ["Windows 7 / Firefox 62.0a1 (2018-05-09) - DPad busted"],
                 axes: [{ src: "a0" }, { src: "a1" }, { src: "a2" }, { src: "a5" }],
                 buttons: [
                     { src: "b1" }, { src: "b2" }, { src: "b0" }, { src: "b3" },
-                    { src: "b4" }, { src: "b5" }, { src: "a3", xform: "11_01", param: 0.125 }, { src: "a4", xform: "11_01", param: 0.125 },
+                    { src: "b4" }, { src: "b5" }, { src: "a3", xform: "11-01", param: 0.125 }, { src: "a4", xform: "11-01", param: 0.125 },
                     { src: "b8" }, { src: "b9" }, { src: "b10" }, { src: "b11" },
                     { src: "b14" }, { src: "b15" }, { src: "b16" }, { src: "b17" },
                     { src: "b12" },
                     { src: "b13" }
+                ]
+            },
+            "054c-0ba0-gecko-8-13": {
+                tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+                axes: [{ src: "a0" }, { src: "a1" }, { src: "a3" }, { src: "a4" }],
+                buttons: [
+                    { src: "b0" }, { src: "b1" }, { src: "b3" }, { src: "b2" },
+                    { src: "b4" }, { src: "b5" }, { src: "a2", xform: "11-01", param: 0.125 }, { src: "a5", xform: "11-01", param: 0.125 },
+                    { src: "b8" }, { src: "b9" }, { src: "b11" }, { src: "b12" },
+                    { src: "a7", xform: "axis-negative-01" }, { src: "a7", xform: "axis-positive-01" }, { src: "a6", xform: "axis-negative-01" }, { src: "a6", xform: "axis-positive-01" },
+                    { src: "b10" },
+                ]
+            },
+            "054c-0268-gecko-6-17": {
+                tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+                axes: [{ src: "a0" }, { src: "a1" }, { src: "a3" }, { src: "a4" }],
+                buttons: [
+                    { src: "b0" }, { src: "b1" }, { src: "b3" }, { src: "b2" },
+                    { src: "b4" }, { src: "b5" }, { src: "a2", xform: "11-01", param: 0.125 }, { src: "a5", xform: "11-01", param: 0.125 },
+                    { src: "b8" }, { src: "b9" }, { src: "b11" }, { src: "b12" },
+                    { src: "b13" }, { src: "b14" }, { src: "b15" }, { src: "b16" },
+                    { src: "b10" },
+                ]
+            },
+            "045e-028e-gecko-8-11": {
+                tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+                axes: [{ src: "a0" }, { src: "a1" }, { src: "a3" }, { src: "a4" }],
+                buttons: [
+                    { src: "b0" }, { src: "b1" }, { src: "b2" }, { src: "b3" },
+                    { src: "b4" }, { src: "b5" }, { src: "a2", xform: "11-01", param: 0.125 }, { src: "a5", xform: "11-01", param: 0.125 },
+                    { src: "b6" }, { src: "b7" }, { src: "b9" }, { src: "b10" },
+                    { src: "a7", xform: "axis-negative-01" }, { src: "a7", xform: "axis-positive-01" }, { src: "a6", xform: "axis-negative-01" }, { src: "a6", xform: "axis-positive-01" },
+                    { src: "b8" },
                 ]
             }
         };
         var stdRemapRepeats = {
             "054c-0ba0-gecko-6-18": "054c-0ba0-gecko-8-18",
             "054c-054c-gecko-8-18": "054c-0ba0-gecko-8-18",
+            "054c-054c-gecko-8-13": "054c-0ba0-gecko-8-13",
             "054c-054c-gecko-6-18": "054c-0ba0-gecko-8-18",
+            "054c-054c-blink-10-14": "054c-0ba0-blink-10-14",
             "054c-09cc-gecko-8-18": "054c-0ba0-gecko-8-18",
-            "054c-09cc-gecko-6-18": "054c-0ba0-gecko-8-18"
+            "054c-09cc-gecko-8-13": "054c-0ba0-gecko-8-13",
+            "054c-09cc-gecko-6-18": "054c-0ba0-gecko-8-18",
+            "054c-09cc-blink-10-14": "054c-0ba0-blink-10-14",
+            "045e-02d1-gecko-8-11": "045e-028e-gecko-8-11",
         };
         Object.keys(stdRemapRepeats).forEach(function (newRemap) {
             var existingRemap = stdRemapRepeats[newRemap];
@@ -454,20 +517,6 @@ var mmk;
             addEventListener("load", function () {
                 gamepad_4.addRawConnectedListener(telemetryReportGamepad);
             });
-    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
-})(mmk || (mmk = {}));
-var mmk;
-(function (mmk) {
-    var gamepad;
-    (function (gamepad) {
-        function isSupported() {
-            if ('getGamepads' in navigator)
-                return true;
-            if ('onconnectedgamepad' in window)
-                return true;
-            return false;
-        }
-        gamepad.isSupported = isSupported;
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));
 //# sourceMappingURL=mmk.gamepad.js.map

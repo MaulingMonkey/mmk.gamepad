@@ -15,6 +15,12 @@ declare namespace mmk.gamepad {
     function flattenPremapGamepad(gamepad: Gamepad): FlatPremapGamepad;
 }
 declare namespace mmk.gamepad {
+    type RawGamepadCallback = (gamepad: Gamepad) => void;
+    function addRawConnectedListener(callback: RawGamepadCallback): void;
+    function addRawDisconnectedListener(callback: RawGamepadCallback): void;
+    function getRawGamepads(): Gamepad[];
+}
+declare namespace mmk.gamepad {
     interface ParsedGamepadId {
         name: string;
         vendor: string;
@@ -24,17 +30,11 @@ declare namespace mmk.gamepad {
     function parseGamepadId(id: string): ParsedGamepadId;
 }
 declare namespace mmk.gamepad {
-    type RawGamepadCallback = (gamepad: Gamepad) => void;
-    function addRawConnectedListener(callback: RawGamepadCallback): void;
-    function addRawDisconnectedListener(callback: RawGamepadCallback): void;
-    function getRawGamepads(): Gamepad[];
-}
-declare namespace mmk.gamepad {
     function poll(action: () => void): void;
 }
 declare namespace mmk.gamepad {
-    function tryRemapStdLayout(gamepad: Gamepad): Gamepad;
+    function isSupported(): boolean;
 }
 declare namespace mmk.gamepad {
-    function isSupported(): boolean;
+    function tryRemapStdLayout(gamepad: Gamepad): Gamepad;
 }

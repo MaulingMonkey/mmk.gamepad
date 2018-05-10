@@ -10,17 +10,22 @@ License: [Apache 2.0](LICENSE.txt)
 
 # Browser Support
 
-| OS         | Browser    | Max Gamepads | API(s)                       |
-| ---------- | ---------- | ------------ | ---------------------------- |
-| Windows  7 | Opera 44   | 4            | XInput or RawInput           |
-| Windows  7 | Chrome 57  | 4            | XInput or RawInput           |
-| Windows  7 | FireFox 53 | 5+           | XInput or RawInput           |
-| Windows 10 | Edge       | 4?           | Only XInput?                 |
-| Windows  7 | IE 11      | 0            | No gamepad API [1]           |
-| Windows  7 | IE  8      | XXX [2]      | No gamepad API [1]           |
+| OS               | Browser     | Max Gamepads | API(s)             | Notes                    |
+| ---------------- | ----------- | ------------ | ------------------ | ------------------------ |
+| Windows  7       | Opera 44    | 4            | XInput or RawInput |                          |
+| Windows  7       | Chrome 57   | 4            | XInput or RawInput |                          |
+| Windows  7       | FireFox 53  | 5+           | XInput or RawInput |                          |
+| Windows 10       | Edge        | 4?           | Only XInput?       |                          |
+| Windows  7       | IE 11       | 0            | No gamepad API [1] | !isSupported             |
+| Windows  7       | IE  8       | XXX [2]      | No gamepad API     | Compatability bugs       |
+| Ubuntu 18.04 LTS | Chromium 65 | 0            | No gamepad API [1] | "isSupported" lies [3]   |
+| Ubuntu 18.04 LTS | FireFox 59  | 3+           | Unknown            | Triggers init to 0.5 [4] |
 
 1. All mmk.gamepad functions should still "work" as if there were no gamepads connected.
 2. This browser may still have compatability bugs even providing the "no gamepads" interface.
+3. This browser implements a gamepad API, but no gamepads work.
+4. The triggers of this gamepad currently initialize to 0.5 despite being at the 0.0 position.
+   Could be worked around with a more stateful remapping.
 
 
 
@@ -32,10 +37,19 @@ License: [Apache 2.0](LICENSE.txt)
 | Windows | Xbox One                | OK [1]   | OK [1]   | OK [1]   | OK [1] |                |
 | Windows | DualShock 4 (Micro-USB) | OK       | OK       | No DPad  |        | No touch/gyros |
 | Windows | DualShock 4 (Wireless)  | OK       | OK       | No DPad  |        | No touch/gyros |
-| Windows | DualShock 3 (Mini-USB)  |          |          |          |        | Dead [2]       |
+| Windows | DualShock 3 (Mini-USB)  |          |          |          |        | Bad HID [2]    |
 
 1. This gamepad displays an incorrect or generic name which we cannot work around (e.g. "Xbox 360 Controller" for XB1 controllers, or "xinput")
-2. This might just be my gamepad, or my default windows 7 drivers being insufficient.
+2. Third party (non-Sony!) drivers may make this gamepad work - it doesn't speak standard HID properly.
+
+| OS      | Gamepad                 | FireFox  | Notes                    |
+| ------- | ----------------------- | -------- | ------------------------ |
+| Ubuntu  | Xbox 360                | OK       |                          |
+| Ubuntu  | Xbox One                | OK       |                          |
+| Ubuntu  | DualShock 4 (Micro-USB) | OK       | No gyros, touch is mouse |
+| Ubuntu  | DualShock 4 (Wireless)  | Probably | No gyros, touch is mouse |
+| Ubuntu  | DualShock 3 (Mini-USB)  | OK       | No gyros                 |
+
 
 
 
@@ -89,6 +103,6 @@ else          { ... } // Fallback to non-standard mapping prompts etc...
 * Herustically detect disconnected/off controllers (e.g. PS4 wireless dongle still shows up with home button held 10+ seconds)
 * Provide connected/disconnected events (e.g. Chrome doesn't generate any, and we may want to hide browser-level duplicates or powered off controllers etc.)
 * Test more browsers (<strike>Firefox? Mozilla? Edge? Opera?</strike>)  **Huzzah!**
-* Test more OSes (Linux? OS X?)
+* Test more OSes (<strike>Linux?</strike> OS X?)
 * <strike>Publish nuget</strike>
 * Track active controllers

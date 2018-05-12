@@ -324,7 +324,12 @@ var mmk;
                 return { value: v ? 1.0 : 0.0, pressed: v };
             };
         }
-        var axisXforms = {};
+        var axisXforms = {
+            "01-11": function (src, remap) {
+                var v = src ? (src.value * 2) - 1 : 0;
+                return { value: v, pressed: false };
+            }
+        };
         var buttonXforms = {
             "11-01": function (src, remap) {
                 var v = src ? (src.value + 1) / 2 : 0;
@@ -343,9 +348,32 @@ var mmk;
             "hat-down-bit": remapXformHat(function (i) { return (3 <= i) && (i <= 5); }),
             "hat-left-bit": remapXformHat(function (i) { return (5 <= i) && (i <= 7); })
         };
-        var stdRemaps = {
-            "054c-0ba0-blink-10-14": {
+        var vendorProductToName = {
+            "045e-0202": "Xbox Controller",
+            "045e-0285": "Xbox Controller S",
+            "045e-0289": "Xbox Controller S",
+            "045e-028e": "Xbox 360 Controller",
+            "045e-028f": "Xbox 360 Wireless Controller",
+            "045e-0291": "Xbox 360 Wireless Receiver for Windows",
+            "045e-02a1": "Xbox 360 Wireless Receiver for Windows",
+            "045e-02d1": "Xbox One Controller",
+            "045e-02dd": "Xbox One Controller",
+            "045e-02e3": "Xbox One Elite Controller",
+            "045e-02e6": "Wireless XBox Controller Dongle",
+            "045e-02ea": "Xbox One S Controller",
+            "045e-02fd": "Xbox One S Controller (Bluetooth)",
+            "054c-0268": "DualShock 3 Controller",
+            "054c-054c": "DualShock 4 Controller",
+            "054c-09cc": "DualShock 4 Controller (2nd Gen)",
+            "054c-0ba0": "DualShock 4 Wireless Adapter",
+        };
+        var remaps = [{
                 tested: ["Windows 7 / Opera 52.0.2871.99"],
+                matches: [
+                    "054c-054c-blink-10-14",
+                    "054c-09cc-blink-10-14",
+                    "054c-0ba0-blink-10-14",
+                ],
                 axes: [{ src: "a0" }, { src: "a1" }, { src: "a2" }, { src: "a5" }],
                 buttons: [
                     { src: "b1" }, { src: "b2" }, { src: "b0" }, { src: "b3" },
@@ -355,9 +383,16 @@ var mmk;
                     { src: "b12" },
                     { src: "b13" }
                 ]
-            },
-            "054c-0ba0-gecko-8-18": {
+            }, {
                 tested: ["Windows 7 / Firefox 62.0a1 (2018-05-09) - DPad busted"],
+                matches: [
+                    "054c-054c-gecko-8-18",
+                    "054c-09cc-gecko-8-18",
+                    "054c-0ba0-gecko-8-18",
+                    "054c-054c-gecko-6-18",
+                    "054c-09cc-gecko-6-18",
+                    "054c-0ba0-gecko-6-18",
+                ],
                 axes: [{ src: "a0" }, { src: "a1" }, { src: "a2" }, { src: "a5" }],
                 buttons: [
                     { src: "b1" }, { src: "b2" }, { src: "b0" }, { src: "b3" },
@@ -367,9 +402,13 @@ var mmk;
                     { src: "b12" },
                     { src: "b13" }
                 ]
-            },
-            "054c-0ba0-gecko-8-13": {
+            }, {
                 tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+                matches: [
+                    "054c-054c-gecko-8-13",
+                    "054c-09cc-gecko-8-13",
+                    "054c-0ba0-gecko-8-13",
+                ],
                 axes: [{ src: "a0" }, { src: "a1" }, { src: "a3" }, { src: "a4" }],
                 buttons: [
                     { src: "b0" }, { src: "b1" }, { src: "b3" }, { src: "b2" },
@@ -378,9 +417,11 @@ var mmk;
                     { src: "a7", xform: "axis-negative-01" }, { src: "a7", xform: "axis-positive-01" }, { src: "a6", xform: "axis-negative-01" }, { src: "a6", xform: "axis-positive-01" },
                     { src: "b10" },
                 ]
-            },
-            "054c-0268-gecko-6-17": {
+            }, {
                 tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+                matches: [
+                    "054c-0268-gecko-6-17",
+                ],
                 axes: [{ src: "a0" }, { src: "a1" }, { src: "a3" }, { src: "a4" }],
                 buttons: [
                     { src: "b0" }, { src: "b1" }, { src: "b3" }, { src: "b2" },
@@ -389,9 +430,12 @@ var mmk;
                     { src: "b13" }, { src: "b14" }, { src: "b15" }, { src: "b16" },
                     { src: "b10" },
                 ]
-            },
-            "045e-028e-gecko-8-11": {
+            }, {
                 tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+                matches: [
+                    "045e-028e-gecko-8-11",
+                    "045e-02d1-gecko-8-11",
+                ],
                 axes: [{ src: "a0" }, { src: "a1" }, { src: "a3" }, { src: "a4" }],
                 buttons: [
                     { src: "b0" }, { src: "b1" }, { src: "b2" }, { src: "b3" },
@@ -400,24 +444,33 @@ var mmk;
                     { src: "a7", xform: "axis-negative-01" }, { src: "a7", xform: "axis-positive-01" }, { src: "a6", xform: "axis-negative-01" }, { src: "a6", xform: "axis-positive-01" },
                     { src: "b8" },
                 ]
-            }
-        };
-        var stdRemapRepeats = {
-            "054c-0ba0-gecko-6-18": "054c-0ba0-gecko-8-18",
-            "054c-054c-gecko-8-18": "054c-0ba0-gecko-8-18",
-            "054c-054c-gecko-8-13": "054c-0ba0-gecko-8-13",
-            "054c-054c-gecko-6-18": "054c-0ba0-gecko-8-18",
-            "054c-054c-blink-10-14": "054c-0ba0-blink-10-14",
-            "054c-09cc-gecko-8-18": "054c-0ba0-gecko-8-18",
-            "054c-09cc-gecko-8-13": "054c-0ba0-gecko-8-13",
-            "054c-09cc-gecko-6-18": "054c-0ba0-gecko-8-18",
-            "054c-09cc-blink-10-14": "054c-0ba0-blink-10-14",
-            "045e-02d1-gecko-8-11": "045e-028e-gecko-8-11",
-        };
-        Object.keys(stdRemapRepeats).forEach(function (newRemap) {
-            var existingRemap = stdRemapRepeats[newRemap];
-            console.assert(!!stdRemaps[existingRemap], "remap:", newRemap, "references nonexistant remap:", existingRemap);
-            stdRemaps[newRemap] = stdRemaps[existingRemap];
+            }, {
+                tested: ["Ubuntu 18.04 LTS / Chrome 66.0.3359.139"],
+                matches: [
+                    "054c-054c-blink-4-18",
+                    "054c-09cc-blink-4-18",
+                    "054c-0ba0-blink-4-18",
+                ],
+                axes: [{ src: "a0" }, { src: "a1" }, { src: "b6", xform: "01-11" }, { src: "b7", xform: "01-11" }],
+                buttons: [
+                    { src: "b2" }, { src: "b0" }, { src: "b3" }, { src: "b1" },
+                    { src: "b4" }, { src: "b5" }, { src: "a2", xform: "11-01", param: 0.125 }, { src: "a3", xform: "11-01", param: 0.125 },
+                    { src: "b8" }, { src: "b9" }, { src: "b11" }, { src: "b16" },
+                    { src: "b12" }, { src: "b13" }, { src: "b14" }, { src: "b15" },
+                    { src: "b10" },
+                ],
+            }];
+        var xxxIsLinux = /\blinux\b/i.test(navigator.userAgent);
+        var xxxIsChromeBased = /\bChrome\/\d{2,3}\b/i.test(navigator.userAgent);
+        var xxxIsChromium = /\bChromium\/\d{2,3}\b/i.test(navigator.userAgent);
+        var xxxIsChrome = xxxIsChromeBased && !xxxIsChromium;
+        var liesAboutStandardMapping = xxxIsLinux && xxxIsChromeBased;
+        var remapsByKey = {};
+        remaps.forEach(function (remap) {
+            remap.matches.forEach(function (id) {
+                console.assert(!(id in remapsByKey), "Remaps contains multiple entries for the same mapping");
+                remapsByKey[id] = remap;
+            });
         });
         function getRemapKey(gamepad) {
             var id = gamepad_4.parseGamepadId(gamepad.id);
@@ -426,17 +479,18 @@ var mmk;
         }
         function findStdRemap(gamepad) {
             var key = getRemapKey(gamepad);
-            var value = stdRemaps[key];
+            var value = remapsByKey[key];
             return value;
         }
         function tryRemapStdLayout(gamepad) {
             if (!gamepad)
                 return gamepad;
-            if (gamepad.mapping === "standard")
+            if (!liesAboutStandardMapping && gamepad.mapping === "standard")
                 return gamepad;
             var remapGamepad = findStdRemap(gamepad);
-            if (!remapGamepad)
+            if (!remapGamepad) {
                 return undefined;
+            }
             var flatGamepad = gamepad_4.flattenPremapGamepad(gamepad);
             var fakey = {
                 id: gamepad.id,

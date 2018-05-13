@@ -19,13 +19,12 @@ License: [Apache 2.0](LICENSE.txt)
 | Windows  7       | IE 11       | 0            | No gamepad API [1] | !isSupported             |
 | Windows  7       | IE  8       | XXX [2]      | No gamepad API     | Compatability bugs       |
 | Ubuntu 18.04 LTS | Chromium 65 | 0            | No gamepad API [1] | "isSupported" lies [3]   |
-| Ubuntu 18.04 LTS | FireFox 59  | 3+           | Unknown            | Triggers init to 0.5 [4] |
+| Ubuntu 18.04 LTS | Chrome 66   | 4+           | Unknown            |                          |
+| Ubuntu 18.04 LTS | FireFox 59  | 4+           | Unknown            |                          |
 
 1. All mmk.gamepad functions should still "work" as if there were no gamepads connected.
 2. This browser may still have compatability bugs even providing the "no gamepads" interface.
 3. This browser implements a gamepad API, but no gamepads work.
-4. The triggers of this gamepad currently initialize to 0.5 despite being at the 0.0 position.
-   Could be worked around with a more stateful remapping.
 
 
 
@@ -42,14 +41,26 @@ License: [Apache 2.0](LICENSE.txt)
 1. This gamepad displays an incorrect or generic name which we cannot work around (e.g. "Xbox 360 Controller" for XB1 controllers, or "xinput")
 2. Third party (non-Sony!) drivers may make this gamepad work - it doesn't speak standard HID properly.
 
-| OS      | Gamepad                 | FireFox  | Notes                    |
-| ------- | ----------------------- | -------- | ------------------------ |
-| Ubuntu  | Xbox 360                | OK       |                          |
-| Ubuntu  | Xbox One                | OK       |                          |
-| Ubuntu  | DualShock 4 (Micro-USB) | OK       | No gyros, touch is mouse |
-| Ubuntu  | DualShock 4 (Wireless)  | Probably | No gyros, touch is mouse |
-| Ubuntu  | DualShock 3 (Mini-USB)  | OK       | No gyros                 |
+| OS      | Gamepad                 | Chrome [3] | FireFox  | Notes                                     |
+| ------- | ----------------------- | ---------- | -------- | ----------------------------------------- |
+| Ubuntu  | Xbox 360                | OK         | OK       |                                           |
+| Ubuntu  | Xbox One                | OK         | OK       |                                           |
+| Ubuntu  | DualShock 4 (Micro-USB) | OK [4]     | OK       | No gyros, bad init [5], touchpad is mouse |
+| Ubuntu  | DualShock 4 (Wireless)  | OK [4]     | OK       | No gyros, bad init [5], touchpad is mouse |
+| Ubuntu  | DualShock 3 (Mini-USB)  | OK         | OK       | No gyros                                  |
 
+3. Not Chromium - which still defines the gamepad API, but doesn't appear to actually
+   export info about connected gamepads even when Chrome will on the same system.
+
+4. Note that the baseline gamepad API lies about this gamepad being in the standard
+   layout already in Chrome 66 on Ubuntu 18.04 LTS.  tryRemapStdLayout will fix these
+   to use the correct layout anyways.
+
+5. Some triggers/axises of this gamepad currently misinitialize to non-zero
+   values (e.g. -1, 0.5), although they'll correct themselves after some use.
+   Could be worked around with some more stateful mapping (e.g. treating known
+   bad values as 0.0 until the right stick / triggers are sufficiently
+   exercised.)
 
 
 

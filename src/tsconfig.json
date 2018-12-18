@@ -1,0 +1,15 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "outFile": "..\\Scripts\\mmk.gamepad\\mmk.gamepad.js",
+        "target": "es2015",
+        "strict": true,
+        "sourceMap": true,
+        "watch": true,
+        "declaration": true,
+        "declarationMap": true,
+    },
+    "include": [
+        "**\\*.ts",
+    ],
+}

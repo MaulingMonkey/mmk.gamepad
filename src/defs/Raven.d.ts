@@ -95,7 +95,7 @@ interface RavenSingleton {
 	// https://docs.sentry.io/learn/user-feedback/
 	showReportDialog(config?:{ eventId?: string; dsn?: string; }): void;
 
-	setTransport(transport: RavenTransportCallback);
+	setTransport(transport: RavenTransportCallback): void;
 }
 
 declare var Raven : RavenSingleton;

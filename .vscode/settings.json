@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        ".git/": true,
+        "Scripts/": true,
+        "packages/": true,
+        "**/demo.js": true,
+        "**/demo.js.map": true,
+    }
+}

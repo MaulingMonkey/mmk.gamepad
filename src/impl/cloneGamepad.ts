@@ -16,16 +16,23 @@
 namespace mmk.gamepad {
 	export function cloneGamepad(original: Gamepad): Gamepad {
 		let clone : Gamepad = {
-			id:        original.id,
-			mapping:   original.mapping,
-			index:     original.index,
-			timestamp: original.timestamp,
-			connected: original.connected,
-			axes:      new Array(original.axes   .length),
-			buttons:   new Array(original.buttons.length)
+			id:              original.id,
+			displayId:       original.displayId,
+			mapping:         original.mapping,
+			index:           original.index,
+			timestamp:       original.timestamp,
+			connected:       original.connected,
+			axes:            new Array(original.axes   .length),
+			buttons:         new Array(original.buttons.length),
 		};
-		for (let i=0; i<original.axes   .length; ++i) clone.axes   [i] = original.axes[i];
-		for (let i=0; i<original.buttons.length; ++i) clone.buttons[i] = { pressed: original.buttons[i].pressed, value: original.buttons[i].value };
+		for (let i=0; i<original.axes.length; ++i) {
+			clone.axes[i] = original.axes[i];
+		}
+		for (let i=0; i<original.buttons.length; ++i) {
+			let { pressed, value, touched } = original.buttons[i];
+			touched = touched || false;
+			clone.buttons[i] = { pressed, value, touched };
+		}
 		return clone;
 	}
 

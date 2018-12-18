@@ -17,6 +17,7 @@ namespace mmk.gamepad {
 	export interface FlatPremapGamepadValue {
 		value:   number;  // Very axis dependant.  Usually - but not always - 1 | 0 for buttons.
 		pressed: boolean; // Always false for axises
+		touched: boolean; // Always false for axises
 	}
 
 	export type FlatPremapGamepad = {[no: string]: FlatPremapGamepadValue};
@@ -27,13 +28,13 @@ namespace mmk.gamepad {
 		for (let i=0; i<gamepad.axes.length; ++i) {
 			let a = gamepad.axes[i];
 			let id = "a"+i;
-			map[id] = { value: a, pressed: false };
+			map[id] = { value: a, pressed: false, touched: false };
 		}
 
 		for (let i=0; i<gamepad.buttons.length; ++i) {
 			let b = gamepad.buttons[i];
 			let id = "b"+i;
-			map[id] = { value: b.value, pressed: b.pressed };
+			map[id] = { value: b.value, pressed: b.pressed, touched: b.touched };
 		}
 
 		return map;

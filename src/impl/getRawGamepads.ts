@@ -15,25 +15,25 @@
 
 namespace mmk.gamepad {
 	//var log = console.log;
-	var log = (...args) => {};
+	var log = (...args: any[]) => {};
 
 	export type RawGamepadCallback = (gamepad: Gamepad) => void;
 
 	var rawConnectedCallbacks : RawGamepadCallback[] = [];
 	var rawDisconnectedCallbacks : RawGamepadCallback[] = [];
 
-	export function addRawConnectedListener   (callback: RawGamepadCallback) {
-		oldPads.forEach(gp => { if (gp !== undefined) callback(gp); });
+	export function addRawConnectedListener(callback: RawGamepadCallback) {
+		oldPads.forEach(gp => { if (gp) callback(gp); });
 		rawConnectedCallbacks.push(callback);
 	}
 	export function addRawDisconnectedListener(callback: RawGamepadCallback) {
 		rawDisconnectedCallbacks.push(callback);
 	}
 
-	export function getRawGamepads(): Gamepad[] {
+	export function getRawGamepads(): (Gamepad | null)[] {
 		if ('getGamepads' in navigator) {
 			let gp = navigator.getGamepads();
-			let a : Gamepad[] = [];
+			let a : (Gamepad | null)[] = [];
 			for (let i=0; i<gp.length; ++i) a.push(gp[i]);
 			return a;
 		} else {
@@ -41,7 +41,7 @@ namespace mmk.gamepad {
 		}
 	}
 
-	var oldPads : Gamepad[] = [];
+	var oldPads : (Gamepad | null)[] = [];
 
 	if (!("addEventListener" in window)) console.warn("addEventListener unavailable, assuming this browser doesn't support the gamepads API anyways");
 	else addEventListener("load", function(){
@@ -59,15 +59,15 @@ namespace mmk.gamepad {
 					continue;
 				} else if (!oldPad) {
 					log("fake connectedgamepad:",newPad);
-					rawConnectedCallbacks   .forEach(cb => cb(newPad));
+					rawConnectedCallbacks   .forEach(cb => cb(newPad as Gamepad));
 				} else if (!newPad) {
 					log("fake disconnectedgamepad:",oldPad);
-					rawDisconnectedCallbacks.forEach(cb => cb(oldPad));
+					rawDisconnectedCallbacks.forEach(cb => cb(oldPad as Gamepad));
 				} else if ((oldPad.id !== newPad.id) || (oldPad.index !== newPad.index)) { // index should always be equal...?
 					log("fake disconnectedgamepad:",oldPad);
 					log("fake connectedgamepad:",newPad);
-					rawDisconnectedCallbacks.forEach(cb => cb(oldPad));
-					rawConnectedCallbacks   .forEach(cb => cb(newPad));
+					rawDisconnectedCallbacks.forEach(cb => cb(oldPad as Gamepad));
+					rawConnectedCallbacks   .forEach(cb => cb(newPad as Gamepad));
 				} else {
 					// id === id, index === index, but instance !== instance?  Hmm.
 				}

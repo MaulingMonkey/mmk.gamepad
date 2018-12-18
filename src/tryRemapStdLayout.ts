@@ -15,49 +15,54 @@
 
 namespace mmk.gamepad {
 	var assert = console.assert;
-	//var assert = (...args) => {};
+	//var assert = (...args : any[]) => {};
+
+	type RemapXformType = "01-11" | "11-01" | "axis-negative-01" | "axis-positive-01" | "hat-up-bit" | "hat-right-bit" | "hat-down-bit" | "hat-left-bit";
 
 	interface RemapSrc {
 		src:    string; // e.g. "a0", "b0", etc.
-		xform?: string; // "threshhold", "hat-x-y", "01_11", "11-01", etc.
+		xform?: RemapXformType;
 		param?: number; // Optional param corresponding to xform
 	}
 	interface Remap {
 		tested?:  string[];
-		matches?: string[];
+		matches:  string[];
 		axes:     RemapSrc[];
 		buttons:  RemapSrc[];
 		// TODO: Hats?
 	}
 
-	type RemapXform = (src: FlatPremapGamepadValue, remap: RemapSrc) => { value: number, pressed: boolean };
+	type RemapXform = (src: FlatPremapGamepadValue, remap: RemapSrc) => { value: number, pressed: boolean, touched: boolean };
 
 	function remapXformHat(condition: (i: number) => boolean): RemapXform {
 		return (src, remap) => {
 			let i = src ? Math.round((src.value+1)/2*7) : 8;
 			let v = condition(i);
-			return { value: v ? 1.0 : 0.0, pressed: v };
+			return { value: v ? 1.0 : 0.0, pressed: v, touched: v };
 		};
 	}
 
 	const axisXforms : {[id: string]: RemapXform} = {
 		"01-11": (src, remap) => {
-			let v = src ? (src.value*2)-1 : 0;
-			return { value: v, pressed: false };
+			let value = src ? (src.value*2)-1 : 0;
+			return { value, pressed: false, touched: false };
 		}
 	};
 	const buttonXforms : {[id: string]: RemapXform} = {
 		"11-01": (src, remap) => {
-			let v = src ? (src.value+1)/2 : 0;
-			return { value: v, pressed: !remap.param ? src.pressed : (v > remap.param) };
+			let value = src ? (src.value+1)/2 : 0;
+			let pressed = !remap.param ? src.pressed : (value > remap.param);
+			return { value, pressed, touched: pressed };
 		},
 		"axis-negative-01": (src, remap) => {
-			let v = (src && src.value < 0.0) ? -src.value : 0.0;
-			return { value: v, pressed: v > (remap.param ? remap.param : 0.0) };
+			let value = (src && src.value < 0.0) ? -src.value : 0.0;
+			let pressed = value > (remap.param ? remap.param : 0.0);
+			return { value, pressed, touched: pressed };
 		},
 		"axis-positive-01": (src, remap) => {
-			let v = (src && src.value > 0.0) ? +src.value : 0.0;
-			return { value: v, pressed: v > (remap.param ? remap.param : 0.0) };
+			let value = (src && src.value > 0.0) ? +src.value : 0.0;
+			let pressed = value > (remap.param ? remap.param : 0.0);
+			return { value, pressed, touched: pressed };
 		},
 		"hat-up-bit":    remapXformHat(i => (i === 7) || (i === 0) || (i === 1)),
 		"hat-right-bit": remapXformHat(i => (1 <= i) && (i <= 3)),
@@ -227,7 +232,7 @@ namespace mmk.gamepad {
 		return value;
 	}
 
-	export function tryRemapStdLayout(gamepad: Gamepad): Gamepad {
+	export function tryRemapStdLayout(gamepad: Gamepad): Gamepad | undefined {
 		if (!gamepad) return gamepad;
 		if (!liesAboutStandardMapping && gamepad.mapping === "standard") return gamepad; // Already remapped
 
@@ -239,6 +244,7 @@ namespace mmk.gamepad {
 		let flatGamepad = flattenPremapGamepad(gamepad);
 		let fakey : Gamepad = {
 			id:        gamepad.id,
+			displayId: gamepad.displayId,
 			index:     gamepad.index,
 			timestamp: gamepad.timestamp,
 			connected: gamepad.connected,
@@ -267,11 +273,11 @@ namespace mmk.gamepad {
 		for (let i=0; i<remapGamepad.buttons.length; ++i) {
 			let remapButton = remapGamepad.buttons[i];
 			if (remapButton === undefined) {
-				fakey.buttons[i] = { value: 0.0, pressed: false };
+				fakey.buttons[i] = { value: 0.0, pressed: false, touched: false };
 			} else if (remapButton.xform === undefined) {
 				let flatButton = flatGamepad[remapButton.src];
 				assert(!!flatButton);
-				fakey.buttons[i] = flatButton ? flatButton : { value: 0.0, pressed: false };
+				fakey.buttons[i] = flatButton ? flatButton : { value: 0.0, pressed: false, touched: false };
 			} else { // remap
 				let flatButton = flatGamepad[remapButton.src];
 				let remapXform = buttonXforms[remapButton.xform];
@@ -292,9 +298,9 @@ namespace mmk.gamepad {
 			if (("Raven" in window) && Raven.isSetup()) {
 				let clone = cloneGamepad(gamepad);
 
-				let cloneNoData = {};
+				let cloneNoData : any = {};
 				Object.keys(clone).forEach(key => {
-					if ("axes buttons".split(' ').indexOf(key) === -1) cloneNoData[key] = clone[key];
+					if ("axes buttons".split(' ').indexOf(key) === -1) cloneNoData[key] = (clone as any)[key];
 				});
 
 				Raven.captureMessage("No remap for gamepad", {

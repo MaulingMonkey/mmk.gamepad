@@ -18,11 +18,16 @@ var mmk;
     var gamepad;
     (function (gamepad_1) {
         function getEntries() {
+            let deadZone = document.getElementById("deadzone").checked ? 0.15 : 0;
             let standardize = document.getElementById("standardize").checked;
-            return gamepad_1.getRawGamepads().filter(gp => !!gp).map(gp => {
+            let keepNonstandard = document.getElementById("keep-nonstd").checked;
+            let keepInactive = document.getElementById("keep-inactive").checked;
+            let keepNull = false;
+            let options = { deadZone, standardize, keepNonstandard, keepInactive, keepNull };
+            return mmk.gamepad.getGamepads(options).map(gp => {
                 return {
                     original: gp,
-                    display: (standardize && gamepad_1.tryRemapStdLayout(gp)) || gp,
+                    display: standardize ? gamepad_1.tryRemapStdLayout(gp) : gp,
                     parsedIds: gamepad_1.parseGamepadId(gp.id)
                 };
             });

@@ -21,10 +21,16 @@ namespace mmk.gamepad {
 	}
 
 	function getEntries(): Entry[] {
-		let standardize = (<HTMLInputElement> document.getElementById("standardize")).checked;
-		return getRawGamepads().filter(gp => !!gp).map(gp => { return {
+		let deadZone        = (<HTMLInputElement> document.getElementById("deadzone")).checked ? 0.15 : 0;
+		let standardize     = (<HTMLInputElement> document.getElementById("standardize")).checked;
+		let keepNonstandard = (<HTMLInputElement> document.getElementById("keep-nonstd")).checked;
+		let keepInactive    = (<HTMLInputElement> document.getElementById("keep-inactive")).checked;
+		let keepNull        = false;
+		let options : GetGamepadsOptions = { deadZone, standardize, keepNonstandard, keepInactive, keepNull };
+
+		return mmk.gamepad.getGamepads(options).map(gp => { return {
 			original:  gp,
-			display:   (standardize && tryRemapStdLayout(gp)) || gp,
+			display:   standardize ? tryRemapStdLayout(gp) : gp,
 			parsedIds: parseGamepadId(gp.id)
 		};});
 	}

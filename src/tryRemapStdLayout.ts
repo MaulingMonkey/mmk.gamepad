@@ -232,14 +232,14 @@ namespace mmk.gamepad {
 		return value;
 	}
 
-	export function tryRemapStdLayout(gamepad: Gamepad): Gamepad | undefined {
+	export function tryRemapStdLayout(gamepad: Gamepad): Gamepad;
+	export function tryRemapStdLayout(gamepad: Gamepad | null): Gamepad | null;
+	export function tryRemapStdLayout(gamepad: Gamepad | null): Gamepad | null {
 		if (!gamepad) return gamepad;
 		if (!liesAboutStandardMapping && gamepad.mapping === "standard") return gamepad; // Already remapped
 
 		let remapGamepad = findStdRemap(gamepad);
-		if (!remapGamepad) {
-			return undefined;
-		}
+		if (!remapGamepad) return gamepad;
 
 		let flatGamepad = flattenPremapGamepad(gamepad);
 		let fakey : Gamepad = {

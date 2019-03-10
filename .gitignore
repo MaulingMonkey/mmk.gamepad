@@ -5,6 +5,7 @@ Thumbs.db
 *.user
 
 packages/
+.projnfo/
 .vs/
 bin/
 obj/

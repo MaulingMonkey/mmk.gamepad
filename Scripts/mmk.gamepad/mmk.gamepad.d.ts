@@ -2,7 +2,8 @@ declare namespace mmk.gamepad {
     function isSupported(): boolean;
 }
 declare namespace mmk.gamepad {
-    function tryRemapStdLayout(gamepad: Gamepad): Gamepad | undefined;
+    function tryRemapStdLayout(gamepad: Gamepad): Gamepad;
+    function tryRemapStdLayout(gamepad: Gamepad | null): Gamepad | null;
 }
 declare namespace mmk.gamepad {
     interface Gamepad {
@@ -30,6 +31,19 @@ declare namespace mmk.gamepad {
         [no: string]: FlatPremapGamepadValue;
     };
     function flattenPremapGamepad(gamepad: Gamepad): FlatPremapGamepad;
+}
+declare namespace mmk.gamepad {
+    interface GetGamepadsOptions {
+        deadZone: number;
+        standardize: boolean;
+        keepNonstandard: boolean;
+        keepInactive: boolean;
+        keepNull: boolean;
+    }
+    function getGamepads(options: GetGamepadsOptions & {
+        filterNull: false;
+    }): (Gamepad | null)[];
+    function getGamepads(options: GetGamepadsOptions): Gamepad[];
 }
 declare namespace mmk.gamepad {
     type RawGamepadCallback = (gamepad: Gamepad) => void;

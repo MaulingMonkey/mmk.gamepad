@@ -22,9 +22,7 @@ var mmk;
             let standardize = document.getElementById("standardize").checked;
             let keepNonstandard = document.getElementById("keep-nonstd").checked;
             let keepInactive = document.getElementById("keep-inactive").checked;
-            let keepNull = false;
-            let options = { deadZone, standardize, keepNonstandard, keepInactive, keepNull };
-            return mmk.gamepad.getGamepads(options).map(gp => {
+            return mmk.gamepad.getGamepads({ deadZone, standardize, keepNonstandard, keepInactive, keepNull: false }).map(gp => {
                 return {
                     original: gp,
                     display: standardize ? gamepad_1.tryRemapStdLayout(gp) : gp,

@@ -289,37 +289,4 @@ namespace mmk.gamepad {
 
 		return fakey;
 	}
-
-	function telemetryReportGamepad(gamepad: Gamepad) {
-		if (!gamepad) return;
-
-		if ((gamepad.mapping !== "standard") && !findStdRemap(gamepad)) {
-			console.warn("No remap for gamepad:  ", getRemapKey(gamepad), "   "+gamepad.id);
-			if (("Raven" in window) && Raven.isSetup()) {
-				let clone = cloneGamepad(gamepad);
-
-				let cloneNoData : any = {};
-				Object.keys(clone).forEach(key => {
-					if ("axes buttons".split(' ').indexOf(key) === -1) cloneNoData[key] = (clone as any)[key];
-				});
-
-				Raven.captureMessage("No remap for gamepad", {
-					level: "warning",
-					tags: {
-						remapKey:  getRemapKey(gamepad),
-						gamepadId: gamepad.id
-					}, extra: {
-						axes:      clone.axes,
-						buttons:   clone.buttons.map(b => JSON.stringify(b)),
-						gamepad:   cloneNoData,
-						remapKey:  getRemapKey(gamepad)
-					}
-				});
-			}
-		}
-	}
-
-	if ("addEventListener" in window) addEventListener("load", function(){
-		addRawConnectedListener(telemetryReportGamepad);
-	});
 }

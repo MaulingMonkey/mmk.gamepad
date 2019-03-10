@@ -289,37 +289,6 @@ var mmk;
             return fakey;
         }
         gamepad_1.tryRemapStdLayout = tryRemapStdLayout;
-        function telemetryReportGamepad(gamepad) {
-            if (!gamepad)
-                return;
-            if ((gamepad.mapping !== "standard") && !findStdRemap(gamepad)) {
-                console.warn("No remap for gamepad:  ", getRemapKey(gamepad), "   " + gamepad.id);
-                if (("Raven" in window) && Raven.isSetup()) {
-                    let clone = gamepad_1.cloneGamepad(gamepad);
-                    let cloneNoData = {};
-                    Object.keys(clone).forEach(key => {
-                        if ("axes buttons".split(' ').indexOf(key) === -1)
-                            cloneNoData[key] = clone[key];
-                    });
-                    Raven.captureMessage("No remap for gamepad", {
-                        level: "warning",
-                        tags: {
-                            remapKey: getRemapKey(gamepad),
-                            gamepadId: gamepad.id
-                        }, extra: {
-                            axes: clone.axes,
-                            buttons: clone.buttons.map(b => JSON.stringify(b)),
-                            gamepad: cloneNoData,
-                            remapKey: getRemapKey(gamepad)
-                        }
-                    });
-                }
-            }
-        }
-        if ("addEventListener" in window)
-            addEventListener("load", function () {
-                gamepad_1.addRawConnectedListener(telemetryReportGamepad);
-            });
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));
 /* Copyright 2017 MaulingMonkey

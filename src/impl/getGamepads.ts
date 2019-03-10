@@ -58,8 +58,8 @@ namespace mmk.gamepad {
 		return g.axes.some(a => a !== 0) || g.buttons.some(b => b.pressed || b.touched);
 	}
 
-	export function getGamepads(options: GetGamepadsOptions & { keepNull: true  }): (Gamepad | null)[];
 	export function getGamepads(options: GetGamepadsOptions & { keepNull: false }): Gamepad[];
+	export function getGamepads(options: GetGamepadsOptions): (Gamepad | null)[];
 	export function getGamepads(options: GetGamepadsOptions): (Gamepad | null)[] {
 		let gamepads = getRawGamepads();
 		if (!options.keepNull)        gamepads = gamepads.filter(g => g !== null);

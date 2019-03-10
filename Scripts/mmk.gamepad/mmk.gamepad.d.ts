@@ -41,9 +41,9 @@ declare namespace mmk.gamepad {
         keepNull: boolean;
     }
     function getGamepads(options: GetGamepadsOptions & {
-        filterNull: false;
-    }): (Gamepad | null)[];
-    function getGamepads(options: GetGamepadsOptions): Gamepad[];
+        keepNull: false;
+    }): Gamepad[];
+    function getGamepads(options: GetGamepadsOptions): (Gamepad | null)[];
 }
 declare namespace mmk.gamepad {
     type RawGamepadCallback = (gamepad: Gamepad) => void;

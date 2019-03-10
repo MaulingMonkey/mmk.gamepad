@@ -1,4 +1,17 @@
 declare namespace mmk.gamepad {
+    interface GetGamepadsOptions {
+        deadZone: number;
+        standardize: boolean;
+        keepNonstandard: boolean;
+        keepInactive: boolean;
+        keepNull: boolean;
+    }
+    function getGamepads(options: GetGamepadsOptions & {
+        keepNull: false;
+    }): Gamepad[];
+    function getGamepads(options: GetGamepadsOptions): (Gamepad | null)[];
+}
+declare namespace mmk.gamepad {
     function isSupported(): boolean;
 }
 declare namespace mmk.gamepad {
@@ -31,19 +44,6 @@ declare namespace mmk.gamepad {
         [no: string]: FlatPremapGamepadValue;
     };
     function flattenPremapGamepad(gamepad: Gamepad): FlatPremapGamepad;
-}
-declare namespace mmk.gamepad {
-    interface GetGamepadsOptions {
-        deadZone: number;
-        standardize: boolean;
-        keepNonstandard: boolean;
-        keepInactive: boolean;
-        keepNull: boolean;
-    }
-    function getGamepads(options: GetGamepadsOptions & {
-        keepNull: false;
-    }): Gamepad[];
-    function getGamepads(options: GetGamepadsOptions): (Gamepad | null)[];
 }
 declare namespace mmk.gamepad {
     type RawGamepadCallback = (gamepad: Gamepad) => void;

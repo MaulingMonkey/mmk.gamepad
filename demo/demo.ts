@@ -69,7 +69,7 @@ namespace mmk.gamepad {
 		return !button.pressed ? ("#"+c+"FFFF") : ("#FF"+c+c);
 	}
 
-	function refresh() {
+	function refreshGamepads() {
 		let entries = getEntries();
 
 		let d3entries = d3.select("#mmk-gamepad-demo").selectAll(".gamepad").data(entries);
@@ -108,11 +108,57 @@ namespace mmk.gamepad {
 		}
 	}
 
+	interface DemoEventRow {
+		type:           string;
+		gamepadIndex:   string;
+		index?:         string;
+		held?:          string;
+		value?:         string;
+	}
+
+	var eventRows : DemoEventRow[] = [];
+
+	function refreshEvents() {
+		let keepValueEvents = (<HTMLInputElement> document.getElementById("keep-value-events")).checked;
+		if (!keepValueEvents) eventRows = eventRows.filter(row => row.type.substr(Math.max(0, row.type.length - 6)) !== "-value");
+		while (eventRows.length > 20) eventRows.shift();
+
+		let d3entries = d3.select("#mmk-gamepad-events-demo").selectAll(".event").data(eventRows);
+
+		let d3new = d3entries.enter().append("tr").attr("class", "event");
+		d3new.append("td").attr("class", "event-type");
+		d3new.append("td").attr("class", "event-gamepad-index");
+		d3new.append("td").attr("class", "event-index");
+		d3new.append("td").attr("class", "event-held");
+		d3new.append("td").attr("class", "event-value");
+
+		d3entries.exit().remove();
+
+		d3entries.select(".event-type"      ).text(e => e.type);
+		d3entries.select(".event-gamepad-index").text(e => e.gamepadIndex);
+		d3entries.select(".event-index"     ).text(e => e.index || "");
+		d3entries.select(".event-held"      ).text(e => e.held || "");
+		d3entries.select(".event-value"     ).text(e => e.value || "");
+	}
+
+	function refresh() {
+		refreshGamepads();
+		refreshEvents();
+	}
+
 	if ('d3' in window) addEventListener("load", function(){
 		let demo = document.getElementById("mmk-gamepad-demo");
 		if (!demo) return;
 
 		refresh();
 		poll(refresh);
+		if ('addEventListener' in window) {
+			addEventListener("mmk-gamepad-connected",    e => eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), value: e.connected ? "connected" : "disconnected" }));
+			addEventListener("mmk-gamepad-disconnected", e => eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), value: e.connected ? "connected" : "disconnected" }));
+			addEventListener("mmk-gamepad-button-down",  e => eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2) }));
+			addEventListener("mmk-gamepad-button-up",    e => eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2) }));
+			addEventListener("mmk-gamepad-button-value", e => eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2) }));
+			addEventListener("mmk-gamepad-axis-value",   e => eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.axisIndex.toString(), value: e.axisValue.toFixed(2) }));
+		}
 	});
 }

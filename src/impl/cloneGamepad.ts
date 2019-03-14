@@ -14,7 +14,12 @@
 */
 
 namespace mmk.gamepad {
-	export function cloneGamepad(original: Gamepad): Gamepad {
+	export function cloneGamepad(original: Gamepad): Gamepad;
+	export function cloneGamepad(original: Gamepad | null): Gamepad | null;
+	export function cloneGamepad(original: Gamepad | undefined): Gamepad | undefined;
+	export function cloneGamepad(original: Gamepad | undefined | null): Gamepad | undefined | null;
+	export function cloneGamepad(original: Gamepad | undefined | null): Gamepad | undefined | null {
+		if (!original) return original;
 		let clone : Gamepad = {
 			id:              original.id,
 			displayId:       original.displayId,
@@ -36,8 +41,12 @@ namespace mmk.gamepad {
 		return clone;
 	}
 
-	export function cloneGamepads(original: Gamepad[]): Gamepad[] {
-		let clone : Gamepad[] = new Array(original.length);
+	export function cloneGamepads(original: Gamepad[]): Gamepad[];
+	export function cloneGamepads(original: (Gamepad | null)[]): (Gamepad | null)[];
+	export function cloneGamepads(original: (Gamepad | undefined)[]): (Gamepad | undefined)[];
+	export function cloneGamepads(original: (Gamepad | undefined | null)[]): (Gamepad | undefined | null)[];
+	export function cloneGamepads(original: (Gamepad | undefined | null)[]): (Gamepad | undefined | null)[] {
+		let clone : (Gamepad | undefined | null)[] = new Array(original.length);
 		for (let i=0; i<original.length; ++i) clone[i] = cloneGamepad(original[i]);
 		return clone;
 	}

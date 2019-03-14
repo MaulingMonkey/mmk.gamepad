@@ -15,8 +15,8 @@ License: [Apache 2.0](LICENSE.txt)
 | Windows  7       | Opera 44    | 4            | XInput or RawInput |                          |
 | Windows  7       | Chrome 57   | 4            | XInput or RawInput |                          |
 | Windows  7       | FireFox 53  | 5+           | XInput or RawInput |                          |
-| Windows 10       | Edge        | 4?           | Only XInput?       |                          |
-| Windows  7       | IE 11       | 0            | No gamepad API [1] | !isSupported             |
+| Windows 10       | Edge        | 4?           | Only XInput?       | [4] [5]                  |
+| Windows  7       | IE 11       | 0            | No gamepad API [1] | !isSupported [4]         |
 | Windows  7       | IE  8       | XXX [2]      | No gamepad API     | Compatability bugs       |
 | Ubuntu 18.04 LTS | Chromium 65 | 0            | No gamepad API [1] | "isSupported" lies [3]   |
 | Ubuntu 18.04 LTS | Chrome 66   | 4+           | Unknown            |                          |
@@ -25,7 +25,8 @@ License: [Apache 2.0](LICENSE.txt)
 1. All mmk.gamepad functions should still "work" as if there were no gamepads connected.
 2. This browser may still have compatability bugs even providing the "no gamepads" interface.
 3. This browser implements a gamepad API, but no gamepads work.
-
+4. You may need to specify `<meta http-equiv="X-UA-Compatible" content="IE=9" />` or better to avoid JS errors.
+5. Edge has some built-in gamepad navigation behavior.  `mmk.gamepad` will disable this by default.
 
 
 # Gamepad support
@@ -91,9 +92,9 @@ else          { ... } // Fallback to non-standard mapping prompts etc...
 # Installation
 
 ## Via NuGet
-* Add [mmk.gamepad](https://www.nuget.org/packages/mmk.gamepad/) to your project via nuget.
-* Reference `<script src="Scripts/mmk.gamepad/mmk.gamepad.js"></script>` on your page.
-* Done!
+* <strike>Add [mmk.gamepad](https://www.nuget.org/packages/mmk.gamepad/) to your project via nuget.</strike>
+* <strike>Reference `<script src="Scripts/mmk.gamepad/mmk.gamepad.js"></script>` on your page.</strike>
+* <strike>Done!</strike>
 
 
 

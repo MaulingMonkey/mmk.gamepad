@@ -14,23 +14,7 @@
 */
 
 namespace mmk.gamepad {
-	//var log = console.log;
-	var log = (...args: any[]) => {};
-
-	export type RawGamepadCallback = (gamepad: Gamepad) => void;
-
-	var rawConnectedCallbacks : RawGamepadCallback[] = [];
-	var rawDisconnectedCallbacks : RawGamepadCallback[] = [];
-
-	export function addRawConnectedListener(callback: RawGamepadCallback) {
-		oldPads.forEach(gp => { if (gp) callback(gp); });
-		rawConnectedCallbacks.push(callback);
-	}
-	export function addRawDisconnectedListener(callback: RawGamepadCallback) {
-		rawDisconnectedCallbacks.push(callback);
-	}
-
-	export function getRawGamepads(): (Gamepad | null)[] {
+	export function getRawGamepads (): (Gamepad | null)[] {
 		if ('getGamepads' in navigator) {
 			let gp = navigator.getGamepads();
 			let a : (Gamepad | null)[] = [];
@@ -40,38 +24,4 @@ namespace mmk.gamepad {
 			return [];
 		}
 	}
-
-	var oldPads : (Gamepad | null)[] = [];
-
-	if (!("addEventListener" in window)) console.warn("addEventListener unavailable, assuming this browser doesn't support the gamepads API anyways");
-	else addEventListener("load", function(){
-		poll(function(){
-			let newPads = getRawGamepads();
-			let n = Math.max(oldPads.length, newPads.length);
-			for (let i=0; i<n; ++i) {
-				let oldPad = oldPads[i];
-				let newPad = newPads[i];
-				oldPads[i] = newPads[i];
-
-				if (oldPad === newPad) {
-					continue;
-				} else if (!oldPad && !newPad) {
-					continue;
-				} else if (!oldPad) {
-					log("fake connectedgamepad:",newPad);
-					rawConnectedCallbacks   .forEach(cb => cb(newPad as Gamepad));
-				} else if (!newPad) {
-					log("fake disconnectedgamepad:",oldPad);
-					rawDisconnectedCallbacks.forEach(cb => cb(oldPad as Gamepad));
-				} else if ((oldPad.id !== newPad.id) || (oldPad.index !== newPad.index)) { // index should always be equal...?
-					log("fake disconnectedgamepad:",oldPad);
-					log("fake connectedgamepad:",newPad);
-					rawDisconnectedCallbacks.forEach(cb => cb(oldPad as Gamepad));
-					rawConnectedCallbacks   .forEach(cb => cb(newPad as Gamepad));
-				} else {
-					// id === id, index === index, but instance !== instance?  Hmm.
-				}
-			}
-		});
-	});
 }

@@ -17,6 +17,170 @@ var mmk;
 (function (mmk) {
     var gamepad;
     (function (gamepad) {
+        var settings;
+        (function (settings) {
+            /// Microsoft Edge now responds to gamepad input in a way that is *very* likely to conflict with your own
+            /// gamepad handling.  For example, hitting (B) will focus... the address bar?  Home button?  Something in
+            /// the browser header that isn't what you want.  By enabling this (default behavior), we mark all Edge's
+            /// gamepad key events as handled, disabling the conflicting Edge behavior.
+            ///
+            /// If you want the default  Microsoft Edge gamepad navigation behavior, disable this option. You might
+            /// consider disabling this during your title screen, or alternatively making a quit option that navigates
+            /// back in history, or otherwise provide some kind of mechanism to allow users to return gamepad control
+            /// to it's browser navigation role.
+            ///
+            /// In the future, disabling this may also add some navigation behavior to Chrome/Firefox to match IE11's
+            /// behavior.  Or this option might go away entirely in favor of a better approach.
+            settings.captureGamepadEvents = true;
+        })(settings = gamepad.settings || (gamepad.settings = {}));
+        var defaultOptions = { deadZone: 0.15, keepInactive: true, keepNonstandard: true, keepNull: true, standardize: true };
+        function dispatchGamepadEvent(type, data, initHandled) {
+            if (initHandled === void 0) { initHandled = false; }
+            var e = document.createEvent("CustomEvent");
+            e.initCustomEvent(type, true, true, undefined);
+            Object.keys(data).forEach(function (key) {
+                e[key] = data[key];
+            });
+            if (initHandled) {
+                e.preventDefault();
+            }
+            return (document.activeElement || document.body).dispatchEvent(e);
+        }
+        var dispatchAnyEvents = true;
+        var oldPads = [];
+        function implPollEvents(options) {
+            if (!dispatchAnyEvents)
+                return;
+            var newPads = gamepad.getGamepads({ deadZone: 0, keepInactive: true, keepNonstandard: true, keepNull: true, standardize: true });
+            var nPads = Math.max(oldPads.length, newPads.length);
+            for (var iPad = 0; iPad < nPads; ++iPad) {
+                var oldPad = oldPads[iPad];
+                var newPad = newPads[iPad];
+                if (oldPad && (!newPad || newPad.id !== oldPad.id || newPad.index !== oldPad.index)) {
+                    dispatchGamepadEvent("mmk-gamepad-disconnected", { gamepadIndex: oldPad.index, connected: false });
+                }
+                if (newPad && (!oldPad || newPad.id !== oldPad.id || newPad.index !== oldPad.index)) {
+                    dispatchGamepadEvent("mmk-gamepad-connected", { gamepadIndex: newPad.index, connected: true });
+                }
+                var eventPad = newPad || oldPad;
+                if (!eventPad)
+                    continue;
+                var gamepadIndex = eventPad.index;
+                var nButtons = Math.max(newPad ? newPad.buttons.length : 0, oldPad ? oldPad.buttons.length : 0);
+                for (var buttonIndex = 0; buttonIndex < nButtons; ++buttonIndex) {
+                    var oldButtonPressed = (oldPad && buttonIndex < oldPad.buttons.length && oldPad.buttons[buttonIndex].pressed) || false;
+                    var newButtonPressed = (newPad && buttonIndex < newPad.buttons.length && newPad.buttons[buttonIndex].pressed) || false;
+                    var oldButtonValue = (oldPad && buttonIndex < oldPad.buttons.length) ? oldPad.buttons[buttonIndex].value : 0;
+                    var newButtonValue = (newPad && buttonIndex < newPad.buttons.length) ? newPad.buttons[buttonIndex].value : 0;
+                    var held = newButtonPressed;
+                    var buttonValue = newButtonValue;
+                    var handled = false;
+                    if (newButtonPressed && !oldButtonPressed) {
+                        handled = dispatchGamepadEvent("mmk-gamepad-button-down", { gamepadIndex: gamepadIndex, buttonIndex: buttonIndex, buttonValue: buttonValue, held: held });
+                    }
+                    else if (!newButtonPressed && oldButtonPressed) {
+                        handled = dispatchGamepadEvent("mmk-gamepad-button-up", { gamepadIndex: gamepadIndex, buttonIndex: buttonIndex, buttonValue: buttonValue, held: held });
+                    }
+                    if ((newButtonValue !== oldButtonValue) || (newButtonPressed !== oldButtonPressed)) {
+                        dispatchGamepadEvent("mmk-gamepad-button-value", { gamepadIndex: gamepadIndex, buttonIndex: buttonIndex, buttonValue: buttonValue, held: held }, handled);
+                    }
+                }
+                var nAxises = Math.max(newPad ? newPad.axes.length : 0, oldPad ? oldPad.axes.length : 0);
+                for (var axisIndex = 0; axisIndex < nAxises; ++axisIndex) {
+                    var oldAxisValue = (oldPad && axisIndex < oldPad.axes.length) ? oldPad.axes[axisIndex] : 0;
+                    var axisValue = (newPad && axisIndex < newPad.axes.length) ? newPad.axes[axisIndex] : 0;
+                    if (oldAxisValue === axisValue)
+                        continue;
+                    dispatchGamepadEvent("mmk-gamepad-axis-value", { gamepadIndex: gamepadIndex, axisIndex: axisIndex, axisValue: axisValue });
+                }
+            }
+            oldPads = mmk.gamepad.cloneGamepads(newPads);
+        }
+        var autoDispatchEvents = true;
+        if (!("addEventListener" in window)) {
+            dispatchAnyEvents = false;
+            console.warn("addEventListener unavailable, assuming this browser doesn't support the gamepads API anyways");
+        }
+        else
+            addEventListener("load", function () {
+                gamepad.poll(function () {
+                    if (autoDispatchEvents) {
+                        implPollEvents(defaultOptions);
+                    }
+                });
+            });
+        /// Poll gamepad state, and dispatch events based on that state.
+        /// Note that mmk.gamepad will automatically dispatch by default based on one of:
+        /// 	requestAnimationFrame(...)
+        /// 	setInterval(..., 10)
+        /// And that calling this method will disable that automatic dispatch mechanism.
+        function pollEvents(options) {
+            autoDispatchEvents = false;
+            implPollEvents(options || defaultOptions);
+        }
+        gamepad.pollEvents = pollEvents;
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+// https://docs.microsoft.com/en-us/windows/uwp/xbox-apps/how-to-disable-mouse-mode
+navigator.gamepadInputEmulation = "gamepad";
+// See mmk.gamepad.settings.captureGamepadEvents doc comments
+if ('addEventListener' in window) {
+    // We might consider bypassing polling for button events on Microsoft Edge in favor of keydown/up events.
+    // This would let us have "mmk-gamepad-button-down" being .preventDefault()ed cause the actual keydown event
+    // to also be .preventDefault()ed, instead of relying on global boolean state.  Open questions include how
+    // to handle thumbstick/trigger events...
+    addEventListener("keydown", function (ev) {
+        switch (ev.key) {
+            case "GamepadA":
+            case "GamepadB":
+            case "GamepadX":
+            case "GamepadY":
+            case "GamepadLeftThumbstick": // Click
+            case "GamepadLeftThumbstickUp":
+            case "GamepadLeftThumbstickDown":
+            case "GamepadLeftThumbstickLeft":
+            case "GamepadLeftThumbstickRight":
+            case "GamepadRightThumbstick": // Click
+            case "GamepadRightThumbstickUp":
+            case "GamepadRightThumbstickDown":
+            case "GamepadRightThumbstickLeft":
+            case "GamepadRightThumbstickRight":
+            case "GamepadDPadUp":
+            case "GamepadDPadDown":
+            case "GamepadDPadLeft":
+            case "GamepadDPadRight":
+            case "GamepadLeftShoulder":
+            case "GamepadRightShoulder":
+            case "GamepadLeftTrigger":
+            case "GamepadRightTrigger":
+            // We have no way to handle the guide button on Windows 10 + Microsoft Edge
+            case "GamepadView": // Back
+            case "GamepadMenu": // Start
+                if (mmk.gamepad.settings.captureGamepadEvents) {
+                    ev.preventDefault();
+                }
+                break;
+        }
+    }, true);
+}
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
         function v(value, fallback) {
             return (value === undefined) ? fallback : value;
         }
@@ -50,20 +214,20 @@ var mmk;
             return g;
         }
         function isActive(g) {
-            return g.axes.some(a => a !== 0) || g.buttons.some(b => b.pressed || b.touched);
+            return g.axes.some(function (a) { return a !== 0; }) || g.buttons.some(function (b) { return b.pressed || b.touched; });
         }
         function getGamepads(options) {
-            let gamepads = gamepad.getRawGamepads();
+            var gamepads = gamepad.getRawGamepads();
             if (!options.keepNull)
-                gamepads = gamepads.filter(g => g !== null);
+                gamepads = gamepads.filter(function (g) { return g !== null; });
             if (options.standardize)
-                gamepads = gamepads.map(g => gamepad.tryRemapStdLayout(g) || g);
+                gamepads = gamepads.map(function (g) { return gamepad.tryRemapStdLayout(g) || g; });
             if (!options.keepNonstandard)
-                gamepads = gamepads.filter(g => g ? g.mapping === "standard" : g);
+                gamepads = gamepads.filter(function (g) { return g ? g.mapping === "standard" : g; });
             if (options.deadZone)
-                gamepads = gamepads.map(g => g ? cloneDeadZone(g, options.deadZone) : g);
+                gamepads = gamepads.map(function (g) { return g ? cloneDeadZone(g, options.deadZone) : g; });
             if (!options.keepInactive)
-                gamepads = gamepads.filter(g => g ? isActive(g) : false);
+                gamepads = gamepads.filter(function (g) { return g ? isActive(g) : false; });
             return gamepads;
         }
         gamepad.getGamepads = getGamepads;
@@ -117,41 +281,41 @@ var mmk;
     (function (gamepad_1) {
         var assert = console.assert;
         function remapXformHat(condition) {
-            return (src, remap) => {
-                let i = src ? Math.round((src.value + 1) / 2 * 7) : 8;
-                let v = condition(i);
+            return function (src, remap) {
+                var i = src ? Math.round((src.value + 1) / 2 * 7) : 8;
+                var v = condition(i);
                 return { value: v ? 1.0 : 0.0, pressed: v, touched: v };
             };
         }
-        const axisXforms = {
-            "01-11": (src, remap) => {
-                let value = src ? (src.value * 2) - 1 : 0;
-                return { value, pressed: false, touched: false };
+        var axisXforms = {
+            "01-11": function (src, remap) {
+                var value = src ? (src.value * 2) - 1 : 0;
+                return { value: value, pressed: false, touched: false };
             }
         };
-        const buttonXforms = {
-            "11-01": (src, remap) => {
-                let value = src ? (src.value + 1) / 2 : 0;
-                let pressed = !remap.param ? src.pressed : (value > remap.param);
-                return { value, pressed, touched: pressed };
+        var buttonXforms = {
+            "11-01": function (src, remap) {
+                var value = src ? (src.value + 1) / 2 : 0;
+                var pressed = !remap.param ? src.pressed : (value > remap.param);
+                return { value: value, pressed: pressed, touched: pressed };
             },
-            "axis-negative-01": (src, remap) => {
-                let value = (src && src.value < 0.0) ? -src.value : 0.0;
-                let pressed = value > (remap.param ? remap.param : 0.0);
-                return { value, pressed, touched: pressed };
+            "axis-negative-01": function (src, remap) {
+                var value = (src && src.value < 0.0) ? -src.value : 0.0;
+                var pressed = value > (remap.param ? remap.param : 0.0);
+                return { value: value, pressed: pressed, touched: pressed };
             },
-            "axis-positive-01": (src, remap) => {
-                let value = (src && src.value > 0.0) ? +src.value : 0.0;
-                let pressed = value > (remap.param ? remap.param : 0.0);
-                return { value, pressed, touched: pressed };
+            "axis-positive-01": function (src, remap) {
+                var value = (src && src.value > 0.0) ? +src.value : 0.0;
+                var pressed = value > (remap.param ? remap.param : 0.0);
+                return { value: value, pressed: pressed, touched: pressed };
             },
-            "hat-up-bit": remapXformHat(i => (i === 7) || (i === 0) || (i === 1)),
-            "hat-right-bit": remapXformHat(i => (1 <= i) && (i <= 3)),
-            "hat-down-bit": remapXformHat(i => (3 <= i) && (i <= 5)),
-            "hat-left-bit": remapXformHat(i => (5 <= i) && (i <= 7))
+            "hat-up-bit": remapXformHat(function (i) { return (i === 7) || (i === 0) || (i === 1); }),
+            "hat-right-bit": remapXformHat(function (i) { return (1 <= i) && (i <= 3); }),
+            "hat-down-bit": remapXformHat(function (i) { return (3 <= i) && (i <= 5); }),
+            "hat-left-bit": remapXformHat(function (i) { return (5 <= i) && (i <= 7); })
         };
         // http://www.linux-usb.org/usb.ids
-        const vendorProductToName = {
+        var vendorProductToName = {
             // Microsoft
             "045e-0202": "Xbox Controller",
             "045e-0285": "Xbox Controller S",
@@ -170,10 +334,10 @@ var mmk;
             "054c-0268": "DualShock 3 Controller",
             "054c-054c": "DualShock 4 Controller",
             "054c-09cc": "DualShock 4 Controller (2nd Gen)",
-            "054c-0ba0": "DualShock 4 Wireless Adapter",
+            "054c-0ba0": "DualShock 4 Wireless Adapter"
         };
         //const stdRemaps : {[vendProdHintAxesButtons: string]: Remap} = {
-        const remaps = [{
+        var remaps = [{
                 tested: ["Windows 7 / Opera 52.0.2871.99"],
                 matches: [
                     "054c-054c-blink-10-14",
@@ -276,29 +440,29 @@ var mmk;
                     { src: "b12" }, { src: "b13" }, { src: "b14" }, { src: "b15" },
                     // -- end of standard layout
                     { src: "b10" },
-                ],
+                ]
             }];
         // Avoid where possible.
-        const xxxIsLinux = /\blinux\b/i.test(navigator.userAgent);
-        const xxxIsChromeBased = /\bChrome\/\d{2,3}\b/i.test(navigator.userAgent);
-        const xxxIsChromium = /\bChromium\/\d{2,3}\b/i.test(navigator.userAgent);
-        const xxxIsChrome = xxxIsChromeBased && !xxxIsChromium;
-        const liesAboutStandardMapping = xxxIsLinux && xxxIsChromeBased;
-        const remapsByKey = {};
-        remaps.forEach(remap => {
-            remap.matches.forEach(id => {
+        var xxxIsLinux = /\blinux\b/i.test(navigator.userAgent);
+        var xxxIsChromeBased = /\bChrome\/\d{2,3}\b/i.test(navigator.userAgent);
+        var xxxIsChromium = /\bChromium\/\d{2,3}\b/i.test(navigator.userAgent);
+        var xxxIsChrome = xxxIsChromeBased && !xxxIsChromium;
+        var liesAboutStandardMapping = xxxIsLinux && xxxIsChromeBased;
+        var remapsByKey = {};
+        remaps.forEach(function (remap) {
+            remap.matches.forEach(function (id) {
                 console.assert(!(id in remapsByKey), "Remaps contains multiple entries for the same mapping");
                 remapsByKey[id] = remap;
             });
         });
         function getRemapKey(gamepad) {
-            let id = gamepad_1.parseGamepadId(gamepad.id);
-            let key = id.vendor + "-" + id.product + "-" + id.hint + "-" + gamepad.axes.length + "-" + gamepad.buttons.length;
+            var id = gamepad_1.parseGamepadId(gamepad.id);
+            var key = id.vendor + "-" + id.product + "-" + id.hint + "-" + gamepad.axes.length + "-" + gamepad.buttons.length;
             return key;
         }
         function findStdRemap(gamepad) {
-            let key = getRemapKey(gamepad);
-            let value = remapsByKey[key];
+            var key = getRemapKey(gamepad);
+            var value = remapsByKey[key];
             return value;
         }
         function tryRemapStdLayout(gamepad) {
@@ -306,11 +470,11 @@ var mmk;
                 return gamepad;
             if (!liesAboutStandardMapping && gamepad.mapping === "standard")
                 return gamepad; // Already remapped
-            let remapGamepad = findStdRemap(gamepad);
+            var remapGamepad = findStdRemap(gamepad);
             if (!remapGamepad)
                 return gamepad;
-            let flatGamepad = gamepad_1.flattenPremapGamepad(gamepad);
-            let fakey = {
+            var flatGamepad = gamepad_1.flattenPremapGamepad(gamepad);
+            var fakey = {
                 id: gamepad.id,
                 displayId: gamepad.displayId,
                 index: gamepad.index,
@@ -320,37 +484,37 @@ var mmk;
                 axes: new Array(remapGamepad.axes.length),
                 buttons: new Array(remapGamepad.buttons.length)
             };
-            for (let i = 0; i < remapGamepad.axes.length; ++i) {
-                let remapAxis = remapGamepad.axes[i];
+            for (var i = 0; i < remapGamepad.axes.length; ++i) {
+                var remapAxis = remapGamepad.axes[i];
                 if (remapAxis === undefined) {
                     fakey.axes[i] = 0.0;
                 }
                 else if (remapAxis.xform === undefined) {
-                    let flatAxis = flatGamepad[remapAxis.src];
+                    var flatAxis = flatGamepad[remapAxis.src];
                     assert(!!flatAxis);
                     fakey.axes[i] = flatAxis ? flatAxis.value : 0.0;
                 }
                 else { // remap
-                    let flatAxis = flatGamepad[remapAxis.src];
-                    let remapXform = axisXforms[remapAxis.xform];
+                    var flatAxis = flatGamepad[remapAxis.src];
+                    var remapXform = axisXforms[remapAxis.xform];
                     assert(!!flatAxis);
                     assert(!!remapXform);
                     fakey.axes[i] = remapXform(flatAxis, remapAxis).value;
                 }
             }
-            for (let i = 0; i < remapGamepad.buttons.length; ++i) {
-                let remapButton = remapGamepad.buttons[i];
+            for (var i = 0; i < remapGamepad.buttons.length; ++i) {
+                var remapButton = remapGamepad.buttons[i];
                 if (remapButton === undefined) {
                     fakey.buttons[i] = { value: 0.0, pressed: false, touched: false };
                 }
                 else if (remapButton.xform === undefined) {
-                    let flatButton = flatGamepad[remapButton.src];
+                    var flatButton = flatGamepad[remapButton.src];
                     assert(!!flatButton);
                     fakey.buttons[i] = flatButton ? flatButton : { value: 0.0, pressed: false, touched: false };
                 }
                 else { // remap
-                    let flatButton = flatGamepad[remapButton.src];
-                    let remapXform = buttonXforms[remapButton.xform];
+                    var flatButton = flatGamepad[remapButton.src];
+                    var remapXform = buttonXforms[remapButton.xform];
                     assert(!!flatButton);
                     assert(!!remapXform);
                     fakey.buttons[i] = remapXform(flatButton, remapButton);
@@ -394,7 +558,9 @@ var mmk;
     var gamepad;
     (function (gamepad) {
         function cloneGamepad(original) {
-            let clone = {
+            if (!original)
+                return original;
+            var clone = {
                 id: original.id,
                 displayId: original.displayId,
                 mapping: original.mapping,
@@ -402,22 +568,22 @@ var mmk;
                 timestamp: original.timestamp,
                 connected: original.connected,
                 axes: new Array(original.axes.length),
-                buttons: new Array(original.buttons.length),
+                buttons: new Array(original.buttons.length)
             };
-            for (let i = 0; i < original.axes.length; ++i) {
+            for (var i = 0; i < original.axes.length; ++i) {
                 clone.axes[i] = original.axes[i];
             }
-            for (let i = 0; i < original.buttons.length; ++i) {
-                let { pressed, value, touched } = original.buttons[i];
+            for (var i = 0; i < original.buttons.length; ++i) {
+                var _a = original.buttons[i], pressed = _a.pressed, value = _a.value, touched = _a.touched;
                 touched = touched || false;
-                clone.buttons[i] = { pressed, value, touched };
+                clone.buttons[i] = { pressed: pressed, value: value, touched: touched };
             }
             return clone;
         }
         gamepad.cloneGamepad = cloneGamepad;
         function cloneGamepads(original) {
-            let clone = new Array(original.length);
-            for (let i = 0; i < original.length; ++i)
+            var clone = new Array(original.length);
+            for (var i = 0; i < original.length; ++i)
                 clone[i] = cloneGamepad(original[i]);
             return clone;
         }
@@ -443,15 +609,15 @@ var mmk;
     var gamepad;
     (function (gamepad_2) {
         function flattenPremapGamepad(gamepad) {
-            let map = {};
-            for (let i = 0; i < gamepad.axes.length; ++i) {
-                let a = gamepad.axes[i];
-                let id = "a" + i;
+            var map = {};
+            for (var i = 0; i < gamepad.axes.length; ++i) {
+                var a = gamepad.axes[i];
+                var id = "a" + i;
                 map[id] = { value: a, pressed: false, touched: false };
             }
-            for (let i = 0; i < gamepad.buttons.length; ++i) {
-                let b = gamepad.buttons[i];
-                let id = "b" + i;
+            for (var i = 0; i < gamepad.buttons.length; ++i) {
+                var b = gamepad.buttons[i];
+                var id = "b" + i;
                 map[id] = { value: b.value, pressed: b.pressed, touched: b.touched };
             }
             return map;
@@ -476,26 +642,12 @@ var mmk;
 var mmk;
 (function (mmk) {
     var gamepad;
-    (function (gamepad_3) {
-        //var log = console.log;
-        var log = (...args) => { };
-        var rawConnectedCallbacks = [];
-        var rawDisconnectedCallbacks = [];
-        function addRawConnectedListener(callback) {
-            oldPads.forEach(gp => { if (gp)
-                callback(gp); });
-            rawConnectedCallbacks.push(callback);
-        }
-        gamepad_3.addRawConnectedListener = addRawConnectedListener;
-        function addRawDisconnectedListener(callback) {
-            rawDisconnectedCallbacks.push(callback);
-        }
-        gamepad_3.addRawDisconnectedListener = addRawDisconnectedListener;
+    (function (gamepad) {
         function getRawGamepads() {
             if ('getGamepads' in navigator) {
-                let gp = navigator.getGamepads();
-                let a = [];
-                for (let i = 0; i < gp.length; ++i)
+                var gp = navigator.getGamepads();
+                var a = [];
+                for (var i = 0; i < gp.length; ++i)
                     a.push(gp[i]);
                 return a;
             }
@@ -503,45 +655,7 @@ var mmk;
                 return [];
             }
         }
-        gamepad_3.getRawGamepads = getRawGamepads;
-        var oldPads = [];
-        if (!("addEventListener" in window))
-            console.warn("addEventListener unavailable, assuming this browser doesn't support the gamepads API anyways");
-        else
-            addEventListener("load", function () {
-                gamepad_3.poll(function () {
-                    let newPads = getRawGamepads();
-                    let n = Math.max(oldPads.length, newPads.length);
-                    for (let i = 0; i < n; ++i) {
-                        let oldPad = oldPads[i];
-                        let newPad = newPads[i];
-                        oldPads[i] = newPads[i];
-                        if (oldPad === newPad) {
-                            continue;
-                        }
-                        else if (!oldPad && !newPad) {
-                            continue;
-                        }
-                        else if (!oldPad) {
-                            log("fake connectedgamepad:", newPad);
-                            rawConnectedCallbacks.forEach(cb => cb(newPad));
-                        }
-                        else if (!newPad) {
-                            log("fake disconnectedgamepad:", oldPad);
-                            rawDisconnectedCallbacks.forEach(cb => cb(oldPad));
-                        }
-                        else if ((oldPad.id !== newPad.id) || (oldPad.index !== newPad.index)) { // index should always be equal...?
-                            log("fake disconnectedgamepad:", oldPad);
-                            log("fake connectedgamepad:", newPad);
-                            rawDisconnectedCallbacks.forEach(cb => cb(oldPad));
-                            rawConnectedCallbacks.forEach(cb => cb(newPad));
-                        }
-                        else {
-                            // id === id, index === index, but instance !== instance?  Hmm.
-                        }
-                    }
-                });
-            });
+        gamepad.getRawGamepads = getRawGamepads;
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));
 /* Copyright 2017 MaulingMonkey
@@ -572,11 +686,11 @@ var mmk;
         //	"054c-0268": "PLAYSTATION(R)3 Controller"
         //};
         function parseGamepadId_Blink(id) {
-            let mNameParen = /^(.+?)(?: \((.*)\))$/i.exec(id);
+            var mNameParen = /^(.+?)(?: \((.*)\))$/i.exec(id);
             if (!mNameParen)
                 return undefined;
-            let parsed = { name: mNameParen[1], vendor: "", product: "", hint: "blink" };
-            let mVendorProduct = /(?:^| )Vendor: ([0-9a-f]{4}) Product: ([0-9a-f]{4})$/i.exec(mNameParen[2]);
+            var parsed = { name: mNameParen[1], vendor: "", product: "", hint: "blink" };
+            var mVendorProduct = /(?:^| )Vendor: ([0-9a-f]{4}) Product: ([0-9a-f]{4})$/i.exec(mNameParen[2]);
             if (mVendorProduct) {
                 parsed.vendor = mVendorProduct[1];
                 parsed.product = mVendorProduct[2];
@@ -586,7 +700,7 @@ var mmk;
         function parseGamepadId_Gecko(id) {
             if (id === "xinput")
                 return { name: "xinput", vendor: "", product: "", hint: "gecko" };
-            let m = /^([0-9a-f]{4})-([0-9a-f]{4})-(.+)$/gi.exec(id);
+            var m = /^([0-9a-f]{4})-([0-9a-f]{4})-(.+)$/gi.exec(id);
             if (m)
                 return { name: m[3], vendor: m[1], product: m[2], hint: "gecko" };
             return undefined;
@@ -598,11 +712,11 @@ var mmk;
         function parseGamepadId(id) {
             if (!id)
                 return parseGamepadId_Unknown("unknown");
-            let parsed = parseGamepadId_Blink(id) || parseGamepadId_Gecko(id) || parseGamepadId_Unknown(id);
+            var parsed = parseGamepadId_Blink(id) || parseGamepadId_Gecko(id) || parseGamepadId_Unknown(id);
             return parsed;
         }
         gamepad.parseGamepadId = parseGamepadId;
-        const parsedIdExamples = [
+        var parsedIdExamples = [
             // Chrome / Opera
             ["Xbox 360 Controller (XInput STANDARD GAMEPAD)", { name: "Xbox 360 Controller", vendor: "", product: "", hint: "blink" }],
             ["DUALSHOCK®4 USB Wireless Adaptor (Vendor: 054c Product: 0ba0)", { name: "DUALSHOCK®4 USB Wireless Adaptor", vendor: "054c", product: "0ba0", hint: "blink" }],
@@ -616,9 +730,9 @@ var mmk;
             ["asdf", { name: "asdf", vendor: "", product: "", hint: "unknown" }],
             ["", { name: "unknown", vendor: "", product: "", hint: "unknown" }],
         ];
-        parsedIdExamples.forEach(example => {
-            let parsed = JSON.stringify(parseGamepadId(example[0]));
-            let expected = JSON.stringify(example[1]);
+        parsedIdExamples.forEach(function (example) {
+            var parsed = JSON.stringify(parseGamepadId(example[0]));
+            var expected = JSON.stringify(example[1]);
             console.assert(parsed === expected, "Expected parsed:", parsed, "equal to expected:", expected);
         });
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
@@ -645,7 +759,7 @@ var mmk;
         // e.g. customize setInterval interval? force setInterval even if raf is available?
         function poll(action) {
             if ('requestAnimationFrame' in window) {
-                var perFrame = () => {
+                var perFrame = function () {
                     window.requestAnimationFrame(perFrame);
                     action();
                 };

@@ -19,7 +19,7 @@
 	<input id="deadzone"      type="checkbox" checked="checked"> <label for="standardize">Apply DeadZone (0.15)</label><br>
 	<input id="standardize"   type="checkbox" checked="checked"> <label for="standardize">Standardize Input</label><br>
 	<input id="keep-nonstd"   type="checkbox" checked="checked"> <label for="standardize">Keep Nonstandard</label><br>
-	<input id="keep-inactive" type="checkbox"                  > <label for="standardize">Keep Inactive</label><br>
+	<input id="keep-inactive" type="checkbox" checked="checked"> <label for="standardize">Keep Inactive</label><br>
 
 	<table><thead>
 		<tr>
@@ -96,6 +96,24 @@
 			<th>b19</th>
 		</tr>
 	</thead><tbody id="mmk-gamepad-demo">
+		<!-- demo.ts -->
+	</tbody></table>
+
+	<br><br>
+	<input id="keep-value-events" type="checkbox"> <label for="keep-value-events">Keep "*-value" events</label><br>
+	<table><thead>
+		<tr>
+			<th>Events</th>
+			<th>Gamepad</th>
+			<th colspan="3">Button/Axis</th>
+		</tr><tr>
+			<th>type</th>
+			<th>index</th>
+			<th>index</th>
+			<th>held</th>
+			<th>value</th>
+		</tr>
+	</thead><tbody id="mmk-gamepad-events-demo">
 		<!-- demo.ts -->
 	</tbody></table>
 </body></html>

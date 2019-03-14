@@ -18,11 +18,11 @@ var mmk;
     var gamepad;
     (function (gamepad_1) {
         function getEntries() {
-            let deadZone = document.getElementById("deadzone").checked ? 0.15 : 0;
-            let standardize = document.getElementById("standardize").checked;
-            let keepNonstandard = document.getElementById("keep-nonstd").checked;
-            let keepInactive = document.getElementById("keep-inactive").checked;
-            return mmk.gamepad.getGamepads({ deadZone, standardize, keepNonstandard, keepInactive, keepNull: false }).map(gp => {
+            var deadZone = document.getElementById("deadzone").checked ? 0.15 : 0;
+            var standardize = document.getElementById("standardize").checked;
+            var keepNonstandard = document.getElementById("keep-nonstd").checked;
+            var keepInactive = document.getElementById("keep-inactive").checked;
+            return mmk.gamepad.getGamepads({ deadZone: deadZone, standardize: standardize, keepNonstandard: keepNonstandard, keepInactive: keepInactive, keepNull: false }).map(function (gp) {
                 return {
                     original: gp,
                     display: standardize ? gamepad_1.tryRemapStdLayout(gp) : gp,
@@ -31,47 +31,47 @@ var mmk;
             });
         }
         function gamepadAxisText(gamepad, axisIndex) {
-            let axis = gamepad.axes[axisIndex];
+            var axis = gamepad.axes[axisIndex];
             if (axis === undefined)
                 return "";
             return (axis >= 0 ? "+" : "") + axis.toFixed(2);
         }
         function gamepadButtonText(gamepad, buttonIndex) {
-            let button = gamepad.buttons[buttonIndex];
+            var button = gamepad.buttons[buttonIndex];
             if (button === undefined)
                 return "";
             return button.value.toFixed(2);
         }
         function gamepadAxisFill(gamepad, axisIndex) {
-            let axis = gamepad.axes[axisIndex];
+            var axis = gamepad.axes[axisIndex];
             if (axis === undefined)
                 return "";
-            let v = 255 * Math.abs(axis);
+            var v = 255 * Math.abs(axis);
             if (v > 255)
                 v = 255;
             v = 255 - Math.round(v);
-            let c = v.toString(16);
+            var c = v.toString(16);
             if (c.length === 1)
                 c = "0" + c;
             return (axis > 0) ? ("#" + c + "FFFF") : ("#FF" + c + c);
         }
         function gamepadButtonFill(gamepad, buttonIndex) {
-            let button = gamepad.buttons[buttonIndex];
+            var button = gamepad.buttons[buttonIndex];
             if (button === undefined)
                 return "";
-            let v = 255 * (0.1 + 0.9 * Math.abs(button.value));
+            var v = 255 * (0.1 + 0.9 * Math.abs(button.value));
             if (v > 255)
                 v = 255;
             v = 255 - Math.round(v);
-            let c = v.toString(16);
+            var c = v.toString(16);
             if (c.length === 1)
                 c = "0" + c;
             return !button.pressed ? ("#" + c + "FFFF") : ("#FF" + c + c);
         }
-        function refresh() {
-            let entries = getEntries();
-            let d3entries = d3.select("#mmk-gamepad-demo").selectAll(".gamepad").data(entries);
-            let d3new = d3entries.enter().append("tr").attr("class", "gamepad");
+        function refreshGamepads() {
+            var entries = getEntries();
+            var d3entries = d3.select("#mmk-gamepad-demo").selectAll(".gamepad").data(entries);
+            var d3new = d3entries.enter().append("tr").attr("class", "gamepad");
             d3new.append("td").attr("class", "gamepad-name");
             d3new.append("td").attr("class", "gamepad-index");
             d3new.append("td").attr("class", "gamepad-mapping");
@@ -79,36 +79,75 @@ var mmk;
             d3new.append("td").attr("class", "gamepad-vendor");
             d3new.append("td").attr("class", "gamepad-product");
             d3new.append("td").attr("class", "gamepad-hint");
-            for (let i = 0; i < 8; ++i)
+            for (var i = 0; i < 8; ++i)
                 d3new.append("td").attr("class", "gamepad-axis-" + i);
-            for (let i = 0; i < 20; ++i)
+            for (var i = 0; i < 20; ++i)
                 d3new.append("td").attr("class", "gamepad-button-" + i);
             d3entries.exit().remove();
-            d3entries.select(".gamepad-name").text(gp => gp.parsedIds.name);
-            d3entries.select(".gamepad-index").text(gp => gp.display.index);
-            d3entries.select(".gamepad-mapping").text(gp => gp.display.mapping);
-            d3entries.select(".gamepad-connected").text(gp => gp.display.connected ? "true" : "false");
-            d3entries.select(".gamepad-vendor").text(gp => gp.parsedIds.vendor || "N/A");
-            d3entries.select(".gamepad-product").text(gp => gp.parsedIds.product || "N/A");
-            d3entries.select(".gamepad-hint").text(gp => gp.parsedIds.hint || "N/A");
-            for (let i = 0; i < 8; ++i) {
+            d3entries.select(".gamepad-name").text(function (gp) { return gp.parsedIds.name; });
+            d3entries.select(".gamepad-index").text(function (gp) { return gp.display.index; });
+            d3entries.select(".gamepad-mapping").text(function (gp) { return gp.display.mapping; });
+            d3entries.select(".gamepad-connected").text(function (gp) { return gp.display.connected ? "true" : "false"; });
+            d3entries.select(".gamepad-vendor").text(function (gp) { return gp.parsedIds.vendor || "N/A"; });
+            d3entries.select(".gamepad-product").text(function (gp) { return gp.parsedIds.product || "N/A"; });
+            d3entries.select(".gamepad-hint").text(function (gp) { return gp.parsedIds.hint || "N/A"; });
+            var _loop_1 = function (i) {
                 d3entries.select(".gamepad-axis-" + i)
-                    .style("background-color", gp => gamepadAxisFill(gp.display, i))
-                    .text(gp => gamepadAxisText(gp.display, i));
+                    .style("background-color", function (gp) { return gamepadAxisFill(gp.display, i); })
+                    .text(function (gp) { return gamepadAxisText(gp.display, i); });
+            };
+            for (var i = 0; i < 8; ++i) {
+                _loop_1(i);
             }
-            for (let i = 0; i < 20; ++i) {
+            var _loop_2 = function (i) {
                 d3entries.select(".gamepad-button-" + i)
-                    .style("background-color", gp => gamepadButtonFill(gp.display, i))
-                    .text(gp => gamepadButtonText(gp.display, i));
+                    .style("background-color", function (gp) { return gamepadButtonFill(gp.display, i); })
+                    .text(function (gp) { return gamepadButtonText(gp.display, i); });
+            };
+            for (var i = 0; i < 20; ++i) {
+                _loop_2(i);
             }
+        }
+        var eventRows = [];
+        function refreshEvents() {
+            var keepValueEvents = document.getElementById("keep-value-events").checked;
+            if (!keepValueEvents)
+                eventRows = eventRows.filter(function (row) { return row.type.substr(Math.max(0, row.type.length - 6)) !== "-value"; });
+            while (eventRows.length > 20)
+                eventRows.shift();
+            var d3entries = d3.select("#mmk-gamepad-events-demo").selectAll(".event").data(eventRows);
+            var d3new = d3entries.enter().append("tr").attr("class", "event");
+            d3new.append("td").attr("class", "event-type");
+            d3new.append("td").attr("class", "event-gamepad-index");
+            d3new.append("td").attr("class", "event-index");
+            d3new.append("td").attr("class", "event-held");
+            d3new.append("td").attr("class", "event-value");
+            d3entries.exit().remove();
+            d3entries.select(".event-type").text(function (e) { return e.type; });
+            d3entries.select(".event-gamepad-index").text(function (e) { return e.gamepadIndex; });
+            d3entries.select(".event-index").text(function (e) { return e.index || ""; });
+            d3entries.select(".event-held").text(function (e) { return e.held || ""; });
+            d3entries.select(".event-value").text(function (e) { return e.value || ""; });
+        }
+        function refresh() {
+            refreshGamepads();
+            refreshEvents();
         }
         if ('d3' in window)
             addEventListener("load", function () {
-                let demo = document.getElementById("mmk-gamepad-demo");
+                var demo = document.getElementById("mmk-gamepad-demo");
                 if (!demo)
                     return;
                 refresh();
                 gamepad_1.poll(refresh);
+                if ('addEventListener' in window) {
+                    addEventListener("mmk-gamepad-connected", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), value: e.connected ? "connected" : "disconnected" }); });
+                    addEventListener("mmk-gamepad-disconnected", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), value: e.connected ? "connected" : "disconnected" }); });
+                    addEventListener("mmk-gamepad-button-down", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2) }); });
+                    addEventListener("mmk-gamepad-button-up", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2) }); });
+                    addEventListener("mmk-gamepad-button-value", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2) }); });
+                    addEventListener("mmk-gamepad-axis-value", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.axisIndex.toString(), value: e.axisValue.toFixed(2) }); });
+                }
             });
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));

@@ -2,7 +2,7 @@
     "compileOnSave": true,
     "compilerOptions": {
         "outFile": "..\\Scripts\\mmk.gamepad\\mmk.gamepad.js",
-        "target": "es2015",
+        "target": "es3",
         "strict": true,
         "sourceMap": true,
         "watch": true,

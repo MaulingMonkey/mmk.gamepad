@@ -1,0 +1,417 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@maulingmonkey/gamepad</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@maulingmonkey/gamepad</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> @maulingmonkey/gamepad</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<p>﻿</p>
+				<h1 id="mmk-gamepad">mmk.gamepad</h1>
+				<p><strong>M</strong>auling<strong>M</strong>on<strong>k</strong>ey&#39;s typescript gamepad API for consistent cross-browser and cross-gamepad binding, polling for input, etc.</p>
+				<ul>
+					<li>GitHub: <a href="https://github.com/MaulingMonkey/mmk.gamepad">github.com/MaulingMonkey/mmk.gamepad</a></li>
+					<li>Demo: <a href="https://maulingmonkey.com/mmk.gamepad/demo/">maulingmonkey.com/mmk.gamepad/demo/</a></li>
+					<li>Docs: <a href="https://maulingmonkey.com/mmk.gamepad/docs/">maulingmonkey.com/mmk.gamepad/docs/</a></li>
+					<li>NPM: <a href="https://www.npmjs.com/package/@maulingmonkey/gamepad">@maulingmonkey/gamepad</a></li>
+					<li>License: <a href="LICENSE.txt">Apache 2.0</a></li>
+				</ul>
+				<h1 id="what-why-">What?  Why?</h1>
+				<p>The vanilla browser gamepad APIs are unusable without a lot work, except for <em>maybe</em> if you stick to vanilla Microsoft
+				360/XB1 gamepads.</p>
+				<ol>
+					<li>Noop fallbacks for unsupported browsers so you don&#39;t have to do your own feature testing.</li>
+					<li>Edge has conflicting gamepad browser navigation that needs to be disabled,
+					if you don&#39;t want basic input like pressing (B) to navigate away.</li>
+					<li>Many browsers poorly standardize gamepads.  Even ignoring outright buggy <code>&quot;standard&quot;</code> layout gamepads, I&#39;ve seen
+						dpads exposed as <code>-1/8..+1</code> axises, int -&gt; float bitcasts of accelerometer data, gamepads that start initialized
+					to non-resting states... testing hardware you don&#39;t have is hard, I guess.</li>
+					<li>Basic gamepad APIs don&#39;t handle basic things like deadzone functionality, events (although Edge has some keydown
+					events for gamepads)</li>
+				</ol>
+				<h1 id="browser-support">Browser Support</h1>
+				<table>
+					<thead>
+						<tr>
+							<th>OS</th>
+							<th>Browser</th>
+							<th>Max Gamepads</th>
+							<th>API(s)</th>
+							<th>Notes</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td>Windows  7</td>
+							<td>Opera 44</td>
+							<td>4</td>
+							<td>XInput or RawInput</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Windows  7</td>
+							<td>Chrome 57</td>
+							<td>4</td>
+							<td>XInput or RawInput</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Windows  7</td>
+							<td>FireFox 53</td>
+							<td>5+</td>
+							<td>XInput or RawInput</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Windows 10</td>
+							<td>Edge</td>
+							<td>4?</td>
+							<td>Only XInput?</td>
+							<td>[4] [5]</td>
+						</tr>
+						<tr>
+							<td>Windows  7</td>
+							<td>IE 11</td>
+							<td>0</td>
+							<td>No gamepad API [1]</td>
+							<td>!isSupported [4]</td>
+						</tr>
+						<tr>
+							<td>Windows  7</td>
+							<td>IE  8</td>
+							<td>XXX [2]</td>
+							<td>No gamepad API</td>
+							<td>Compatability bugs</td>
+						</tr>
+						<tr>
+							<td>Ubuntu 18.04 LTS</td>
+							<td>Chromium 65</td>
+							<td>0</td>
+							<td>No gamepad API [1]</td>
+							<td>&quot;isSupported&quot; lies [3]</td>
+						</tr>
+						<tr>
+							<td>Ubuntu 18.04 LTS</td>
+							<td>Chrome 66</td>
+							<td>4+</td>
+							<td>Unknown</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Ubuntu 18.04 LTS</td>
+							<td>FireFox 59</td>
+							<td>4+</td>
+							<td>Unknown</td>
+							<td></td>
+						</tr>
+				</tbody></table>
+				<ol>
+					<li>All mmk.gamepad functions should still &quot;work&quot; as if there were no gamepads connected.</li>
+					<li>This browser may still have compatability bugs even providing the &quot;no gamepads&quot; interface.</li>
+					<li>This browser implements a gamepad API, but no gamepads work.</li>
+					<li>You may need to specify <code>&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=9&quot; /&gt;</code> or better to avoid JS errors.</li>
+					<li>Edge has some built-in gamepad navigation behavior.  <code>mmk.gamepad</code> will disable this by default.</li>
+				</ol>
+				<h1 id="gamepad-support">Gamepad support</h1>
+				<table>
+					<thead>
+						<tr>
+							<th>OS</th>
+							<th>Gamepad</th>
+							<th>Chrome</th>
+							<th>Opera</th>
+							<th>FireFox</th>
+							<th>Edge</th>
+							<th>Notes</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td>Windows</td>
+							<td>Xbox 360</td>
+							<td>OK</td>
+							<td>OK</td>
+							<td>OK [1]</td>
+							<td>OK</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Windows</td>
+							<td>Xbox One</td>
+							<td>OK [1]</td>
+							<td>OK [1]</td>
+							<td>OK [1]</td>
+							<td>OK [1]</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Windows</td>
+							<td>DualShock 4 (Micro-USB)</td>
+							<td>OK</td>
+							<td>OK</td>
+							<td>No DPad</td>
+							<td>| No touch/gyros</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Windows</td>
+							<td>DualShock 4 (Wireless)</td>
+							<td>OK</td>
+							<td>OK</td>
+							<td>No DPad</td>
+							<td>| No touch/gyros</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Windows</td>
+							<td>DualShock 3 (Mini-USB)</td>
+							<td>|</td>
+							<td>|</td>
+							<td>Bad HID [2]</td>
+							<td></td>
+							<td></td>
+						</tr>
+				</tbody></table>
+				<ol>
+					<li>This gamepad displays an incorrect or generic name which we cannot work around (e.g. &quot;Xbox 360 Controller&quot; for XB1 controllers, or &quot;xinput&quot;)</li>
+					<li>Third party (non-Sony!) drivers may make this gamepad work - it doesn&#39;t speak standard HID properly.</li>
+				</ol>
+				<table>
+					<thead>
+						<tr>
+							<th>OS</th>
+							<th>Gamepad</th>
+							<th>Chrome [3]</th>
+							<th>FireFox</th>
+							<th>Notes</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td>Ubuntu</td>
+							<td>Xbox 360</td>
+							<td>OK</td>
+							<td>OK</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Ubuntu</td>
+							<td>Xbox One</td>
+							<td>OK</td>
+							<td>OK</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Ubuntu</td>
+							<td>DualShock 4 (Micro-USB)</td>
+							<td>OK [4]</td>
+							<td>OK</td>
+							<td>No gyros, bad init [5], touchpad is mouse</td>
+						</tr>
+						<tr>
+							<td>Ubuntu</td>
+							<td>DualShock 4 (Wireless)</td>
+							<td>OK [4]</td>
+							<td>OK</td>
+							<td>No gyros, bad init [5], touchpad is mouse</td>
+						</tr>
+						<tr>
+							<td>Ubuntu</td>
+							<td>DualShock 3 (Mini-USB)</td>
+							<td>OK</td>
+							<td>OK</td>
+							<td>No gyros</td>
+						</tr>
+				</tbody></table>
+				<ol start="3">
+					<li><p>Not Chromium - which still defines the gamepad API, but doesn&#39;t appear to actually
+						export info about connected gamepads even when Chrome will on the same system.</p>
+					</li>
+					<li><p>Note that the baseline gamepad API lies about this gamepad being in the standard
+							layout already in Chrome 66 on Ubuntu 18.04 LTS.  tryRemapStdLayout will fix these
+						to use the correct layout anyways.</p>
+					</li>
+					<li><p>Some triggers/axises of this gamepad currently misinitialize to non-zero
+							values (e.g. -1, 0.5), although they&#39;ll correct themselves after some use.
+							Could be worked around with some more stateful mapping (e.g. treating known
+							bad values as 0.0 until the right stick / triggers are sufficiently
+						exercised.)</p>
+					</li>
+				</ol>
+				<h1 id="basic-api">Basic API</h1>
+				<p>See <a href="src/demo.ts">src/demo.ts</a></p>
+				<pre><code class="language-typescript"><span class="hljs-comment">// In case you want to display a hint to switch browsers ;)</span>
+<span class="hljs-keyword">if</span> (!mmk.gamepad.isSupported()) <span class="hljs-built_in">console</span>.warn(<span class="hljs-string">"Gamepads not available in this browser"</span>);
+
+<span class="hljs-comment">// The rough equivalent of navigator.getGamepads(), with fallbacks.</span>
+<span class="hljs-keyword">var</span> gamepads = mmk.gamepad.getRawGamepads() <span class="hljs-comment">// Can return undefined elements (for e.g. disconnected controllers)</span>
+
+<span class="hljs-keyword">var</span> snapshot = mmk.gamepad.cloneGamepads(gamepads); <span class="hljs-comment">// Deep copy of basic fields</span>
+snapshot[<span class="hljs-number">0</span>]  = mmk.gamepad.cloneGamepad(snapshot[<span class="hljs-number">0</span>]); <span class="hljs-comment">// Hey why not</span>
+
+<span class="hljs-comment">// Works despite the lack of "connectedgamepad" and "disconnectedgamepad" events:</span>
+mmk.gamepad.addRawConnectedListener   ( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">gamepad</span>) </span>{ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Connected gamepad:"</span>,   gamepad); } );
+mmk.gamepad.addRawDisconnectedListener( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">gamepad</span>) </span>{ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Disconnected gamepad:"</span>, gamepad); } );
+<span class="hljs-comment">// (note that addRawConnectedListener will immediately invoke your callback on already connected gamepads!)</span>
+
+<span class="hljs-keyword">var</span> standard = mmk.gamepad.tryRemapStdLayout(snapshot[<span class="hljs-number">0</span>]);
+<span class="hljs-keyword">if</span> (standard) { <span class="hljs-built_in">console</span>.assert(standard.mapping === <span class="hljs-string">"standard"</span>); } <span class="hljs-comment">// Well, that was easy!</span>
+<span class="hljs-keyword">else</span>          { ... } <span class="hljs-comment">// Fallback to non-standard mapping prompts etc...</span></code></pre>
+				<h1 id="installation">Installation</h1>
+				<h2 id="via-npm">Via npm</h2>
+				<ul>
+					<li>Grab <a href="https://nodejs.org/en/">NPM</a> via node.js</li>
+					<li>Install per project<pre><code class="language-cmd">npm i @maulingmonkey/gamepad</code></pre>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-not-exported">
+						<a href="modules/mmk.html">mmk</a>
+					</li>
+					<li class=" tsd-kind-module tsd-parent-kind-module">
+						<a href="modules/mmk.gamepad.html">mmk.gamepad</a>
+					</li>
+					<li class=" tsd-kind-module tsd-parent-kind-module">
+						<a href="modules/mmk.gamepad.config.html">mmk.gamepad.config</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="interfaces/globaleventhandlerseventmap.html" class="tsd-kind-icon">Global<wbr>Event<wbr>Handlers<wbr>Event<wbr>Map</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

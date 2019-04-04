@@ -1,11 +1,28 @@
-﻿# mmk.gamepad
+﻿
+# mmk.gamepad
 
-MaulingMonKey's typescript gamepad API for consistent cross-browser and cross-gamepad binding, polling for input, etc.
+<strong>M</strong>auling<strong>M</strong>on<strong>k</strong>ey's typescript gamepad API for consistent cross-browser and cross-gamepad binding, polling for input, etc.
 
-Demo: http://maulingmonkey.com/mmk.gamepad/demo/
+* GitHub: [github.com/MaulingMonkey/mmk.gamepad](https://github.com/MaulingMonkey/mmk.gamepad)
+* Demo: [maulingmonkey.com/mmk.gamepad/demo/](https://maulingmonkey.com/mmk.gamepad/demo/)
+* Docs: [maulingmonkey.com/mmk.gamepad/docs/](https://maulingmonkey.com/mmk.gamepad/docs/)
+* NPM: [@maulingmonkey/gamepad](https://www.npmjs.com/package/@maulingmonkey/gamepad)
+* License: [Apache 2.0](LICENSE.txt)
 
-License: [Apache 2.0](LICENSE.txt)
 
+# What?  Why?
+
+The vanilla browser gamepad APIs are unusable without a lot work, except for *maybe* if you stick to vanilla Microsoft
+360/XB1 gamepads.
+
+1. Noop fallbacks for unsupported browsers so you don't have to do your own feature testing.
+2. Edge has conflicting gamepad browser navigation that needs to be disabled,
+   if you don't want basic input like pressing (B) to navigate away.
+3. Many browsers poorly standardize gamepads.  Even ignoring outright buggy `"standard"` layout gamepads, I've seen
+   dpads exposed as `-1/8..+1` axises, int -> float bitcasts of accelerometer data, gamepads that start initialized
+   to non-resting states... testing hardware you don't have is hard, I guess.
+4. Basic gamepad APIs don't handle basic things like deadzone functionality, events (although Edge has some keydown
+   events for gamepads)
 
 
 # Browser Support
@@ -91,30 +108,9 @@ else          { ... } // Fallback to non-standard mapping prompts etc...
 
 # Installation
 
-## Via NuGet
-* <strike>Add [mmk.gamepad](https://www.nuget.org/packages/mmk.gamepad/) to your project via nuget.</strike>
-* <strike>Reference `<script src="Scripts/mmk.gamepad/mmk.gamepad.js"></script>` on your page.</strike>
-* <strike>Done!</strike>
-
-
-
-# TODO
-
-* Implement controller database
-  * <strike>Parse https://github.com/gabomdq/SDL_GameControllerDB/blob/master/gamecontrollerdb.txt</strike> **Wrong useful :(**
-  * <strike>Build my own database</strike> **Started :)**
-  * Consider parsing https://github.com/luser/gamepad-data ?
-* Controller autodetect / fixup
-  * Autodetect weird axis dpads
-  * Autodetect mismapped axies (e.g. -1..+1 triggers)
-  * Autodetect misbehaving axies
-* <strike>Use database to remap controllers to "standard" layout</strike> **Done**
-* Provide constants for standard layout buttons
-* Provide api to get labels for buttons
-* Herustically detect duplicate controllers (e.g. PS4 can be connected via wireless and microusb simultaniously)
-* Herustically detect disconnected/off controllers (e.g. PS4 wireless dongle still shows up with home button held 10+ seconds)
-* Provide connected/disconnected events (e.g. Chrome doesn't generate any, and we may want to hide browser-level duplicates or powered off controllers etc.)
-* Test more browsers (<strike>Firefox? Mozilla? Edge? Opera?</strike>)  **Huzzah!**
-* Test more OSes (<strike>Linux?</strike> OS X?)
-* <strike>Publish nuget</strike>
-* Track active controllers
+## Via npm
+* Grab [NPM](https://nodejs.org/en/) via node.js
+* Install per project
+  ```cmd
+  npm i @maulingmonkey/gamepad
+  ```

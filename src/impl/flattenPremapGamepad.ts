@@ -14,14 +14,17 @@
 */
 
 namespace mmk.gamepad {
+	/** @hidden */
 	export interface FlatPremapGamepadValue {
 		value:   number;  // Very axis dependant.  Usually - but not always - 1 | 0 for buttons.
 		pressed: boolean; // Always false for axises
 		touched: boolean; // Always false for axises
 	}
 
+	/** @hidden */
 	export type FlatPremapGamepad = {[no: string]: FlatPremapGamepadValue};
 
+	/** @hidden */
 	export function flattenPremapGamepad(gamepad: Gamepad): FlatPremapGamepad {
 		let map : FlatPremapGamepad = {};
 

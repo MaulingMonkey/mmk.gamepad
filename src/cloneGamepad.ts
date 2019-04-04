@@ -14,20 +14,23 @@
 */
 
 namespace mmk.gamepad {
-	export function cloneGamepad(original: Gamepad): Gamepad;
-	export function cloneGamepad(original: Gamepad | null): Gamepad | null;
-	export function cloneGamepad(original: Gamepad | undefined): Gamepad | undefined;
-	export function cloneGamepad(original: Gamepad | undefined | null): Gamepad | undefined | null;
-	export function cloneGamepad(original: Gamepad | undefined | null): Gamepad | undefined | null {
+	/**
+	 * Create a deep clone of a gamepad.
+	*/
+	export function cloneGamepad(original: Gamepad): ClonedGamepad;
+	export function cloneGamepad(original: Gamepad | null): ClonedGamepad | null;
+	export function cloneGamepad(original: Gamepad | undefined): ClonedGamepad | undefined;
+	export function cloneGamepad(original: Gamepad | undefined | null): ClonedGamepad | undefined | null;
+	export function cloneGamepad(original: Gamepad | undefined | null): ClonedGamepad | undefined | null {
 		if (!original) return original;
-		let clone : Gamepad = {
+		let clone : ClonedGamepad = {
 			id:              original.id,
 			displayId:       original.displayId,
 			mapping:         original.mapping,
 			index:           original.index,
 			timestamp:       original.timestamp,
 			connected:       original.connected,
-			axes:            new Array(original.axes   .length),
+			axes:            new Array(original.axes.length),
 			buttons:         new Array(original.buttons.length),
 		};
 		for (let i=0; i<original.axes.length; ++i) {
@@ -41,12 +44,16 @@ namespace mmk.gamepad {
 		return clone;
 	}
 
-	export function cloneGamepads(original: Gamepad[]): Gamepad[];
-	export function cloneGamepads(original: (Gamepad | null)[]): (Gamepad | null)[];
-	export function cloneGamepads(original: (Gamepad | undefined)[]): (Gamepad | undefined)[];
-	export function cloneGamepads(original: (Gamepad | undefined | null)[]): (Gamepad | undefined | null)[];
-	export function cloneGamepads(original: (Gamepad | undefined | null)[]): (Gamepad | undefined | null)[] {
-		let clone : (Gamepad | undefined | null)[] = new Array(original.length);
+	/**
+	 * Create a deep clone of a set of gamepads.  Also works on array-like objects, such as the "array" returned from
+	 * `navigator.getGamepads()`.
+	 */
+	export function cloneGamepads(original: Gamepad[]): ClonedGamepad[];
+	export function cloneGamepads(original: (Gamepad | null)[]): (ClonedGamepad | null)[];
+	export function cloneGamepads(original: (Gamepad | undefined)[]): (ClonedGamepad | undefined)[];
+	export function cloneGamepads(original: (Gamepad | undefined | null)[]): (ClonedGamepad | undefined | null)[];
+	export function cloneGamepads(original: (Gamepad | undefined | null)[]): (ClonedGamepad | undefined | null)[] {
+		let clone : (ClonedGamepad | undefined | null)[] = new Array(original.length);
 		for (let i=0; i<original.length; ++i) clone[i] = cloneGamepad(original[i]);
 		return clone;
 	}

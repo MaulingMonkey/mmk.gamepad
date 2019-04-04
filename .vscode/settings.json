@@ -1,10 +1,10 @@
 {
     "files.exclude": {
-        ".git/": true,
-        "Scripts/": true,
-        "packages/": true,
-        "**/demo.js": true,
-        "**/demo.js.map": true,
+        "**/.git": true,
+        "**/*.tsbuildinfo": true,
+        "package-lock.json": true,
+        "{demo/*,global,modular}.{d.ts,d.ts.map,js.map}": true,
     },
-    "editor.insertSpaces": false,
+    "editor.insertSpaces": false, // Project already uses tabs
+    "editor.rulers": [120]
 }

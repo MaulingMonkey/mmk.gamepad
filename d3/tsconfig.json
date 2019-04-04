@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "outFile": "d3.min.js",
+        "strict": false,
+        "noImplicitUseStrict": true,
+        "declaration": true,
+        "composite": true,
+    },
+    "include": [
+        "..\\node_modules\\d3\\d3.min.js",
+        "..\\node_modules\\@types\\d3\\index.d.ts",
+    ]
+}

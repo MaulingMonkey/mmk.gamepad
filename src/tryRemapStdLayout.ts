@@ -14,16 +14,21 @@
 */
 
 namespace mmk.gamepad {
+	/** @hidden */
 	var assert = console.assert;
 	//var assert = (...args : any[]) => {};
 
+	/** @hidden */
 	type RemapXformType = "01-11" | "11-01" | "axis-negative-01" | "axis-positive-01" | "hat-up-bit" | "hat-right-bit" | "hat-down-bit" | "hat-left-bit";
 
+	/** @hidden */
 	interface RemapSrc {
 		src:    string; // e.g. "a0", "b0", etc.
 		xform?: RemapXformType;
 		param?: number; // Optional param corresponding to xform
 	}
+
+	/** @hidden */
 	interface Remap {
 		tested?:  string[];
 		matches:  string[];
@@ -32,8 +37,10 @@ namespace mmk.gamepad {
 		// TODO: Hats?
 	}
 
+	/** @hidden */
 	type RemapXform = (src: FlatPremapGamepadValue, remap: RemapSrc) => { value: number, pressed: boolean, touched: boolean };
 
+	/** @hidden */
 	function remapXformHat(condition: (i: number) => boolean): RemapXform {
 		return (src, remap) => {
 			let i = src ? Math.round((src.value+1)/2*7) : 8;
@@ -42,12 +49,15 @@ namespace mmk.gamepad {
 		};
 	}
 
+	/** @hidden */
 	const axisXforms : {[id: string]: RemapXform} = {
 		"01-11": (src, remap) => {
 			let value = src ? (src.value*2)-1 : 0;
 			return { value, pressed: false, touched: false };
 		}
 	};
+
+	/** @hidden */
 	const buttonXforms : {[id: string]: RemapXform} = {
 		"11-01": (src, remap) => {
 			let value = src ? (src.value+1)/2 : 0;
@@ -70,7 +80,7 @@ namespace mmk.gamepad {
 		"hat-left-bit":  remapXformHat(i => (5 <= i) && (i <= 7))
 	};
 
-	// http://www.linux-usb.org/usb.ids
+	/** @hidden - http://www.linux-usb.org/usb.ids */
 	const vendorProductToName : {[vendor_product: string]: string} = {
 		// Microsoft
 		"045e-0202": "Xbox Controller",
@@ -97,6 +107,7 @@ namespace mmk.gamepad {
 	};
 
 	//const stdRemaps : {[vendProdHintAxesButtons: string]: Remap} = {
+	/** @hidden */
 	const remaps : Remap[] = [{
 		tested: ["Windows 7 / Opera 52.0.2871.99"],
 		matches: [
@@ -205,13 +216,19 @@ namespace mmk.gamepad {
 	}];
 
 	// Avoid where possible.
+	/** @hidden */
 	const xxxIsLinux        = /\blinux\b/i.test(navigator.userAgent);
+	/** @hidden */
 	const xxxIsChromeBased  = /\bChrome\/\d{2,3}\b/i.test(navigator.userAgent);
+	/** @hidden */
 	const xxxIsChromium     = /\bChromium\/\d{2,3}\b/i.test(navigator.userAgent);
+	/** @hidden */
 	const xxxIsChrome       = xxxIsChromeBased && !xxxIsChromium;
 
+	/** @hidden */
 	const liesAboutStandardMapping = xxxIsLinux && xxxIsChromeBased;
 
+	/** @hidden */
 	const remapsByKey : { [id: string]: Remap } = {};
 	remaps.forEach(remap => {
 		remap.matches.forEach(id => {
@@ -220,18 +237,27 @@ namespace mmk.gamepad {
 		});
 	});
 
+	/** @hidden */
 	function getRemapKey(gamepad: Gamepad): string {
 		let id = parseGamepadId(gamepad.id);
 		let key = id.vendor+"-"+id.product+"-"+id.hint+"-"+gamepad.axes.length+"-"+gamepad.buttons.length;
 		return key;
 	}
 
+	/** @hidden */
 	function findStdRemap(gamepad: Gamepad): Remap {
 		let key = getRemapKey(gamepad);
 		let value = remapsByKey[key];
 		return value;
 	}
 
+	/** Given a [[Gamepad]] where `gamepad.mapping !== "standard"`, or a gamepad where `gamepad.mapping === "standard"`
+	 * but the browser is suspected of incorrectly implementing the standard mapping, rearrange the axes and buttons of
+	 * the [[Gamepad]] to properly match the `"standard"` mapping.  As for what the `"standard"` mapping is, see
+	 * 
+	 * See also:  (W3C Gamepad Editor's Draft)[https://w3c.github.io/gamepad/#remapping] for information about the
+	 * standard gamepad mapping.
+	 */
 	export function tryRemapStdLayout(gamepad: Gamepad): Gamepad;
 	export function tryRemapStdLayout(gamepad: Gamepad | null): Gamepad | null;
 	export function tryRemapStdLayout(gamepad: Gamepad | null): Gamepad | null {
@@ -242,7 +268,7 @@ namespace mmk.gamepad {
 		if (!remapGamepad) return gamepad;
 
 		let flatGamepad = flattenPremapGamepad(gamepad);
-		let fakey : Gamepad = {
+		let fakey : ClonedGamepad = {
 			id:        gamepad.id,
 			displayId: gamepad.displayId,
 			index:     gamepad.index,

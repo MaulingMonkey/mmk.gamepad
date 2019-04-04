@@ -14,45 +14,64 @@
 */
 
 namespace mmk.gamepad {
-	export namespace settings {
-		/// Microsoft Edge now responds to gamepad input in a way that is *very* likely to conflict with your own
-		/// gamepad handling.  For example, hitting (B) will focus... the address bar?  Home button?  Something in
-		/// the browser header that isn't what you want.  By enabling this (default behavior), we mark all Edge's
-		/// gamepad key events as handled, disabling the conflicting Edge behavior.
-		///
-		/// If you want the default  Microsoft Edge gamepad navigation behavior, disable this option. You might
-		/// consider disabling this during your title screen, or alternatively making a quit option that navigates
-		/// back in history, or otherwise provide some kind of mechanism to allow users to return gamepad control
-		/// to it's browser navigation role.
-		///
-		/// In the future, disabling this may also add some navigation behavior to Chrome/Firefox to match IE11's
-		/// behavior.  Or this option might go away entirely in favor of a better approach.
+	export namespace config {
+		/**
+		 * Microsoft Edge now responds to gamepad input in a way that is *very* likely to conflict with your own
+		 * gamepad handling.  For example, hitting (B) will focus... the address bar?  Home button?  Something in
+		 * the browser header that isn't what you want.  By enabling this (default behavior), we mark all Edge's
+		 * gamepad key events as handled, disabling the conflicting Edge behavior.
+		 *
+		 * If you want the default  Microsoft Edge gamepad navigation behavior, disable this option. You might
+		 * consider disabling this during your title screen, or alternatively making a quit option that navigates
+		 * back in history, or otherwise provide some kind of mechanism to allow users to return gamepad control
+		 * to it's browser navigation role.
+		 *
+		 * In the future, disabling this may also add some navigation behavior to Chrome/Firefox to match IE11's
+		 * behavior.  Or this option might go away entirely in favor of a better approach.
+		 */
 		export var captureGamepadEvents = true;
 	}
 
+	/**
+	 * A generic `"mmk-gamepad-*"` event.
+	 */
 	export interface GamepadEvent extends CustomEvent<undefined> {
 		readonly gamepadIndex: number;
 	}
 
+	/**
+	 * A `"mmk-gamepad-connected"` or `"mmk-gamepad-disconnected"` event, indicating that gamepads were physically
+	 * connected, disconnected, or became unmasked/visible to websites due to the user interacting with one.
+	 */
 	export interface GamepadConnectivityEvent extends GamepadEvent {
 		readonly connected: boolean;
 	}
 
+	/**
+	 * A `"mmk-gamepad-button-down"`, `"mmk-gamepad-button-up"`, or `"mmk-gamepad-button-value"` event, indicating that
+	 * one of the gamepad buttons changed value.
+	 */
 	export interface GamepadButtonEvent extends GamepadEvent {
 		readonly held:        boolean;
 		readonly buttonIndex: number;
 		readonly buttonValue: number;
 	}
 
+	/**
+	 * A `"mmk-gamepad-axis-value"` event, indicating that one of the gamepad axises changed value.
+	 */
 	export interface GamepadAxisEvent extends GamepadEvent {
 		readonly axisIndex:  number;
 		readonly axisValue:  number;
 	}
 
 	export type PollGamepadOptions = GetGamepadsOptions & { keepInactive: true, keepNull: true, standardize: true };
+	/** @hidden */
 	const defaultOptions : PollGamepadOptions = { deadZone: 0.15, keepInactive: true, keepNonstandard: true, keepNull: true, standardize: true };
 
+	/** @hidden */
 	type NewFields<T, U> = Pick<T, Exclude<keyof T, keyof U>>;
+	/** @hidden */
 	function dispatchGamepadEvent<K extends keyof GlobalEventHandlersEventMap>(type: K, data: NewFields<GlobalEventHandlersEventMap[K], CustomEvent<undefined>>, initHandled: boolean = false): boolean {
 		let e = document.createEvent("CustomEvent") as any;
 		e.initCustomEvent(type, true, true, undefined);
@@ -65,8 +84,11 @@ namespace mmk.gamepad {
 		return (document.activeElement || document.body).dispatchEvent(e);
 	}
 
+	/** @hidden */
 	var dispatchAnyEvents = true;
+	/** @hidden */
 	var oldPads : (Gamepad | null)[] = [];
+	/** @hidden */
 	function implPollEvents (options: PollGamepadOptions) {
 		if (!dispatchAnyEvents) return;
 		let newPads = getGamepads({ deadZone: 0, keepInactive: true, keepNonstandard: true, keepNull: true, standardize: true });
@@ -118,6 +140,7 @@ namespace mmk.gamepad {
 		oldPads = mmk.gamepad.cloneGamepads(newPads);
 	}
 
+	/** @hidden */
 	var autoDispatchEvents = true;
 	if (!("addEventListener" in window)) {
 		dispatchAnyEvents = false;
@@ -131,11 +154,17 @@ namespace mmk.gamepad {
 		});
 	});
 
-	/// Poll gamepad state, and dispatch events based on that state.
-	/// Note that mmk.gamepad will automatically dispatch by default based on one of:
-	/// 	requestAnimationFrame(...)
-	/// 	setInterval(..., 10)
-	/// And that calling this method will disable that automatic dispatch mechanism.
+	/**
+	 * Poll gamepad state, and dispatch events based on that state.
+	 * Note that mmk.gamepad will automatically dispatch by default based on one of:
+	 * ```ts
+	 *     requestAnimationFrame(...)
+	 *     setInterval(..., 10)
+	 * ```
+	 * And that calling this method will disable that automatic dispatch mechanism.
+	 * 
+	 * @param options Allows some customization of if e.g. deadzones are applied to generated events or not.
+	 */
 	export function pollEvents (options?: PollGamepadOptions) {
 		autoDispatchEvents = false;
 		implPollEvents(options || defaultOptions);
@@ -194,7 +223,7 @@ if ('addEventListener' in window) {
 			// We have no way to handle the guide button on Windows 10 + Microsoft Edge
 			case "GamepadView": // Back
 			case "GamepadMenu": // Start
-				if (mmk.gamepad.settings.captureGamepadEvents) {
+				if (mmk.gamepad.config.captureGamepadEvents) {
 					ev.preventDefault();
 				}
 				break;

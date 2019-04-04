@@ -22,10 +22,12 @@ namespace mmk.gamepad {
 		keepNull:         boolean;
 	}
 
+	/** @hidden */
 	function v<T>(value: T | undefined, fallback: T): T {
 		return (value === undefined) ? fallback : value;
 	}
 
+	/** @hidden */
 	function stickDeadZone (x: number, y: number, dz: number): [number, number] {
 		if (dz <= 0) return [x,y];
 		if (dz >= 1) return [0,0];
@@ -33,27 +35,30 @@ namespace mmk.gamepad {
 		if (m2 <= dz*dz) return [0,0];
 		var m = Math.sqrt(m2); // current magnitude
 		var t = (m - dz) / (1 - dz); // target magnitude
+		if (t < 0) t = 0;
 		var s = t / m; // scale
 		return [x * s, y * s];
 	}
 
-	function cloneDeadZone (g: Gamepad, dz: number): Gamepad {
-		g = cloneGamepad(g);
-		if (g.mapping === "standard") {
-			var leftX = g.axes[0];
-			var leftY = g.axes[1];
-			var rightX = g.axes[2];
-			var rightY = g.axes[3];
+	/** @hidden */
+	function cloneDeadZone (original: Gamepad, dz: number): Gamepad {
+		const clone = cloneGamepad(original);
+		if (clone.mapping === "standard") {
+			var leftX = clone.axes[0];
+			var leftY = clone.axes[1];
+			var rightX = clone.axes[2];
+			var rightY = clone.axes[3];
 			var leftThumbDZ  = stickDeadZone(leftX, leftY, dz);
 			var rightThumbDZ = stickDeadZone(rightX, rightY, dz);
-			g.axes[0] = leftThumbDZ[0];
-			g.axes[1] = leftThumbDZ[1];
-			g.axes[2] = rightThumbDZ[0];
-			g.axes[3] = rightThumbDZ[1];
+			clone.axes[0] = leftThumbDZ[0];
+			clone.axes[1] = leftThumbDZ[1];
+			clone.axes[2] = rightThumbDZ[0];
+			clone.axes[3] = rightThumbDZ[1];
 		}
-		return g;
+		return clone;
 	}
 
+	/** @hidden */
 	function isActive (g: Gamepad): boolean {
 		return g.axes.some(a => a !== 0) || g.buttons.some(b => b.pressed || b.touched);
 	}

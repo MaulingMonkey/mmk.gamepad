@@ -14,10 +14,20 @@
 */
 
 namespace mmk.gamepad {
+	/**
+	 * A parsed [[Gamepad.id]], used for selecting browser/gamepad specific workarounds/mappings to apply.
+	 */
 	export interface ParsedGamepadId {
-		name:    string; // should always be defined, if only to "unknown"
-		vendor:  string; // may be blank
-		product: string; // may be blank
+		/** Should always be defined, if only to "unknown" */
+		name:    string;
+
+		/** May be blank, otherwise this should be a USB Vendor ID hex code like "054c", probably. */
+		vendor:  string;
+
+		/** May be blank, otherwise this should be a USB Device ID hex code like "0ba0", probably. */
+		product: string;
+
+		/** Browser implementation hint */
 		hint:    "blink" | "gecko" | "unknown";
 	}
 
@@ -31,6 +41,7 @@ namespace mmk.gamepad {
 	//	"054c-0268": "PLAYSTATION(R)3 Controller"
 	//};
 
+	/** @hidden */
 	function parseGamepadId_Blink(id: string): ParsedGamepadId | undefined { // e.g. Chrome, Opera
 		let mNameParen = /^(.+?)(?: \((.*)\))$/i.exec(id);
 		if (!mNameParen) return undefined;
@@ -45,6 +56,7 @@ namespace mmk.gamepad {
 		return parsed;
 	}
 
+	/** @hidden */
 	function parseGamepadId_Gecko(id: string): ParsedGamepadId | undefined { // e.g. Firefox
 		if (id === "xinput") return { name: "xinput", vendor: "", product: "", hint: "gecko" };
 		let m = /^([0-9a-f]{4})-([0-9a-f]{4})-(.+)$/gi.exec(id);
@@ -52,17 +64,54 @@ namespace mmk.gamepad {
 		return undefined;
 	}
 
+	/** @hidden */
 	function parseGamepadId_Unknown(id: string): ParsedGamepadId { // e.g. IE, Safari, Edge, ???
 		// TODO: Scan for other 4-byte hex strings?
 		return { name: id, vendor: "", product: "", hint: "unknown" };
 	}
 
+	/**
+	 * Attempt to decompose a [[Gamepad.id]].  The exact layout of the [[Gamepad.id]] is hideously browser specific,
+	 * non-portable, brittle, and generally badwrong to rely upon... but it's also my least bad option for identifying
+	 * specific gamepads and applying gamepad/browser/OS specific workarounds and fixes for the raw
+	 * `navigator.getGamepad()` results.  Some examples:
+	 * 
+	 * ```ts
+	 * parseGamepadId(undefined) => { name: "unknown", vendor: "", product: "", hint: "unknown" }
+	 * parseGamepadId(""       ) => { name: "unknown", vendor: "", product: "", hint: "unknown" }
+	 * parseGamepadId("asdf"   ) => { name: "asdf",    vendor: "", product: "", hint: "unknown" }
+	 * parseGamepadId("xinput" ) => { name: "xinput",  vendor: "", product: "", hint: "gecko"   }
+	 * 
+	 * parseGamepadId("054c-0ba0-DUALSHOCK®4 USB Wireless Adaptor") => {
+	 *     name:    "DUALSHOCK®4 USB Wireless Adaptor",
+	 *     vendor:  "054c",
+	 *     product: "0ba0",
+	 *     hint:    "gecko"
+	 * }
+	 * 
+	 * parseGamepadId("DUALSHOCK®4 USB Wireless Adaptor (Vendor: 054c Product: 0ba0)") => {
+	 *     name:    "DUALSHOCK®4 USB Wireless Adaptor",
+	 *     vendor:  "054c",
+	 *     product: "0ba0",
+	 *     hint:    "blink"
+	 * }
+	 * ```
+	 * 
+	 * If you encounter new and exciting [[Gamepad.id]] schemas, please send them my way!
+	 * 
+	 * See also:
+	 * - [MDN web docs](https://developer.mozilla.org/en-US/docs/Web/API/Gamepad/id) on [[Gamepad.id]]
+	 * - [W3C Editor's Draft](https://w3c.github.io/gamepad/#dom-gamepad-id) on [[Gamepad.id]]
+	 * 
+	 * @param id The [[Gamepad.id]] to try and parse.
+	 */
 	export function parseGamepadId(id: string | undefined): ParsedGamepadId {
 		if (!id) return parseGamepadId_Unknown("unknown");
 		let parsed = parseGamepadId_Blink(id) || parseGamepadId_Gecko(id) || parseGamepadId_Unknown(id);
 		return parsed;
 	}
 
+	/** @hidden */
 	const parsedIdExamples : [string | undefined, ParsedGamepadId][] = [
 		// Chrome / Opera
 		[ "Xbox 360 Controller (XInput STANDARD GAMEPAD)",                     { name: "Xbox 360 Controller",              vendor: "",     product: "",     hint: "blink" } ], // 360, XB1

@@ -1,15 +1,14 @@
 {
-    "compileOnSave": true,
+    "extends": "../tsconfig.common.json",
     "compilerOptions": {
         "outFile": "demo.js",
-        "target": "es3",
-        "strict": true,
-        "sourceMap": true,
-        "watch": true,
     },
     "include": [
-        "..\\packages\\**\\*.d.ts",
         "..\\Scripts\\mmk.gamepad\\mmk.gamepad.d.ts",
         "**\\*.ts",
     ],
+    "references": [
+        { "path": "../d3",  "prepend": true }, // Must be first - not compatible with "use strict"
+        { "path": "../src", "prepend": true },
+    ]
 }

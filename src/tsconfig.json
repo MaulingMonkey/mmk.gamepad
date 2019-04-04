@@ -1,11 +1,8 @@
 {
-    "compileOnSave": true,
+    "extends": "../tsconfig.common.json",
     "compilerOptions": {
-        "outFile": "..\\Scripts\\mmk.gamepad\\mmk.gamepad.js",
-        "target": "es3",
-        "strict": true,
-        "sourceMap": true,
-        "watch": true,
+        "outFile": "..\\global.js",
+        "composite": true,
         "declaration": true,
         "declarationMap": true,
     },

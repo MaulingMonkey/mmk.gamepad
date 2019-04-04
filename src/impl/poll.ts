@@ -14,9 +14,7 @@
 */
 
 namespace mmk.gamepad {
-	// TODO: Make polling mechanics customizeable?
-	// e.g. customize setInterval interval? force setInterval even if raf is available?
-
+	/** @hidden */
 	export function poll(action: ()=>void) {
 		if ('requestAnimationFrame' in window) {
 			var perFrame = ()=>{

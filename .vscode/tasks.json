@@ -1,35 +1,49 @@
 {
     "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Build mmk.gamepad",
-            "type": "typescript",
-            "tsconfig": "src\\tsconfig.json",
-            "problemMatcher": [ "$tsc" ],
-            "group": "build",
-            "isBackground": true
-        },
-        {
-            "label": "Build demo",
-            "type": "typescript",
-            "tsconfig": "demo\\tsconfig.json",
-            "problemMatcher": [ "$tsc" ],
-            "group": "build",
-            "isBackground": true
-        },
-        {
-            "label": "Build all",
-            "dependsOn": ["Build mmk.gamepad", "Build demo"],
-            "group": {
-                "kind": "build",
-                "isDefault": true
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+    },
+    "windows": {
+        "options": {
+            "env": {
+                "PATH": "${workspaceFolder}\\node_modules\\.bin;${env:PATH}",
             }
-        },
-        {
-            "label": "Open page",
-            "type": "shell",
-            "command": "start \"\" ${workspaceFolder}\\demo\\index.html",
-            "problemMatcher": []
         }
+    },
+    "tasks": [
+        // Auto watch
+        {
+            "group": "build",
+            "label": "Auto Watch:  Build typescript",
+            "type": "shell",
+            "command": "tsc -b -w src demo",
+            "problemMatcher": ["$tsc-watch"],
+            "isBackground": true,
+            "runOptions": { "runOn": "folderOpen" }
+        },
+        //{   // "modularize-namespace --watch ..." not yet implemented
+        //    "group": "build",
+        //    "label": "Auto Watch:  Build modular library",
+        //    "type": "shell",
+        //    "command": "modularize-namespace --watch global.js --output modular.js --namespace mmk.gamepad",
+        //    "problemMatcher": [],
+        //    "isBackground": true,
+        //    "runOptions": { "runOn": "folderOpen" }
+        //},
+
+        // Manual Build Tasks
+        { "group": "build", "label": "Build documentation", "type": "shell", "command": "${workspaceFolder}\\build\\docs.cmd", "problemMatcher": [] },
+        { "group": "build", "label": "Build typescript",    "type": "shell", "command": "${workspaceFolder}\\build\\typescript.cmd", "problemMatcher": ["$tsc"] },
+
+        // Utility Tasks
+        { "label": "Open local demo",           "type": "shell", "command": "start \"\" \"${workspaceFolder}\\demo\\index.html\"", "problemMatcher": [] },
+        { "label": "Open local documentation",  "type": "shell", "command": "start \"\" \"${workspaceFolder}\\docs\\index.html\"", "problemMatcher": [], "dependsOn": ["Build documentation"] },
+        { "label": "Open GitHub",               "type": "shell", "command": "start \"\" \"https://github.com/MaulingMonkey/mmk.gamepad\"", "problemMatcher": [] },
+        { "label": "Open GitHub Issues",        "type": "shell", "command": "start \"\" \"https://github.com/MaulingMonkey/mmk.gamepad/issues\"", "problemMatcher": [] }
     ]
 }

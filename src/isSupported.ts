@@ -14,6 +14,14 @@
 */
 
 namespace mmk.gamepad {
+    /**
+     * Returns `true` if the browser seems to provide the gamepad APIs mmk.gamepad relies on for actual input.
+     * This isn't 100% accurate, Chromium on Linux has been known to define the APIs but not implement them.
+     * 
+     * `mmk.gamepad` methods should generally still "work" (e.g. noop) even if the underlying browser APIs are missing,
+     * this method mostly exists to hint that you might not want to bother showing gamepad specific hints, or might want
+     * to suggest a gamepad-enabled browser, depending on your game.
+     */
 	export function isSupported(): boolean {
 		if ('getGamepads' in navigator) return true;
 		if ('onconnectedgamepad' in window) return true;

@@ -14,11 +14,21 @@
 */
 
 namespace mmk.gamepad {
+	function ro<T>(value: T): Readonly<T> { return value as Readonly<T>; }
+
+	/** @hidden */
 	export function getRawGamepads (): (Gamepad | null)[] {
 		if ('getGamepads' in navigator) {
 			let gp = navigator.getGamepads();
 			let a : (Gamepad | null)[] = [];
-			for (let i=0; i<gp.length; ++i) a.push(gp[i]);
+			for (var gamepad of gp) {
+				if (!gamepad) {
+					a.push(gamepad);
+				}
+				else {
+					a.push(ro(gamepad));
+				}
+			}
 			return a;
 		} else {
 			return [];

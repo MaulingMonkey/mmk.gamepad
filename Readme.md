@@ -84,7 +84,7 @@ The vanilla browser gamepad APIs are unusable without a lot work, except for *ma
 
 # Basic API
 
-See [src/demo.ts](src/demo.ts)
+See [demo/demo.ts](https://github.com/MaulingMonkey/mmk.gamepad/blob/master/demo/demo.ts)
 
 ```typescript
 // In case you want to display a hint to switch browsers ;)

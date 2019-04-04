@@ -37,13 +37,22 @@
         //},
 
         // Manual Build Tasks
-        { "group": "build", "label": "Build documentation", "type": "shell", "command": "${workspaceFolder}\\build\\docs.cmd", "problemMatcher": [] },
+        { "group": "build", "label": "Build documentation", "type": "shell", "command": "${workspaceFolder}\\build\\docs.cmd ${input:docs-github-tag}", "problemMatcher": [] },
         { "group": "build", "label": "Build typescript",    "type": "shell", "command": "${workspaceFolder}\\build\\typescript.cmd", "problemMatcher": ["$tsc"] },
 
         // Utility Tasks
         { "label": "Open local demo",           "type": "shell", "command": "start \"\" \"${workspaceFolder}\\demo\\index.html\"", "problemMatcher": [] },
         { "label": "Open local documentation",  "type": "shell", "command": "start \"\" \"${workspaceFolder}\\docs\\index.html\"", "problemMatcher": [], "dependsOn": ["Build documentation"] },
         { "label": "Open GitHub",               "type": "shell", "command": "start \"\" \"https://github.com/MaulingMonkey/mmk.gamepad\"", "problemMatcher": [] },
-        { "label": "Open GitHub Issues",        "type": "shell", "command": "start \"\" \"https://github.com/MaulingMonkey/mmk.gamepad/issues\"", "problemMatcher": [] }
+        { "label": "Open GitHub Issues",        "type": "shell", "command": "start \"\" \"https://github.com/MaulingMonkey/mmk.gamepad/issues\"", "problemMatcher": [] },
+        { "label": "Open online demo",          "type": "shell", "command": "start \"\" \"https://maulingmonkey.com/mmk.gamepad/demo\"", "problemMatcher": [] },
+        { "label": "Open online documentation", "type": "shell", "command": "start \"\" \"https://maulingmonkey.com/mmk.gamepad/docs\"", "problemMatcher": [] },
+    ],
+    "inputs": [
+        {
+            "id": "docs-github-tag",
+            "description": "A github tag to use for the documentation such as v0.0.2",
+            "type": "promptString",
+        }
     ]
 }

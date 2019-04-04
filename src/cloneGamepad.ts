@@ -22,7 +22,7 @@ namespace mmk.gamepad {
 	export function cloneGamepad(original: Gamepad | undefined): ClonedGamepad | undefined;
 	export function cloneGamepad(original: Gamepad | undefined | null): ClonedGamepad | undefined | null;
 	export function cloneGamepad(original: Gamepad | undefined | null): ClonedGamepad | undefined | null {
-		if (!original) return original;
+		if (!original) return original as any;
 		let clone : ClonedGamepad = {
 			id:              original.id,
 			displayId:       original.displayId,

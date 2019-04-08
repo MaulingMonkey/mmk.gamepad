@@ -16,8 +16,8 @@
     "bugs": "https://github.com/MaulingMonkey/mmk.gamepad/issues",
     "homepage": "https://github.com/MaulingMonkey/mmk.gamepad#readme",
     "repository": "github:MaulingMonkey/mmk.gamepad",
-    "browser": "Scripts/mmk.gamepad/mmk.gamepad.js",
-    "types": "Scripts/mmk.gamepad/mmk.gamepad.d.ts",
+    "browser": "global.js",
+    "types": "global.d.ts",
     "main": "global.js",
     "files": [
         "global.d.ts",

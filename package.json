@@ -12,7 +12,7 @@
         "typescript",
         "input"
     ],
-    "author": "MaulingMonkey (https://maulingmonkey.com/)",
+    "author": "MaulingMonkey <npm@maulingmonkey.com> (https://maulingmonkey.com/)",
     "bugs": "https://github.com/MaulingMonkey/mmk.gamepad/issues",
     "homepage": "https://github.com/MaulingMonkey/mmk.gamepad#readme",
     "repository": "github:MaulingMonkey/mmk.gamepad",

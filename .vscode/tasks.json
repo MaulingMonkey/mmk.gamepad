@@ -26,15 +26,15 @@
             "isBackground": true,
             "runOptions": { "runOn": "folderOpen" }
         },
-        //{   // "modularize-namespace --watch ..." not yet implemented
-        //    "group": "build",
-        //    "label": "Auto Watch:  Build modular library",
-        //    "type": "shell",
-        //    "command": "modularize-namespace --watch global.js --output modular.js --namespace mmk.gamepad",
-        //    "problemMatcher": [],
-        //    "isBackground": true,
-        //    "runOptions": { "runOn": "folderOpen" }
-        //},
+        {
+            "group": "build",
+            "label": "Auto Watch:  Build modular library",
+            "type": "shell",
+            "command": "modularize-namespace --watch global.js --output modular.js --namespace mmk.gamepad",
+            "problemMatcher": [],
+            "isBackground": true,
+            "runOptions": { "runOn": "folderOpen" }
+        },
 
         // Manual Build Tasks
         { "group": "build", "label": "Build documentation", "type": "shell", "command": "${workspaceFolder}\\build\\docs.cmd ${input:docs-github-tag}", "problemMatcher": [] },

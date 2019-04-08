@@ -3,7 +3,15 @@
     "version": "0.0.2",
     "description": "Typescript gamepad API for consistent cross-browser and cross-gamepad binding, polling for input, etc.",
     "license": "Apache-2.0",
-    "keywords": ["browser", "gamepad", "controller", "xbox", "playstation", "typescript", "input"],
+    "keywords": [
+        "browser",
+        "gamepad",
+        "controller",
+        "xbox",
+        "playstation",
+        "typescript",
+        "input"
+    ],
     "author": "MaulingMonkey (https://maulingmonkey.com/)",
     "bugs": "https://github.com/MaulingMonkey/mmk.gamepad/issues",
     "homepage": "https://github.com/MaulingMonkey/mmk.gamepad#readme",
@@ -20,7 +28,7 @@
         "Readme.md"
     ],
     "devDependencies": {
-        "@maulingmonkey/modularize-namespace": "0.0.1",
+        "@maulingmonkey/modularize-namespace": "0.0.2",
         "@types/d3": "^3.5.41",
         "d3": "^3.5.17",
         "typedoc": "^0.14.2",

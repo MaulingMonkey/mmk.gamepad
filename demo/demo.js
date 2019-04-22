@@ -11213,6 +11213,242 @@ var mmk;
 var mmk;
 (function (mmk) {
     var gamepad;
+    (function (gamepad) {
+        /**
+         * Dual Shock / Sony Button values in the standard mapping layout.
+         *
+         * Main values are:
+         * `Cross`,
+         * `Circle`,
+         * `Square`,
+         * `Triangle`,
+         * `LeftShoulder`,
+         * `RightShoulder`,
+         * `LeftTrigger`,
+         * `RightTrigger`,
+         * `Select`,
+         * `Start`,
+         * `LeftThumb`,
+         * `RightThumb`,
+         * `DirectionalPadUp`,
+         * `DirectionalPadDown`,
+         * `DirectionalPadLeft`,
+         * `DirectionalPadRight`
+         *
+         * Additionally, there are a few shorthand aliases - `LeftShoulder` has `LShoulder`, `DirectionalPadLeft` has
+         * `DPadLeft` - and `Select`/`Start` have DS4 aliases `Share`/`Options`.
+         *
+         * Finally, the hideously and unfixably nonportable `_PlayStationLogo` button can be used.
+         *
+         * See also:
+         * - https://developer.mozilla.org/en-US/docs/Web/API/Gamepad/buttons
+         * - https://developer.mozilla.org/en-US/docs/Web/API/Gamepad/mapping
+         * - https://w3c.github.io/gamepad/#dom-gamepad-buttons
+         */
+        var DualShockButton;
+        (function (DualShockButton) {
+            DualShockButton[DualShockButton["Cross"] = 0] = "Cross";
+            DualShockButton[DualShockButton["Circle"] = 1] = "Circle";
+            DualShockButton[DualShockButton["Square"] = 2] = "Square";
+            DualShockButton[DualShockButton["Triangle"] = 3] = "Triangle";
+            DualShockButton[DualShockButton["LeftShoulder"] = 4] = "LeftShoulder";
+            DualShockButton[DualShockButton["RightShoulder"] = 5] = "RightShoulder";
+            DualShockButton[DualShockButton["LeftTrigger"] = 6] = "LeftTrigger";
+            DualShockButton[DualShockButton["RightTrigger"] = 7] = "RightTrigger";
+            DualShockButton[DualShockButton["Select"] = 8] = "Select";
+            DualShockButton[DualShockButton["Start"] = 9] = "Start";
+            DualShockButton[DualShockButton["LeftThumb"] = 10] = "LeftThumb";
+            DualShockButton[DualShockButton["RightThumb"] = 11] = "RightThumb";
+            DualShockButton[DualShockButton["DirectionalPadUp"] = 12] = "DirectionalPadUp";
+            DualShockButton[DualShockButton["DirectionalPadDown"] = 13] = "DirectionalPadDown";
+            DualShockButton[DualShockButton["DirectionalPadLeft"] = 14] = "DirectionalPadLeft";
+            DualShockButton[DualShockButton["DirectionalPadRight"] = 15] = "DirectionalPadRight";
+            /** AVOID.  This is unavailable on many browsers, and even if available, likely triggers other software like Steam or built in Windows 10 stuff. */
+            DualShockButton[DualShockButton["_PlayStationLogo"] = 16] = "_PlayStationLogo";
+            // Extra Aliases
+            DualShockButton[DualShockButton["LShoulder"] = 4] = "LShoulder";
+            DualShockButton[DualShockButton["RShoulder"] = 5] = "RShoulder";
+            DualShockButton[DualShockButton["LTrigger"] = 6] = "LTrigger";
+            DualShockButton[DualShockButton["RTrigger"] = 7] = "RTrigger";
+            DualShockButton[DualShockButton["LThumb"] = 10] = "LThumb";
+            DualShockButton[DualShockButton["RThumb"] = 11] = "RThumb";
+            DualShockButton[DualShockButton["DPadUp"] = 12] = "DPadUp";
+            DualShockButton[DualShockButton["DPadDown"] = 13] = "DPadDown";
+            DualShockButton[DualShockButton["DPadLeft"] = 14] = "DPadLeft";
+            DualShockButton[DualShockButton["DPadRight"] = 15] = "DPadRight";
+            // Sony terminology / aliases
+            DualShockButton[DualShockButton["L1"] = 4] = "L1";
+            DualShockButton[DualShockButton["L2"] = 6] = "L2";
+            DualShockButton[DualShockButton["L3"] = 10] = "L3";
+            DualShockButton[DualShockButton["R1"] = 5] = "R1";
+            DualShockButton[DualShockButton["R2"] = 7] = "R2";
+            DualShockButton[DualShockButton["R3"] = 11] = "R3";
+            // DS4 terminology / aliases
+            DualShockButton[DualShockButton["Share"] = 8] = "Share";
+            DualShockButton[DualShockButton["Options"] = 9] = "Options";
+        })(DualShockButton = gamepad.DualShockButton || (gamepad.DualShockButton = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        /**
+         * Gamepad axes for the `"standard"` gamepad `mapping`.  This means only the thumbsticks, not any triggers.
+         *
+         * Per https://w3c.github.io/gamepad/#remapping this contains:
+         *
+         * - `LeftStickRight`,  `LeftStickX`,  `LStickX` (axis 0)
+         * - `LeftStickDown`,   `LeftStickY`,  `LStickY` (axis 1)
+         * - `RightStickRight`, `RightStickX`, `RStickX` (axis 2)
+         * - `RightStickDown`,  `RightStickY`, `RStickY` (axis 3)
+         */
+        var StandardAxis;
+        (function (StandardAxis) {
+            /** The left stick's X axis.  Right is positive, left is negative. */
+            StandardAxis[StandardAxis["LeftStickRight"] = 0] = "LeftStickRight";
+            /** The left stick's Y axis.  Down is positive, up is negative. */
+            StandardAxis[StandardAxis["LeftStickDown"] = 1] = "LeftStickDown";
+            /** The right stick's X axis.  Right is positive, left is negative. */
+            StandardAxis[StandardAxis["RightStickRight"] = 2] = "RightStickRight";
+            /** The right stick's Y axis.  Down is positive, up is negative. */
+            StandardAxis[StandardAxis["RightStickDown"] = 3] = "RightStickDown";
+            /** The left stick's X axis.  Right is positive, left is negative. */
+            StandardAxis[StandardAxis["LeftStickX"] = 0] = "LeftStickX";
+            /** The left stick's Y axis.  Down is positive, up is negative. */
+            StandardAxis[StandardAxis["LeftStickY"] = 1] = "LeftStickY";
+            /** The right stick's X axis.  Right is positive, left is negative. */
+            StandardAxis[StandardAxis["RightStickX"] = 2] = "RightStickX";
+            /** The right stick's Y axis.  Down is positive, up is negative. */
+            StandardAxis[StandardAxis["RightStickY"] = 3] = "RightStickY";
+            /** The left stick's X axis.  Right is positive, left is negative. */
+            StandardAxis[StandardAxis["LStickX"] = 0] = "LStickX";
+            /** The left stick's Y axis.  Down is positive, up is negative. */
+            StandardAxis[StandardAxis["LStickY"] = 1] = "LStickY";
+            /** The right stick's X axis.  Right is positive, left is negative. */
+            StandardAxis[StandardAxis["RStickX"] = 2] = "RStickX";
+            /** The right stick's Y axis.  Down is positive, up is negative. */
+            StandardAxis[StandardAxis["RStickY"] = 3] = "RStickY";
+        })(StandardAxis = gamepad.StandardAxis || (gamepad.StandardAxis = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        /**
+         * Xbox Button values in the standard mapping layout.
+         *
+         * Main values are:
+         * `A`,
+         * `B`,
+         * `X`,
+         * `Y`,
+         * `LeftShoulder`,
+         * `RightShoulder`,
+         * `LeftTrigger`,
+         * `RightTrigger`,
+         * `Back`,
+         * `Start`,
+         * `LeftThumb`,
+         * `RightThumb`,
+         * `DirectionalPadUp`,
+         * `DirectionalPadDown`,
+         * `DirectionalPadLeft`,
+         * `DirectionalPadRight`
+         *
+         * Additionally, there are a few shorthand aliases - `LeftShoulder` has `LShoulder`, `DirectionalPadLeft` has
+         * `DPadLeft` - and `Back`/`Start` have XB1 aliases `View`/`Menu`.
+         *
+         * Finally, the hideously and unfixably nonportable `_Guide` button can be used.
+         *
+         * See also:
+         * - https://developer.mozilla.org/en-US/docs/Web/API/Gamepad/buttons
+         * - https://developer.mozilla.org/en-US/docs/Web/API/Gamepad/mapping
+         * - https://w3c.github.io/gamepad/#dom-gamepad-buttons
+         */
+        var XboxButton;
+        (function (XboxButton) {
+            XboxButton[XboxButton["A"] = 0] = "A";
+            XboxButton[XboxButton["B"] = 1] = "B";
+            XboxButton[XboxButton["X"] = 2] = "X";
+            XboxButton[XboxButton["Y"] = 3] = "Y";
+            XboxButton[XboxButton["LeftShoulder"] = 4] = "LeftShoulder";
+            XboxButton[XboxButton["RightShoulder"] = 5] = "RightShoulder";
+            XboxButton[XboxButton["LeftTrigger"] = 6] = "LeftTrigger";
+            XboxButton[XboxButton["RightTrigger"] = 7] = "RightTrigger";
+            XboxButton[XboxButton["Back"] = 8] = "Back";
+            XboxButton[XboxButton["Start"] = 9] = "Start";
+            XboxButton[XboxButton["LeftThumb"] = 10] = "LeftThumb";
+            XboxButton[XboxButton["RightThumb"] = 11] = "RightThumb";
+            XboxButton[XboxButton["DirectionalPadUp"] = 12] = "DirectionalPadUp";
+            XboxButton[XboxButton["DirectionalPadDown"] = 13] = "DirectionalPadDown";
+            XboxButton[XboxButton["DirectionalPadLeft"] = 14] = "DirectionalPadLeft";
+            XboxButton[XboxButton["DirectionalPadRight"] = 15] = "DirectionalPadRight";
+            /** AVOID.  This is unavailable on many browsers, and even if available, likely triggers other software like Steam or built in Windows 10 stuff. */
+            XboxButton[XboxButton["_Guide"] = 16] = "_Guide";
+            // Extra Aliases
+            XboxButton[XboxButton["LShoulder"] = 4] = "LShoulder";
+            XboxButton[XboxButton["RShoulder"] = 5] = "RShoulder";
+            XboxButton[XboxButton["LTrigger"] = 6] = "LTrigger";
+            XboxButton[XboxButton["RTrigger"] = 7] = "RTrigger";
+            XboxButton[XboxButton["LThumb"] = 10] = "LThumb";
+            XboxButton[XboxButton["RThumb"] = 11] = "RThumb";
+            XboxButton[XboxButton["DPadUp"] = 12] = "DPadUp";
+            XboxButton[XboxButton["DPadDown"] = 13] = "DPadDown";
+            XboxButton[XboxButton["DPadLeft"] = 14] = "DPadLeft";
+            XboxButton[XboxButton["DPadRight"] = 15] = "DPadRight";
+            // XB1 terminology / aliases
+            XboxButton[XboxButton["View"] = 8] = "View";
+            XboxButton[XboxButton["Menu"] = 9] = "Menu";
+        })(XboxButton = gamepad.XboxButton || (gamepad.XboxButton = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
     (function (gamepad_2) {
         /** @hidden */
         function flattenPremapGamepad(gamepad) {
@@ -11250,6 +11486,7 @@ var mmk;
 (function (mmk) {
     var gamepad;
     (function (gamepad_3) {
+        /** @hidden */
         function ro(value) { return value; }
         /** @hidden */
         function getRawGamepads() {

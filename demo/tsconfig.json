@@ -4,7 +4,6 @@
         "outFile": "demo.js",
     },
     "include": [
-        "..\\Scripts\\mmk.gamepad\\mmk.gamepad.d.ts",
         "**\\*.ts",
     ],
     "references": [

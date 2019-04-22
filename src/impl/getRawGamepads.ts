@@ -14,6 +14,7 @@
 */
 
 namespace mmk.gamepad {
+	/** @hidden */
 	function ro<T>(value: T): Readonly<T> { return value as Readonly<T>; }
 
 	/** @hidden */

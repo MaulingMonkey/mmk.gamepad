@@ -35,7 +35,7 @@ namespace mmk.gamepad {
 	/**
 	 * A generic `"mmk-gamepad-*"` event.
 	 */
-	export interface GamepadEvent extends CustomEvent<undefined> {
+	export interface GamepadEvent {
 		readonly gamepadIndex: number;
 	}
 
@@ -169,18 +169,26 @@ namespace mmk.gamepad {
 		autoDispatchEvents = false;
 		implPollEvents(options || defaultOptions);
 	}
+
+	export interface GamepadEventsMap {
+		"mmk-gamepad-connected":    mmk.gamepad.GamepadConnectivityEvent;
+		"mmk-gamepad-disconnected": mmk.gamepad.GamepadConnectivityEvent;
+		
+		"mmk-gamepad-button-down":  mmk.gamepad.GamepadButtonEvent;
+		"mmk-gamepad-button-up":    mmk.gamepad.GamepadButtonEvent;
+		"mmk-gamepad-button-value":	mmk.gamepad.GamepadButtonEvent; // Triggered whenever the button value changes.  For triggers this might be every frame due to jitter if outside the deadzone.
+		
+		"mmk-gamepad-axis-value":   mmk.gamepad.GamepadAxisEvent; // Triggered whenever the axis value changes.  This might be every frame due to jitter if outside the deadzone.
+	}
+
+	/** @hidden */
+	export type GamepadEventsMap_and_CustomEvent = {
+		[P in keyof mmk.gamepad.GamepadEventsMap]: mmk.gamepad.GamepadEventsMap[P] & CustomEvent<undefined>;
+	};
 }
 
-interface GlobalEventHandlersEventMap {
-	"mmk-gamepad-connected":    mmk.gamepad.GamepadConnectivityEvent;
-	"mmk-gamepad-disconnected": mmk.gamepad.GamepadConnectivityEvent;
-
-	"mmk-gamepad-button-down":  mmk.gamepad.GamepadButtonEvent;
-	"mmk-gamepad-button-up":    mmk.gamepad.GamepadButtonEvent;
-	"mmk-gamepad-button-value":	mmk.gamepad.GamepadButtonEvent; // Triggered whenever the button value changes.  For triggers this might be every frame due to jitter if outside the deadzone.
-
-	"mmk-gamepad-axis-value":   mmk.gamepad.GamepadAxisEvent; // Triggered whenever the axis value changes.  This might be every frame due to jitter if outside the deadzone.
-}
+/** @hidden */
+interface GlobalEventHandlersEventMap extends mmk.gamepad.GamepadEventsMap_and_CustomEvent {}
 
 // https://docs.microsoft.com/en-us/windows/uwp/xbox-apps/how-to-disable-mouse-mode
 navigator.gamepadInputEmulation = "gamepad";

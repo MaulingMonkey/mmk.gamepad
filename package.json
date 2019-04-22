@@ -1,6 +1,6 @@
 {
     "name": "@maulingmonkey/gamepad",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Typescript gamepad API for consistent cross-browser and cross-gamepad binding, polling for input, etc.",
     "license": "Apache-2.0",
     "keywords": [
@@ -28,7 +28,7 @@
         "Readme.md"
     ],
     "devDependencies": {
-        "@maulingmonkey/modularize-namespace": "0.0.2",
+        "@maulingmonkey/modularize-namespace": "0.0.3",
         "@types/d3": "^3.5.41",
         "d3": "^3.5.17",
         "typedoc": "^0.14.2",

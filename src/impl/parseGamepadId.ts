@@ -31,16 +31,6 @@ namespace mmk.gamepad {
 		hint:    "blink" | "gecko" | "unknown";
 	}
 
-	//const nameHintOverrides : {[nameHint: string]: string} = {
-	//	"xinput-gecko": "Xbox 360 Controller"
-	//};
-	//
-	//const vendProdNames : {[vendProd: string]: string} = {
-	//	"054c-0ba0": "DUALSHOCK®4 Controller (Wireless)",
-	//	"054c-09cc": "DUALSHOCK®4 Controller (USB)",
-	//	"054c-0268": "PLAYSTATION(R)3 Controller"
-	//};
-
 	/** @hidden */
 	function parseGamepadId_Blink(id: string): ParsedGamepadId | undefined { // e.g. Chrome, Opera
 		let mNameParen = /^(.+?)(?: \((.*)\))$/i.exec(id);

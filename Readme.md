@@ -10,6 +10,7 @@
 * License: [Apache 2.0](LICENSE.txt)
 
 
+
 # What?  Why?
 
 The vanilla browser gamepad APIs are unusable without a lot work, except for *maybe* if you stick to vanilla Microsoft
@@ -23,6 +24,7 @@ The vanilla browser gamepad APIs are unusable without a lot work, except for *ma
    to non-resting states... testing hardware you don't have is hard, I guess.
 4. Basic gamepad APIs don't handle basic things like deadzone functionality, events (although Edge has some keydown
    events for gamepads)
+
 
 
 # Browser Support
@@ -46,6 +48,7 @@ The vanilla browser gamepad APIs are unusable without a lot work, except for *ma
 5. Edge has some built-in gamepad navigation behavior.  `mmk.gamepad` will disable this by default.
 
 
+
 # Gamepad support
 
 | OS      | Gamepad                 | Chrome   | Opera    | FireFox  | Edge   | Notes          |
@@ -55,26 +58,28 @@ The vanilla browser gamepad APIs are unusable without a lot work, except for *ma
 | Windows | DualShock 4 (Micro-USB) | OK       | OK       | No DPad  |        | No touch/gyros |
 | Windows | DualShock 4 (Wireless)  | OK       | OK       | No DPad  |        | No touch/gyros |
 | Windows | DualShock 3 (Mini-USB)  |          |          |          |        | Bad HID [2]    |
+| Windows | Saitek X52              | No Scroll| No Scroll| No HAT 1 |        | [3]            |
 
 1. This gamepad displays an incorrect or generic name which we cannot work around (e.g. "Xbox 360 Controller" for XB1 controllers, or "xinput")
 2. Third party (non-Sony!) drivers may make this gamepad work - it doesn't speak standard HID properly.
+3. This has a custom `.mapping !== "standard"`
 
-| OS      | Gamepad                 | Chrome [3] | FireFox  | Notes                                     |
+| OS      | Gamepad                 | Chrome [4] | FireFox  | Notes                                     |
 | ------- | ----------------------- | ---------- | -------- | ----------------------------------------- |
 | Ubuntu  | Xbox 360                | OK         | OK       |                                           |
 | Ubuntu  | Xbox One                | OK         | OK       |                                           |
-| Ubuntu  | DualShock 4 (Micro-USB) | OK [4]     | OK       | No gyros, bad init [5], touchpad is mouse |
-| Ubuntu  | DualShock 4 (Wireless)  | OK [4]     | OK       | No gyros, bad init [5], touchpad is mouse |
+| Ubuntu  | DualShock 4 (Micro-USB) | OK [5]     | OK       | No gyros, bad init [6], touchpad is mouse |
+| Ubuntu  | DualShock 4 (Wireless)  | OK [5]     | OK       | No gyros, bad init [6], touchpad is mouse |
 | Ubuntu  | DualShock 3 (Mini-USB)  | OK         | OK       | No gyros                                  |
 
-3. Not Chromium - which still defines the gamepad API, but doesn't appear to actually
+4. Not Chromium - which still defines the gamepad API, but doesn't appear to actually
    export info about connected gamepads even when Chrome will on the same system.
 
-4. Note that the baseline gamepad API lies about this gamepad being in the standard
+5. Note that the baseline gamepad API lies about this gamepad being in the standard
    layout already in Chrome 66 on Ubuntu 18.04 LTS.  tryRemapStdLayout will fix these
    to use the correct layout anyways.
 
-5. Some triggers/axises of this gamepad currently misinitialize to non-zero
+6. Some triggers/axises of this gamepad currently misinitialize to non-zero
    values (e.g. -1, 0.5), although they'll correct themselves after some use.
    Could be worked around with some more stateful mapping (e.g. treating known
    bad values as 0.0 until the right stick / triggers are sufficiently
@@ -106,6 +111,8 @@ if (standard) { console.assert(standard.mapping === "standard"); } // Well, that
 else          { ... } // Fallback to non-standard mapping prompts etc...
 ```
 
+
+
 # Installation
 
 ## Via npm
@@ -114,3 +121,38 @@ else          { ... } // Fallback to non-standard mapping prompts etc...
   ```cmd
   npm i @maulingmonkey/gamepad
   ```
+
+
+# Contribution Notes
+
+## Adding New Devices
+
+Negative values should always be left/up/forward/counterclockwise, with positive values corresponding to their opposites
+(right/down/backwards/clockwise).  This might be unintuitive for some axises on an individual basis (yes, joystick
+forward is *negative*!), but this has a couple of advantages.  Firstly, it keeps everything nice and consistent for
+remapping purpouses (thumbstick up is negative too, and you might want to use that as your throttle!)  Secondly, it
+reduces the importance of properly categorizing your axises ("should I map this as a throttle, or as a slider?") as this
+won't impact how the values are actually mapped.
+
+Additionally, axises should almost always span the entire \[-1..+1\] range.  While you might want to remap this to
+\[0..+1\] in your game (possibly with a button for reversing), consistency at the lowest layer will make such remaps
+more straightforward.  The exception to this would be any unidirectional, spring-loaded axises - any spring-loaded
+resting position should be 0.  It's possible such axises should be considered buttons instead - e.g. gamepad triggers
+are considered buttons in the "standard" mapping.
+
+| Axis (-1..+1)     | Min (-)   | Max (+)       | Notes |
+| ----------------- | --------- | ------------- | ----- |
+| Thumbstick X      | "left"    | "right"       |
+| Thumbstick Y      | "up"      | "down"        |
+| Joystick X        | "left"    | "right"       |
+| Joystick Y        | "forward" | "backward"    |
+| Joystick Twist    | "ccw"     | "cw"          |
+| Throttle          | "forward" | "backward"    | Forward being negative may be suprising, but keeps consistent with thumbsticks.
+| Mouse X           | "left"    | "right"       |
+| Mouse Y           | "up"      | "down"        |
+
+| Buttons (0..+1)   | Notes |
+| ----------------- | ----- |
+| Trigger           | This includes analog triggers like the "standard" gamepad.
+| DPad Up/Down/L/R  | Digital direction pads should be treated as 4 buttons, not axises.
+| HAT  Up/Down/L/R  | Digital HATs, like direction pads, should be treated as 4 buttons, not axises.

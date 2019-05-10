@@ -36,6 +36,7 @@ namespace mmk.gamepad {
 	 * A generic `"mmk-gamepad-*"` event.
 	 */
 	export interface GamepadEvent {
+		readonly gamepadType: metadata.DeviceType;
 		readonly gamepadIndex: number;
 	}
 
@@ -73,7 +74,7 @@ namespace mmk.gamepad {
 	type NewFields<T, U> = Pick<T, Exclude<keyof T, keyof U>>;
 	/** @hidden */
 	function dispatchGamepadEvent<K extends keyof GlobalEventHandlersEventMap>(type: K, data: NewFields<GlobalEventHandlersEventMap[K], CustomEvent<undefined>>, initHandled: boolean = false): boolean {
-		let e = document.createEvent("CustomEvent") as any;
+		const e = document.createEvent("CustomEvent") as any;
 		e.initCustomEvent(type, true, true, undefined);
 		Object.keys(data).forEach(key => {
 			e[key] = (data as any)[key];
@@ -91,50 +92,51 @@ namespace mmk.gamepad {
 	/** @hidden */
 	function implPollEvents (options: PollGamepadOptions) {
 		if (!dispatchAnyEvents) return;
-		let newPads = getGamepads({ deadZone: 0, keepInactive: true, keepNonstandard: true, keepNull: true, standardize: true });
-		let nPads = Math.max(oldPads.length, newPads.length);
+		const newPads = getGamepads({ deadZone: 0, keepInactive: true, keepNonstandard: true, keepNull: true, standardize: true });
+		const nPads = Math.max(oldPads.length, newPads.length);
 		for (let iPad = 0; iPad < nPads; ++iPad) {
-			let oldPad = oldPads[iPad];
-			let newPad = newPads[iPad];
+			const oldPad = oldPads[iPad];
+			const newPad = newPads[iPad];
 
 			if (oldPad && (!newPad || newPad.id !== oldPad.id || newPad.index !== oldPad.index)) {
-				dispatchGamepadEvent("mmk-gamepad-disconnected", { gamepadIndex: oldPad.index, connected: false });
+				dispatchGamepadEvent("mmk-gamepad-disconnected", { gamepadType: metadata.getDeviceType(oldPad), gamepadIndex: oldPad.index, connected: false });
 			}
 			if (newPad && (!oldPad || newPad.id !== oldPad.id || newPad.index !== oldPad.index)) {
-				dispatchGamepadEvent("mmk-gamepad-connected", { gamepadIndex: newPad.index, connected: true });
+				dispatchGamepadEvent("mmk-gamepad-connected", { gamepadType: metadata.getDeviceType(newPad), gamepadIndex: newPad.index, connected: true });
 			}
-			let eventPad = newPad || oldPad;
+			const eventPad = newPad || oldPad;
 			if (!eventPad) continue;
-			let gamepadIndex = eventPad.index;
+			const gamepadType = metadata.getDeviceType(eventPad);
+			const gamepadIndex = eventPad.index;
 
-			let nButtons = Math.max(newPad ? newPad.buttons.length : 0, oldPad ? oldPad.buttons.length : 0);
+			const nButtons = Math.max(newPad ? newPad.buttons.length : 0, oldPad ? oldPad.buttons.length : 0);
 			for (let buttonIndex = 0; buttonIndex < nButtons; ++buttonIndex) {
-				let oldButtonPressed = (oldPad && buttonIndex < oldPad.buttons.length && oldPad.buttons[buttonIndex].pressed) || false;
-				let newButtonPressed = (newPad && buttonIndex < newPad.buttons.length && newPad.buttons[buttonIndex].pressed) || false;
-				let oldButtonValue   = (oldPad && buttonIndex < oldPad.buttons.length) ? oldPad.buttons[buttonIndex].value : 0;
-				let newButtonValue   = (newPad && buttonIndex < newPad.buttons.length) ? newPad.buttons[buttonIndex].value : 0;
-				let held        = newButtonPressed;
-				let buttonValue = newButtonValue;
+				const oldButtonPressed = (oldPad && buttonIndex < oldPad.buttons.length && oldPad.buttons[buttonIndex].pressed) || false;
+				const newButtonPressed = (newPad && buttonIndex < newPad.buttons.length && newPad.buttons[buttonIndex].pressed) || false;
+				const oldButtonValue   = (oldPad && buttonIndex < oldPad.buttons.length) ? oldPad.buttons[buttonIndex].value : 0;
+				const newButtonValue   = (newPad && buttonIndex < newPad.buttons.length) ? newPad.buttons[buttonIndex].value : 0;
+				const held        = newButtonPressed;
+				const buttonValue = newButtonValue;
 
 				let handled = false;
 				if (newButtonPressed && !oldButtonPressed) {
-					handled = dispatchGamepadEvent("mmk-gamepad-button-down", { gamepadIndex, buttonIndex, buttonValue, held });
+					handled = dispatchGamepadEvent("mmk-gamepad-button-down", { gamepadType, gamepadIndex, buttonIndex, buttonValue, held });
 				}
 				else if (!newButtonPressed && oldButtonPressed) {
-					handled = dispatchGamepadEvent("mmk-gamepad-button-up", { gamepadIndex, buttonIndex, buttonValue, held });
+					handled = dispatchGamepadEvent("mmk-gamepad-button-up", { gamepadType, gamepadIndex, buttonIndex, buttonValue, held });
 				}
   
 				if ((newButtonValue !== oldButtonValue) || (newButtonPressed !== oldButtonPressed)) {
-					dispatchGamepadEvent("mmk-gamepad-button-value", { gamepadIndex, buttonIndex, buttonValue, held }, handled);
+					dispatchGamepadEvent("mmk-gamepad-button-value", { gamepadType, gamepadIndex, buttonIndex, buttonValue, held }, handled);
 				}
 			}
 
-			let nAxises = Math.max(newPad ? newPad.axes.length : 0, oldPad ? oldPad.axes.length : 0);
+			const nAxises = Math.max(newPad ? newPad.axes.length : 0, oldPad ? oldPad.axes.length : 0);
 			for (let axisIndex = 0; axisIndex < nAxises; ++axisIndex) {
-				let oldAxisValue = (oldPad && axisIndex < oldPad.axes.length) ? oldPad.axes[axisIndex] : 0;
-				let axisValue = (newPad && axisIndex < newPad.axes.length) ? newPad.axes[axisIndex] : 0;
+				const oldAxisValue = (oldPad && axisIndex < oldPad.axes.length) ? oldPad.axes[axisIndex] : 0;
+				const axisValue = (newPad && axisIndex < newPad.axes.length) ? newPad.axes[axisIndex] : 0;
 				if (oldAxisValue === axisValue) continue;
-				dispatchGamepadEvent("mmk-gamepad-axis-value", { gamepadIndex, axisIndex, axisValue });
+				dispatchGamepadEvent("mmk-gamepad-axis-value", { gamepadType, gamepadIndex, axisIndex, axisValue });
 			}
 		}
 		oldPads = mmk.gamepad.cloneGamepads(newPads);

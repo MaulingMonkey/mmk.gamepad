@@ -16,14 +16,44 @@
 
 	<table><thead>
 		<tr>
-			<th colspan="7">Meta</th>
+			<th colspan="8">Meta, Axises</th>
 
 			<!-- Axes -->
 			<th>LX</th>
 			<th>LY</th>
 			<th>RX</th>
 			<th>RY</th>
-			<th colspan="4">Nonstandard</th>
+			<th colspan="7">Nonstandard</th>
+		</tr><tr>
+			<th>id</th>
+			<th>index</th>
+			<th>mapping</th>
+			<th>connected</th>
+			<th>getDeviceLabel</th>
+			<th>vendor</th>
+			<th>product</th>
+			<th>hint</th>
+
+			<th>a0</th>
+			<th>a1</th>
+			<th>a2</th>
+			<th>a3</th>
+			<th>a4</th>
+			<th>a5</th>
+			<th>a6</th>
+			<th>a7</th>
+			<th>a8</th>
+			<th>a9</th>
+			<th>a10</th>
+		</tr>
+	</thead><tbody id="mmk-gamepad-metadata-1-demo">
+		<!-- demo.ts -->
+	</tbody></table>
+	<br>
+
+	<table><thead>
+		<tr>
+			<th colspan="2">Buttons</th>
 
 			<!-- Buttons -->
 			<th>A</th>
@@ -48,24 +78,10 @@
 
 			<th>Guide</th>
 
-			<th colspan="3">Nonstandard</th>
+			<th colspan="21">Nonstandard</th>
 		</tr><tr>
 			<th>id</th>
 			<th>index</th>
-			<th>mapping</th>
-			<th>connected</th>
-			<th>vendor</th>
-			<th>product</th>
-			<th>hint</th>
-
-			<th>a0</th>
-			<th>a1</th>
-			<th>a2</th>
-			<th>a3</th>
-			<th>a4</th>
-			<th>a5</th>
-			<th>a6</th>
-			<th>a7</th>
 
 			<th>b0</th>
 			<th>b1</th>
@@ -87,24 +103,44 @@
 			<th>b17</th>
 			<th>b18</th>
 			<th>b19</th>
+			<th>b20</th>
+			<th>b21</th>
+			<th>b22</th>
+			<th>b23</th>
+			<th>b24</th>
+			<th>b25</th>
+			<th>b26</th>
+			<th>b27</th>
+			<th>b28</th>
+			<th>b29</th>
+			<th>b30</th>
+			<th>b31</th>
+			<th>b32</th>
+			<th>b33</th>
+			<th>b34</th>
+			<th>b35</th>
+			<th>b36</th>
+			<th>b37</th>
 		</tr>
-	</thead><tbody id="mmk-gamepad-demo">
+	</thead><tbody id="mmk-gamepad-metadata-2-demo">
 		<!-- demo.ts -->
 	</tbody></table>
 
 	<br><br>
-	<input id="keep-value-events" type="checkbox"> <label for="keep-value-events">Keep "*-value" events</label><br>
+	<input id="keep-button-value-events" type="checkbox" > <label for="keep-button-value-events">Keep *-button-value events</label><br>
+	<input id="keep-zero-events"         type="checkbox" > <label for="keep-zero-events">Keep near-0.0 events</label><br>
 	<table><thead>
 		<tr>
 			<th>Events</th>
 			<th>Gamepad</th>
-			<th colspan="3">Button/Axis</th>
+			<th colspan="4">Button/Axis</th>
 		</tr><tr>
 			<th>type</th>
 			<th>index</th>
 			<th>index</th>
 			<th>held</th>
 			<th>value</th>
+			<th>label</th>
 		</tr>
 	</thead><tbody id="mmk-gamepad-events-demo">
 		<!-- demo.ts -->

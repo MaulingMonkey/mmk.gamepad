@@ -58,7 +58,7 @@ namespace mmk.gamepad.metadata {
         }
     }
 
-    export function getAxisLabel (id: Axis, locHint: readonly string[] = navigator.languages): string {
+    export function getAxisLabel (id: Axis, locHint: ReadonlyArray<string> = navigator.languages): string {
         const axis = axises[id];
         for (const lang of locHint) {
             if (lang.indexOf('-') === -1) continue;
@@ -67,7 +67,7 @@ namespace mmk.gamepad.metadata {
         return `Unlocalized Axis ${JSON.stringify(id)}`;
     }
 
-    export function getGamepadAxisLabel (gamepad: Gamepad | VendorProduct | DeviceType, index: number, locHint: readonly string[] = navigator.languages): string | undefined {
+    export function getGamepadAxisLabel (gamepad: Gamepad | VendorProduct | DeviceType, index: number, locHint: ReadonlyArray<string> = navigator.languages): string | undefined {
         const a = getDeviceAxises(gamepad);
         return (0 <= index && index < a.length) ? getAxisLabel(a[index], locHint) : undefined;
     }

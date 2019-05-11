@@ -42,7 +42,7 @@ namespace mmk.gamepad.metadata {
         }
     }
 
-    export function getButtonLabel (id: Button, locHint: readonly string[] = navigator.languages): string {
+    export function getButtonLabel (id: Button, locHint: ReadonlyArray<string> = navigator.languages): string {
         for (let button = buttons[id]; button; ) {
             for (const lang of locHint) {
                 if (lang.indexOf('-') === -1) continue;
@@ -57,7 +57,7 @@ namespace mmk.gamepad.metadata {
         return `Unlocalized Button ${JSON.stringify(id)}`;
     }
 
-    export function getGamepadButtonLabel (gamepad: Gamepad | VendorProduct | DeviceType, index: number, locHint: readonly string[] = navigator.languages): string | undefined {
+    export function getGamepadButtonLabel (gamepad: Gamepad | VendorProduct | DeviceType, index: number, locHint: ReadonlyArray<string> = navigator.languages): string | undefined {
         const b = getDeviceButtons(gamepad);
         return (0 <= index && index < b.length) ? getButtonLabel(b[index], locHint) : undefined;
     }

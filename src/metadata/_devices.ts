@@ -57,7 +57,7 @@ namespace mmk.gamepad.metadata {
         return `${vendor}-${product}`;
     }
 
-    export function getDeviceLabel (target: Gamepad | VendorProduct, locHint: readonly string[] = navigator.languages): string {
+    export function getDeviceLabel (target: Gamepad | VendorProduct, locHint: ReadonlyArray<string> = navigator.languages): string {
         const device = devices[vpid(target)];
         if (!device) return isGamepad(target) ? target.id : `Unknown Device ${JSON.stringify(target)}`;
         for (const lang of locHint) if (lang in device.description) return device.description[lang];
@@ -72,13 +72,13 @@ namespace mmk.gamepad.metadata {
             : "unknown-unknown";
     }
 
-    export function getDeviceButtons (target: Gamepad | VendorProduct | DeviceType): readonly Button[] {
+    export function getDeviceButtons (target: Gamepad | VendorProduct | DeviceType): Button[] {
         const type = deviceTypes[getDeviceType(target)];
         if (!type) return []; // Unknown as heck
         return type.buttons;
     }
 
-    export function getDeviceAxises (target: Gamepad | VendorProduct | DeviceType): readonly Axis[] {
+    export function getDeviceAxises (target: Gamepad | VendorProduct | DeviceType): Axis[] {
         const type = deviceTypes[getDeviceType(target)];
         if (!type) return []; // Unknown as heck
         return type.axises;

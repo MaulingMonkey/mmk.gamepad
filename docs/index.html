@@ -227,17 +227,27 @@
 							<td></td>
 							<td></td>
 						</tr>
+						<tr>
+							<td>Windows</td>
+							<td>Saitek X52</td>
+							<td>No Scroll</td>
+							<td>No Scroll</td>
+							<td>No HAT 1</td>
+							<td>| [3]</td>
+							<td></td>
+						</tr>
 				</tbody></table>
 				<ol>
 					<li>This gamepad displays an incorrect or generic name which we cannot work around (e.g. &quot;Xbox 360 Controller&quot; for XB1 controllers, or &quot;xinput&quot;)</li>
 					<li>Third party (non-Sony!) drivers may make this gamepad work - it doesn&#39;t speak standard HID properly.</li>
+					<li>This has a custom <code>.mapping !== &quot;standard&quot;</code></li>
 				</ol>
 				<table>
 					<thead>
 						<tr>
 							<th>OS</th>
 							<th>Gamepad</th>
-							<th>Chrome [3]</th>
+							<th>Chrome [4]</th>
 							<th>FireFox</th>
 							<th>Notes</th>
 						</tr>
@@ -259,16 +269,16 @@
 						<tr>
 							<td>Ubuntu</td>
 							<td>DualShock 4 (Micro-USB)</td>
-							<td>OK [4]</td>
+							<td>OK [5]</td>
 							<td>OK</td>
-							<td>No gyros, bad init [5], touchpad is mouse</td>
+							<td>No gyros, bad init [6], touchpad is mouse</td>
 						</tr>
 						<tr>
 							<td>Ubuntu</td>
 							<td>DualShock 4 (Wireless)</td>
-							<td>OK [4]</td>
+							<td>OK [5]</td>
 							<td>OK</td>
-							<td>No gyros, bad init [5], touchpad is mouse</td>
+							<td>No gyros, bad init [6], touchpad is mouse</td>
 						</tr>
 						<tr>
 							<td>Ubuntu</td>
@@ -278,7 +288,7 @@
 							<td>No gyros</td>
 						</tr>
 				</tbody></table>
-				<ol start="3">
+				<ol start="4">
 					<li><p>Not Chromium - which still defines the gamepad API, but doesn&#39;t appear to actually
 						export info about connected gamepads even when Chrome will on the same system.</p>
 					</li>
@@ -319,6 +329,97 @@ mmk.gamepad.addRawDisconnectedListener( <span class="hljs-function"><span class=
 					<li>Install per project<pre><code class="language-cmd">npm i @maulingmonkey/gamepad</code></pre>
 					</li>
 				</ul>
+				<h1 id="contribution-notes">Contribution Notes</h1>
+				<h2 id="adding-new-devices">Adding New Devices</h2>
+				<p>Negative values should always be left/up/forward/counterclockwise, with positive values corresponding to their opposites
+					(right/down/backwards/clockwise).  This might be unintuitive for some axises on an individual basis (yes, joystick
+					forward is <em>negative</em>!), but this has a couple of advantages.  Firstly, it keeps everything nice and consistent for
+					remapping purpouses (thumbstick up is negative too, and you might want to use that as your throttle!)  Secondly, it
+					reduces the importance of properly categorizing your axises (&quot;should I map this as a throttle, or as a slider?&quot;) as this
+				won&#39;t impact how the values are actually mapped.</p>
+				<p>Additionally, axises should almost always span the entire [-1..+1] range.  While you might want to remap this to
+					[0..+1] in your game (possibly with a button for reversing), consistency at the lowest layer will make such remaps
+					more straightforward.  The exception to this would be any unidirectional, spring-loaded axises - any spring-loaded
+					resting position should be 0.  It&#39;s possible such axises should be considered buttons instead - e.g. gamepad triggers
+				are considered buttons in the &quot;standard&quot; mapping.</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Axis (-1..+1)</th>
+							<th>Min (-)</th>
+							<th>Max (+)</th>
+							<th>Notes</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td>Thumbstick X</td>
+							<td>&quot;left&quot;</td>
+							<td>&quot;right&quot;</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Thumbstick Y</td>
+							<td>&quot;up&quot;</td>
+							<td>&quot;down&quot;</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Joystick X</td>
+							<td>&quot;left&quot;</td>
+							<td>&quot;right&quot;</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Joystick Y</td>
+							<td>&quot;forward&quot;</td>
+							<td>&quot;backward&quot;</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Joystick Twist</td>
+							<td>&quot;ccw&quot;</td>
+							<td>&quot;cw&quot;</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Throttle</td>
+							<td>&quot;forward&quot;</td>
+							<td>&quot;backward&quot;</td>
+							<td>Forward being negative may be suprising, but keeps consistent with thumbsticks.</td>
+						</tr>
+						<tr>
+							<td>Mouse X</td>
+							<td>&quot;left&quot;</td>
+							<td>&quot;right&quot;</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Mouse Y</td>
+							<td>&quot;up&quot;</td>
+							<td>&quot;down&quot;</td>
+							<td></td>
+						</tr>
+				</tbody></table>
+				<table>
+					<thead>
+						<tr>
+							<th>Buttons (0..+1)</th>
+							<th>Notes</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td>Trigger</td>
+							<td>This includes analog triggers like the &quot;standard&quot; gamepad.</td>
+						</tr>
+						<tr>
+							<td>DPad Up/Down/L/R</td>
+							<td>Digital direction pads should be treated as 4 buttons, not axises.</td>
+						</tr>
+						<tr>
+							<td>HAT  Up/Down/L/R</td>
+							<td>Digital HATs, like direction pads, should be treated as 4 buttons, not axises.</td>
+						</tr>
+				</tbody></table>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -335,6 +436,9 @@ mmk.gamepad.addRawDisconnectedListener( <span class="hljs-function"><span class=
 					</li>
 					<li class=" tsd-kind-module tsd-parent-kind-module">
 						<a href="modules/mmk.gamepad.config.html">mmk.gamepad.config</a>
+					</li>
+					<li class=" tsd-kind-module tsd-parent-kind-module">
+						<a href="modules/mmk.gamepad.metadata.html">mmk.gamepad.metadata</a>
 					</li>
 				</ul>
 			</nav>

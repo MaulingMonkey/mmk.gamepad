@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>GamepadButtonEvent | @maulingmonkey/gamepad</title>
+	<title>AxisRangeMap | @maulingmonkey/gamepad</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -62,34 +62,24 @@
 					<a href="../modules/mmk.gamepad.html">gamepad</a>
 				</li>
 				<li>
-					<a href="mmk.gamepad.gamepadbuttonevent.html">GamepadButtonEvent</a>
+					<a href="../modules/mmk.gamepad.metadata.html">metadata</a>
+				</li>
+				<li>
+					<a href="mmk.gamepad.metadata.axisrangemap.html">AxisRangeMap</a>
 				</li>
 			</ul>
-			<h1>Interface GamepadButtonEvent</h1>
+			<h1>Interface AxisRangeMap</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>A <code>&quot;mmk-gamepad-button-down&quot;</code>, <code>&quot;mmk-gamepad-button-up&quot;</code>, or <code>&quot;mmk-gamepad-button-value&quot;</code> event, indicating that
-						one of the gamepad buttons changed value.</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="mmk.gamepad.gamepadevent.html" class="tsd-signature-type">GamepadEvent</a>
-						<ul class="tsd-hierarchy">
-							<li>
-								<span class="target">GamepadButtonEvent</span>
-							</li>
-						</ul>
+						<span class="target">AxisRangeMap</span>
 					</li>
 				</ul>
 			</section>
@@ -100,11 +90,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mmk.gamepad.gamepadbuttonevent.html#buttonindex" class="tsd-kind-icon">button<wbr>Index</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mmk.gamepad.gamepadbuttonevent.html#buttonvalue" class="tsd-kind-icon">button<wbr>Value</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="mmk.gamepad.gamepadbuttonevent.html#gamepadindex" class="tsd-kind-icon">gamepad<wbr>Index</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="mmk.gamepad.gamepadbuttonevent.html#gamepadtype" class="tsd-kind-icon">gamepad<wbr>Type</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mmk.gamepad.gamepadbuttonevent.html#held" class="tsd-kind-icon">held</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mmk.gamepad.metadata.axisrangemap.html#01" class="tsd-kind-icon">01</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mmk.gamepad.metadata.axisrangemap.html#11" class="tsd-kind-icon">11</a></li>
 							</ul>
 						</section>
 					</div>
@@ -113,54 +100,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="buttonindex" class="tsd-anchor"></a>
-					<h3>button<wbr>Index</h3>
-					<div class="tsd-signature tsd-kind-icon">button<wbr>Index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="01" class="tsd-anchor"></a>
+					<h3>01</h3>
+					<div class="tsd-signature tsd-kind-icon">01<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.4/src/events.ts#L57">events.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.4/src/metadata/_axises.ts#L24">metadata/_axises.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="buttonvalue" class="tsd-anchor"></a>
-					<h3>button<wbr>Value</h3>
-					<div class="tsd-signature tsd-kind-icon">button<wbr>Value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="11" class="tsd-anchor"></a>
+					<h3>11</h3>
+					<div class="tsd-signature tsd-kind-icon">11<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.4/src/events.ts#L58">events.ts:58</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="gamepadindex" class="tsd-anchor"></a>
-					<h3>gamepad<wbr>Index</h3>
-					<div class="tsd-signature tsd-kind-icon">gamepad<wbr>Index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="mmk.gamepad.gamepadevent.html">GamepadEvent</a>.<a href="mmk.gamepad.gamepadevent.html#gamepadindex">gamepadIndex</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.4/src/events.ts#L40">events.ts:40</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="gamepadtype" class="tsd-anchor"></a>
-					<h3>gamepad<wbr>Type</h3>
-					<div class="tsd-signature tsd-kind-icon">gamepad<wbr>Type<span class="tsd-signature-symbol">:</span> <a href="../modules/mmk.gamepad.metadata.html#devicetype" class="tsd-signature-type">DeviceType</a></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="mmk.gamepad.gamepadevent.html">GamepadEvent</a>.<a href="mmk.gamepad.gamepadevent.html#gamepadtype">gamepadType</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.4/src/events.ts#L39">events.ts:39</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="held" class="tsd-anchor"></a>
-					<h3>held</h3>
-					<div class="tsd-signature tsd-kind-icon">held<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.4/src/events.ts#L56">events.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.4/src/metadata/_axises.ts#L25">metadata/_axises.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -175,100 +130,34 @@
 					<li class=" tsd-kind-module tsd-is-not-exported">
 						<a href="../modules/mmk.html">mmk</a>
 					</li>
-					<li class="current tsd-kind-module tsd-parent-kind-module">
+					<li class=" tsd-kind-module tsd-parent-kind-module">
 						<a href="../modules/mmk.gamepad.html">mmk.gamepad</a>
 					</li>
 					<li class=" tsd-kind-module tsd-parent-kind-module">
 						<a href="../modules/mmk.gamepad.config.html">mmk.gamepad.config</a>
 					</li>
-					<li class=" tsd-kind-module tsd-parent-kind-module">
+					<li class="current tsd-kind-module tsd-parent-kind-module">
 						<a href="../modules/mmk.gamepad.metadata.html">mmk.gamepad.metadata</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/mmk.gamepad.dualshockbutton.html" class="tsd-kind-icon">Dual<wbr>Shock<wbr>Button</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/mmk.gamepad.standardaxis.html" class="tsd-kind-icon">Standard<wbr>Axis</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/mmk.gamepad.xboxbutton.html" class="tsd-kind-icon">Xbox<wbr>Button</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="mmk.gamepad.gamepad.html" class="tsd-kind-icon">Gamepad</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="mmk.gamepad.gamepadaxisevent.html" class="tsd-kind-icon">Gamepad<wbr>Axis<wbr>Event</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="mmk.gamepad.gamepadbutton.html" class="tsd-kind-icon">Gamepad<wbr>Button</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="mmk.gamepad.gamepadbuttonevent.html" class="tsd-kind-icon">Gamepad<wbr>Button<wbr>Event</a>
+						<a href="mmk.gamepad.metadata.axisrangemap.html" class="tsd-kind-icon">Axis<wbr>Range<wbr>Map</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="mmk.gamepad.gamepadbuttonevent.html#buttonindex" class="tsd-kind-icon">button<wbr>Index</a>
+								<a href="mmk.gamepad.metadata.axisrangemap.html#01" class="tsd-kind-icon">01</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="mmk.gamepad.gamepadbuttonevent.html#buttonvalue" class="tsd-kind-icon">button<wbr>Value</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="mmk.gamepad.gamepadbuttonevent.html#gamepadindex" class="tsd-kind-icon">gamepad<wbr>Index</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="mmk.gamepad.gamepadbuttonevent.html#gamepadtype" class="tsd-kind-icon">gamepad<wbr>Type</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="mmk.gamepad.gamepadbuttonevent.html#held" class="tsd-kind-icon">held</a>
+								<a href="mmk.gamepad.metadata.axisrangemap.html#11" class="tsd-kind-icon">11</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="mmk.gamepad.gamepadconnectivityevent.html" class="tsd-kind-icon">Gamepad<wbr>Connectivity<wbr>Event</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="mmk.gamepad.gamepadevent.html" class="tsd-kind-icon">Gamepad<wbr>Event</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="mmk.gamepad.gamepadeventsmap.html" class="tsd-kind-icon">Gamepad<wbr>Events<wbr>Map</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="mmk.gamepad.getgamepadsoptions.html" class="tsd-kind-icon">Get<wbr>Gamepads<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="mmk.gamepad.parsedgamepadid.html" class="tsd-kind-icon">Parsed<wbr>Gamepad<wbr>Id</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
-						<a href="../modules/mmk.gamepad.html#pollgamepadoptions" class="tsd-kind-icon">Poll<wbr>Gamepad<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/mmk.gamepad.html#clonegamepad" class="tsd-kind-icon">clone<wbr>Gamepad</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/mmk.gamepad.html#clonegamepads" class="tsd-kind-icon">clone<wbr>Gamepads</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/mmk.gamepad.html#getgamepads" class="tsd-kind-icon">get<wbr>Gamepads</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/mmk.gamepad.html#issupported" class="tsd-kind-icon">is<wbr>Supported</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/mmk.gamepad.html#parsegamepadid" class="tsd-kind-icon">parse<wbr>Gamepad<wbr>Id</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/mmk.gamepad.html#pollevents" class="tsd-kind-icon">poll<wbr>Events</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/mmk.gamepad.html#tryremapstdlayout" class="tsd-kind-icon">try<wbr>Remap<wbr>Std<wbr>Layout</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

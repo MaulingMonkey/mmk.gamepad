@@ -10694,14 +10694,15 @@ var mmk;
                 var oldPad = oldPads[iPad];
                 var newPad = newPads[iPad];
                 if (oldPad && (!newPad || newPad.id !== oldPad.id || newPad.index !== oldPad.index)) {
-                    dispatchGamepadEvent("mmk-gamepad-disconnected", { gamepadIndex: oldPad.index, connected: false });
+                    dispatchGamepadEvent("mmk-gamepad-disconnected", { gamepadType: gamepad.metadata.getDeviceType(oldPad), gamepadIndex: oldPad.index, connected: false });
                 }
                 if (newPad && (!oldPad || newPad.id !== oldPad.id || newPad.index !== oldPad.index)) {
-                    dispatchGamepadEvent("mmk-gamepad-connected", { gamepadIndex: newPad.index, connected: true });
+                    dispatchGamepadEvent("mmk-gamepad-connected", { gamepadType: gamepad.metadata.getDeviceType(newPad), gamepadIndex: newPad.index, connected: true });
                 }
                 var eventPad = newPad || oldPad;
                 if (!eventPad)
                     continue;
+                var gamepadType = gamepad.metadata.getDeviceType(eventPad);
                 var gamepadIndex = eventPad.index;
                 var nButtons = Math.max(newPad ? newPad.buttons.length : 0, oldPad ? oldPad.buttons.length : 0);
                 for (var buttonIndex = 0; buttonIndex < nButtons; ++buttonIndex) {
@@ -10713,13 +10714,13 @@ var mmk;
                     var buttonValue = newButtonValue;
                     var handled = false;
                     if (newButtonPressed && !oldButtonPressed) {
-                        handled = dispatchGamepadEvent("mmk-gamepad-button-down", { gamepadIndex: gamepadIndex, buttonIndex: buttonIndex, buttonValue: buttonValue, held: held });
+                        handled = dispatchGamepadEvent("mmk-gamepad-button-down", { gamepadType: gamepadType, gamepadIndex: gamepadIndex, buttonIndex: buttonIndex, buttonValue: buttonValue, held: held });
                     }
                     else if (!newButtonPressed && oldButtonPressed) {
-                        handled = dispatchGamepadEvent("mmk-gamepad-button-up", { gamepadIndex: gamepadIndex, buttonIndex: buttonIndex, buttonValue: buttonValue, held: held });
+                        handled = dispatchGamepadEvent("mmk-gamepad-button-up", { gamepadType: gamepadType, gamepadIndex: gamepadIndex, buttonIndex: buttonIndex, buttonValue: buttonValue, held: held });
                     }
                     if ((newButtonValue !== oldButtonValue) || (newButtonPressed !== oldButtonPressed)) {
-                        dispatchGamepadEvent("mmk-gamepad-button-value", { gamepadIndex: gamepadIndex, buttonIndex: buttonIndex, buttonValue: buttonValue, held: held }, handled);
+                        dispatchGamepadEvent("mmk-gamepad-button-value", { gamepadType: gamepadType, gamepadIndex: gamepadIndex, buttonIndex: buttonIndex, buttonValue: buttonValue, held: held }, handled);
                     }
                 }
                 var nAxises = Math.max(newPad ? newPad.axes.length : 0, oldPad ? oldPad.axes.length : 0);
@@ -10728,7 +10729,7 @@ var mmk;
                     var axisValue = (newPad && axisIndex < newPad.axes.length) ? newPad.axes[axisIndex] : 0;
                     if (oldAxisValue === axisValue)
                         continue;
-                    dispatchGamepadEvent("mmk-gamepad-axis-value", { gamepadIndex: gamepadIndex, axisIndex: axisIndex, axisValue: axisValue });
+                    dispatchGamepadEvent("mmk-gamepad-axis-value", { gamepadType: gamepadType, gamepadIndex: gamepadIndex, axisIndex: axisIndex, axisValue: axisValue });
                 }
             }
             oldPads = mmk.gamepad.cloneGamepads(newPads);
@@ -10956,6 +10957,11 @@ var mmk;
         };
         /** @hidden */
         var buttonXforms = {
+            "constant": function (src, remap) {
+                var value = remap.param || 0;
+                var pressed = false;
+                return { value: value, pressed: pressed, touched: pressed };
+            },
             "11-01": function (src, remap) {
                 var value = src ? (src.value + 1) / 2 : 0;
                 var pressed = !remap.param ? src.pressed : (value > remap.param);
@@ -10976,31 +10982,10 @@ var mmk;
             "hat-down-bit": remapXformHat(function (i) { return (3 <= i) && (i <= 5); }),
             "hat-left-bit": remapXformHat(function (i) { return (5 <= i) && (i <= 7); })
         };
-        /** @hidden - http://www.linux-usb.org/usb.ids */
-        var vendorProductToName = {
-            // Microsoft
-            "045e-0202": "Xbox Controller",
-            "045e-0285": "Xbox Controller S",
-            "045e-0289": "Xbox Controller S",
-            "045e-028e": "Xbox 360 Controller",
-            "045e-028f": "Xbox 360 Wireless Controller",
-            "045e-0291": "Xbox 360 Wireless Receiver for Windows",
-            "045e-02a1": "Xbox 360 Wireless Receiver for Windows",
-            "045e-02d1": "Xbox One Controller",
-            "045e-02dd": "Xbox One Controller",
-            "045e-02e3": "Xbox One Elite Controller",
-            "045e-02e6": "Wireless XBox Controller Dongle",
-            "045e-02ea": "Xbox One S Controller",
-            "045e-02fd": "Xbox One S Controller (Bluetooth)",
-            // Sony
-            "054c-0268": "DualShock 3 Controller",
-            "054c-054c": "DualShock 4 Controller",
-            "054c-09cc": "DualShock 4 Controller (2nd Gen)",
-            "054c-0ba0": "DualShock 4 Wireless Adapter"
-        };
         //const stdRemaps : {[vendProdHintAxesButtons: string]: Remap} = {
         /** @hidden */
         var remaps = [{
+                mapping: "standard",
                 tested: ["Windows 7 / Opera 52.0.2871.99"],
                 matches: [
                     "054c-054c-blink-10-14",
@@ -11020,6 +11005,7 @@ var mmk;
                 // Note: Axis 6-8 are ignored (dead)
                 // Note: Button 6 and 7 are ignored (overlaps with axis 3/4 for triggers)
             }, {
+                mapping: "standard",
                 tested: ["Windows 7 / Firefox 62.0a1 (2018-05-09) - DPad busted"],
                 matches: [
                     "054c-054c-gecko-8-18",
@@ -11042,6 +11028,7 @@ var mmk;
                 // Note: Axis 6-7 are ignored (dead)
                 // Note: Button 6 and 7 are ignored (overlaps with axis 3/4 for triggers)
             }, {
+                mapping: "standard",
                 tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
                 matches: [
                     "054c-054c-gecko-8-13",
@@ -11058,6 +11045,7 @@ var mmk;
                     { src: "b10" },
                 ]
             }, {
+                mapping: "standard",
                 tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
                 matches: [
                     "054c-0268-gecko-6-17",
@@ -11072,6 +11060,7 @@ var mmk;
                     { src: "b10" },
                 ]
             }, {
+                mapping: "standard",
                 tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
                 matches: [
                     "045e-028e-gecko-8-11",
@@ -11087,6 +11076,7 @@ var mmk;
                     { src: "b8" },
                 ]
             }, {
+                mapping: "standard",
                 // Did version_number get bumped again maybe?  These are mappings for a "standard" layout
                 // https://cs.chromium.org/chromium/src/device/gamepad/gamepad_standard_mappings_linux.cc?l=573-580
                 tested: ["Ubuntu 18.04 LTS / Chrome 66.0.3359.139"],
@@ -11103,6 +11093,56 @@ var mmk;
                     { src: "b12" }, { src: "b13" }, { src: "b14" }, { src: "b15" },
                     // -- end of standard layout
                     { src: "b10" },
+                ]
+            }, {
+                mapping: "-custom",
+                tested: ["Windows 10 / Chrome 74.0.3729.131"],
+                matches: [
+                    "06a3-075c-blink-10-32",
+                ],
+                axes: [
+                    // identity mapped
+                    { src: "a0" }, { src: "a1" }, { src: "a2" }, { src: "a3" }, { src: "a4" }, { src: "a5" }, { src: "a6" }, { src: "a8" }, { src: "a7" }
+                    // dropped: axis 9 (HAT)
+                ],
+                buttons: [
+                    // identity mapped
+                    { src: "b0" }, { src: "b1" }, { src: "b2" }, { src: "b3" }, { src: "b4" },
+                    { src: "b5" }, { src: "b6" }, { src: "b7" }, { src: "b8" }, { src: "b9" },
+                    { src: "b10" }, { src: "b11" }, { src: "b12" }, { src: "b13" }, { src: "b14" },
+                    { src: "b15" }, { src: "b16" }, { src: "b17" }, { src: "b18" }, { src: "b19" },
+                    { src: "b20" }, { src: "b21" }, { src: "b22" }, { src: "b23" }, { src: "b24" },
+                    { src: "b25" }, { src: "b26" }, { src: "b27" }, { src: "b28" }, { src: "b29" },
+                    { src: "b30" }, { src: "b31" },
+                    // Chrome is lacking buttons for mouse wheel
+                    { src: "b0", xform: "constant", param: 0 },
+                    { src: "b0", xform: "constant", param: 0 },
+                    // Synthetic buttons for missing dpad buttons on Chrome
+                    { src: "a9", xform: "hat-up-bit" },
+                    { src: "a9", xform: "hat-right-bit" },
+                    { src: "a9", xform: "hat-down-bit" },
+                    { src: "a9", xform: "hat-left-bit" },
+                ]
+            }, {
+                mapping: "-custom",
+                tested: ["Windows 10 / FireFox 66.0.5"],
+                matches: [
+                    "06a3-075c-gecko-9-38",
+                ],
+                axes: [
+                    // identity mapped
+                    { src: "a0" }, { src: "a1" }, { src: "a2" }, { src: "a3" }, { src: "a4" }, { src: "a5" }, { src: "a6" }, { src: "a8" }, { src: "a7" }
+                ],
+                buttons: [
+                    // identity mapped
+                    { src: "b0" }, { src: "b1" }, { src: "b2" }, { src: "b3" }, { src: "b4" },
+                    { src: "b5" }, { src: "b6" }, { src: "b7" }, { src: "b8" }, { src: "b9" },
+                    { src: "b10" }, { src: "b11" }, { src: "b12" }, { src: "b13" }, { src: "b14" },
+                    { src: "b15" }, { src: "b16" }, { src: "b17" }, { src: "b18" }, { src: "b19" },
+                    { src: "b20" }, { src: "b21" }, { src: "b22" }, { src: "b23" }, { src: "b24" },
+                    { src: "b25" }, { src: "b26" }, { src: "b27" }, { src: "b28" }, { src: "b29" },
+                    { src: "b30" }, { src: "b31" }, { src: "b32" }, { src: "b33" },
+                    { src: "b34" }, { src: "b35" }, { src: "b36" }, { src: "b37" },
                 ]
             }];
         // Avoid where possible.
@@ -11141,6 +11181,8 @@ var mmk;
                 return gamepad;
             if (!liesAboutStandardMapping && gamepad.mapping === "standard")
                 return gamepad; // Already remapped
+            if (gamepad.mapping === "-custom")
+                return gamepad; // Already remapped
             var remapGamepad = findStdRemap(gamepad);
             if (!remapGamepad)
                 return gamepad;
@@ -11151,7 +11193,7 @@ var mmk;
                 index: gamepad.index,
                 timestamp: gamepad.timestamp,
                 connected: gamepad.connected,
-                mapping: "standard",
+                mapping: remapGamepad.mapping,
                 axes: new Array(remapGamepad.axes.length),
                 buttons: new Array(remapGamepad.buttons.length)
             };
@@ -11553,15 +11595,6 @@ var mmk;
 (function (mmk) {
     var gamepad;
     (function (gamepad) {
-        //const nameHintOverrides : {[nameHint: string]: string} = {
-        //	"xinput-gecko": "Xbox 360 Controller"
-        //};
-        //
-        //const vendProdNames : {[vendProd: string]: string} = {
-        //	"054c-0ba0": "DUALSHOCK®4 Controller (Wireless)",
-        //	"054c-09cc": "DUALSHOCK®4 Controller (USB)",
-        //	"054c-0268": "PLAYSTATION(R)3 Controller"
-        //};
         /** @hidden */
         function parseGamepadId_Blink(id) {
             var mNameParen = /^(.+?)(?: \((.*)\))$/i.exec(id);
@@ -11704,7 +11737,940 @@ var mmk;
 var mmk;
 (function (mmk) {
     var gamepad;
+    (function (gamepad_4) {
+        var metadata;
+        (function (metadata) {
+            var axises = {};
+            function regsiterAxises(newAxises) {
+                for (var id in newAxises) {
+                    var value = newAxises[id];
+                    console.assert(!(id in axises));
+                    axises[id] = value;
+                }
+            }
+            metadata.regsiterAxises = regsiterAxises;
+            function getAxisLabel(id, locHint) {
+                var e_2, _a;
+                if (locHint === void 0) { locHint = navigator.languages; }
+                var axis = axises[id];
+                try {
+                    for (var locHint_1 = __values(locHint), locHint_1_1 = locHint_1.next(); !locHint_1_1.done; locHint_1_1 = locHint_1.next()) {
+                        var lang = locHint_1_1.value;
+                        if (lang.indexOf('-') === -1)
+                            continue;
+                        if (lang in axis)
+                            return axis[lang];
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (locHint_1_1 && !locHint_1_1.done && (_a = locHint_1["return"])) _a.call(locHint_1);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+                return "Unlocalized Axis " + JSON.stringify(id);
+            }
+            metadata.getAxisLabel = getAxisLabel;
+            function getGamepadAxisLabel(gamepad, index, locHint) {
+                if (locHint === void 0) { locHint = navigator.languages; }
+                var a = metadata.getDeviceAxises(gamepad);
+                return (0 <= index && index < a.length) ? getAxisLabel(a[index], locHint) : undefined;
+            }
+            metadata.getGamepadAxisLabel = getGamepadAxisLabel;
+        })(metadata = gamepad_4.metadata || (gamepad_4.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad_5) {
+        var metadata;
+        (function (metadata) {
+            var buttons = {};
+            function registerButtons(newButtons) {
+                for (var id in newButtons) {
+                    var value = newButtons[id];
+                    console.assert(!(id in buttons));
+                    buttons[id] = (typeof value === "string") ? { "fallback": value } : value;
+                }
+            }
+            metadata.registerButtons = registerButtons;
+            function getButtonLabel(id, locHint) {
+                var e_3, _a;
+                if (locHint === void 0) { locHint = navigator.languages; }
+                for (var button = buttons[id]; button;) {
+                    try {
+                        for (var locHint_2 = __values(locHint), locHint_2_1 = locHint_2.next(); !locHint_2_1.done; locHint_2_1 = locHint_2.next()) {
+                            var lang = locHint_2_1.value;
+                            if (lang.indexOf('-') === -1)
+                                continue;
+                            if (lang in button)
+                                return button[lang];
+                        }
+                    }
+                    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+                    finally {
+                        try {
+                            if (locHint_2_1 && !locHint_2_1.done && (_a = locHint_2["return"])) _a.call(locHint_2);
+                        }
+                        finally { if (e_3) throw e_3.error; }
+                    }
+                    if (!("fallback" in button))
+                        break;
+                    var old = button;
+                    button = buttons[button.fallback];
+                    if (!button)
+                        return JSON.stringify(id) + " w/ missing fallback " + JSON.stringify(old.fallback);
+                }
+                return "Unlocalized Button " + JSON.stringify(id);
+            }
+            metadata.getButtonLabel = getButtonLabel;
+            function getGamepadButtonLabel(gamepad, index, locHint) {
+                if (locHint === void 0) { locHint = navigator.languages; }
+                var b = metadata.getDeviceButtons(gamepad);
+                return (0 <= index && index < b.length) ? getButtonLabel(b[index], locHint) : undefined;
+            }
+            metadata.getGamepadButtonLabel = getGamepadButtonLabel;
+        })(metadata = gamepad_5.metadata || (gamepad_5.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            var deviceTypes = {};
+            function registerDeviceType(deviceType, information) {
+                console.assert(!(deviceType in deviceTypes));
+                deviceTypes[deviceType] = information;
+            }
+            metadata.registerDeviceType = registerDeviceType;
+            var devices = {};
+            function registerDevice(vendorId, productId, deviceType, description) {
+                var id = vendorId + "-" + productId;
+                console.assert(!(id in devices));
+                devices[id] = { deviceType: deviceType, description: description };
+            }
+            metadata.registerDevice = registerDevice;
+            function isGamepad(target) { return !(("vendor" in target) && ("product" in target)); }
+            function isDeviceType(target) { return typeof target === "string"; }
+            function ids(target) { return isGamepad(target) ? gamepad.parseGamepadId(target.id) : target; }
+            function vpid(target) {
+                var _a = ids(target), vendor = _a.vendor, product = _a.product;
+                return vendor + "-" + product;
+            }
+            function getDeviceLabel(target, locHint) {
+                var e_4, _a;
+                if (locHint === void 0) { locHint = navigator.languages; }
+                var device = devices[vpid(target)];
+                if (!device)
+                    return isGamepad(target) ? target.id : "Unknown Device " + JSON.stringify(target);
+                try {
+                    for (var locHint_3 = __values(locHint), locHint_3_1 = locHint_3.next(); !locHint_3_1.done; locHint_3_1 = locHint_3.next()) {
+                        var lang = locHint_3_1.value;
+                        if (lang in device.description)
+                            return device.description[lang];
+                    }
+                }
+                catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                finally {
+                    try {
+                        if (locHint_3_1 && !locHint_3_1.done && (_a = locHint_3["return"])) _a.call(locHint_3);
+                    }
+                    finally { if (e_4) throw e_4.error; }
+                }
+                return device.description["en-US"]; // Final fallback
+            }
+            metadata.getDeviceLabel = getDeviceLabel;
+            function getDeviceType(target) {
+                if (isDeviceType(target))
+                    return target;
+                var device = devices[vpid(target)];
+                return device ? device.deviceType
+                    : (isGamepad(target) && target.mapping === "standard") ? "gamepad-unknown"
+                        : "unknown-unknown";
+            }
+            metadata.getDeviceType = getDeviceType;
+            function getDeviceButtons(target) {
+                var type = deviceTypes[getDeviceType(target)];
+                if (!type)
+                    return []; // Unknown as heck
+                return type.buttons;
+            }
+            metadata.getDeviceButtons = getDeviceButtons;
+            function getDeviceAxises(target) {
+                var type = deviceTypes[getDeviceType(target)];
+                if (!type)
+                    return []; // Unknown as heck
+                return type.axises;
+            }
+            metadata.getDeviceAxises = getDeviceAxises;
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            metadata.registerButtons({
+                "gamepad-facepad-down": { "en-US": "Face Down (A?) Button" },
+                "gamepad-facepad-right": { "en-US": "Face Right (B?) Button" },
+                "gamepad-facepad-left": { "en-US": "Face Left (X?) Button" },
+                "gamepad-facepad-up": { "en-US": "Face Up (Y?) Button" },
+                "gamepad-left-bumper": { "en-US": "Left Bumper" },
+                "gamepad-right-bumper": { "en-US": "Right Bumper" },
+                "gamepad-left-trigger": { "en-US": "Left Trigger" },
+                "gamepad-right-trigger": { "en-US": "Right Trigger" },
+                "gamepad-face-left": { "en-US": "Left Face (Back)" },
+                "gamepad-face-right": { "en-US": "Right Face (Start)" },
+                "gamepad-logo": { "en-US": "Gamepad Logo" },
+                "gamepad-left-stick-click": { "en-US": "Left Stick Click" },
+                "gamepad-right-stick-click": { "en-US": "Right Stick Click" },
+                "gamepad-dpad-up": { "en-US": "D-Pad Up" },
+                "gamepad-dpad-down": { "en-US": "D-Pad Down" },
+                "gamepad-dpad-left": { "en-US": "D-Pad Left" },
+                "gamepad-dpad-right": { "en-US": "D-Pad Right" }
+            });
+            metadata.regsiterAxises({
+                "gamepad-left-thumb-x": { "range": "11", "min": "left", "max": "right", "en-US": "Left Thumbstick X Axis", "stick": "gamepad-left-thumb" },
+                "gamepad-left-thumb-y": { "range": "11", "min": "up", "max": "down", "en-US": "Left Thumbstick Y Axis", "stick": "gamepad-left-thumb" },
+                "gamepad-right-thumb-x": { "range": "11", "min": "left", "max": "right", "en-US": "Right Thumbstick X Axis", "stick": "gamepad-right-thumb" },
+                "gamepad-right-thumb-y": { "range": "11", "min": "up", "max": "down", "en-US": "Right Thumbstick Y Axis", "stick": "gamepad-right-thumb" }
+            });
+            metadata.registerDeviceType("gamepad-unknown", {
+                "buttons": [
+                    "gamepad-facepad-down",
+                    "gamepad-facepad-right",
+                    "gamepad-facepad-left",
+                    "gamepad-facepad-up",
+                    "gamepad-left-bumper",
+                    "gamepad-right-bumper",
+                    "gamepad-left-trigger",
+                    "gamepad-right-trigger",
+                    "gamepad-face-left",
+                    "gamepad-face-right",
+                    "gamepad-left-stick-click",
+                    "gamepad-right-stick-click",
+                    "gamepad-dpad-up",
+                    "gamepad-dpad-down",
+                    "gamepad-dpad-left",
+                    "gamepad-dpad-right",
+                    "gamepad-logo",
+                ],
+                "axises": [
+                    "gamepad-left-thumb-x",
+                    "gamepad-left-thumb-y",
+                    "gamepad-right-thumb-x",
+                    "gamepad-right-thumb-y",
+                ]
+            });
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            metadata.registerButtons({
+                "gamepad-ds3-cross": "gamepad-sony-cross",
+                "gamepad-ds3-circle": "gamepad-sony-circle",
+                "gamepad-ds3-square": "gamepad-sony-square",
+                "gamepad-ds3-triangle": "gamepad-sony-triangle",
+                "gamepad-ds3-l1": "gamepad-sony-l1",
+                "gamepad-ds3-r1": "gamepad-sony-r1",
+                "gamepad-ds3-l2": "gamepad-sony-l2",
+                "gamepad-ds3-r2": "gamepad-sony-r2",
+                "gamepad-ds3-select": "gamepad-sony-select",
+                "gamepad-ds3-start": "gamepad-sony-start",
+                "gamepad-ds3-playstation": "gamepad-sony-playstation",
+                "gamepad-ds3-l3": "gamepad-sony-l3",
+                "gamepad-ds3-r3": "gamepad-sony-r3"
+            });
+            metadata.registerDeviceType("gamepad-ds3", {
+                "buttons": [
+                    "gamepad-ds3-cross",
+                    "gamepad-ds3-circle",
+                    "gamepad-ds3-square",
+                    "gamepad-ds3-triangle",
+                    "gamepad-ds3-l1",
+                    "gamepad-ds3-r1",
+                    "gamepad-ds3-l2",
+                    "gamepad-ds3-r2",
+                    "gamepad-ds3-select",
+                    "gamepad-ds3-start",
+                    "gamepad-ds3-l3",
+                    "gamepad-ds3-r3",
+                    "gamepad-sony-dpad-up",
+                    "gamepad-sony-dpad-down",
+                    "gamepad-sony-dpad-left",
+                    "gamepad-sony-dpad-right",
+                    "gamepad-ds3-playstation",
+                ],
+                "axises": [
+                    "gamepad-left-thumb-x",
+                    "gamepad-left-thumb-y",
+                    "gamepad-right-thumb-x",
+                    "gamepad-right-thumb-y",
+                ]
+            });
+            metadata.registerDevice("054c", "0268", "gamepad-ds3", { "en-US": "DualShock 3 Controller" }); // aka "Sixaxis" / "PlayStation 3 Controller"
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            metadata.registerButtons({
+                "gamepad-ds4-cross": "gamepad-sony-cross",
+                "gamepad-ds4-circle": "gamepad-sony-circle",
+                "gamepad-ds4-square": "gamepad-sony-square",
+                "gamepad-ds4-triangle": "gamepad-sony-triangle",
+                "gamepad-ds4-l1": "gamepad-sony-l1",
+                "gamepad-ds4-r1": "gamepad-sony-r1",
+                "gamepad-ds4-l2": "gamepad-sony-l2",
+                "gamepad-ds4-r2": "gamepad-sony-r2",
+                "gamepad-ds4-share": { "fallback": "gamepad-sony-select", "en-US": "SHARE" },
+                "gamepad-ds4-options": { "fallback": "gamepad-sony-start", "en-US": "OPTIONS" },
+                "gamepad-ds4-playstation": "gamepad-sony-playstation",
+                "gamepad-ds4-l3": "gamepad-sony-l3",
+                "gamepad-ds4-r3": "gamepad-sony-r3",
+                "gamepad-ds4-touchpad": "gamepad-sony-touchpad"
+            });
+            metadata.registerDeviceType("gamepad-ds4", {
+                "buttons": [
+                    "gamepad-ds4-cross",
+                    "gamepad-ds4-circle",
+                    "gamepad-ds4-square",
+                    "gamepad-ds4-triangle",
+                    "gamepad-ds4-l1",
+                    "gamepad-ds4-r1",
+                    "gamepad-ds4-l2",
+                    "gamepad-ds4-r2",
+                    "gamepad-ds4-share",
+                    "gamepad-ds4-options",
+                    "gamepad-ds4-l3",
+                    "gamepad-ds4-r3",
+                    "gamepad-sony-dpad-up",
+                    "gamepad-sony-dpad-down",
+                    "gamepad-sony-dpad-left",
+                    "gamepad-sony-dpad-right",
+                    "gamepad-ds4-playstation",
+                    "gamepad-ds4-touchpad",
+                ],
+                "axises": [
+                    "gamepad-left-thumb-x",
+                    "gamepad-left-thumb-y",
+                    "gamepad-right-thumb-x",
+                    "gamepad-right-thumb-y",
+                ]
+            });
+            metadata.registerDevice("054c", "054c", "gamepad-ds4", { "en-US": "DualShock 4 Controller" });
+            metadata.registerDevice("054c", "09cc", "gamepad-ds4", { "en-US": "DualShock 4 Controller (2nd Gen)" });
+            metadata.registerDevice("054c", "0ba0", "gamepad-ds4", { "en-US": "DualShock 4 Wireless Adapter" });
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            metadata.registerButtons({
+                "gamepad-microsoft-a": { "en-US": "A Button", "fallback": "gamepad-facepad-down" },
+                "gamepad-microsoft-b": { "en-US": "B Button", "fallback": "gamepad-facepad-right" },
+                "gamepad-microsoft-x": { "en-US": "X Button", "fallback": "gamepad-facepad-left" },
+                "gamepad-microsoft-y": { "en-US": "Y Button", "fallback": "gamepad-facepad-up" },
+                "gamepad-microsoft-left-bumper": { "en-US": "Left Bumper", "fallback": "gamepad-left-bumper" },
+                "gamepad-microsoft-right-bumper": { "en-US": "Right Bumper", "fallback": "gamepad-right-bumper" },
+                "gamepad-microsoft-left-trigger": { "en-US": "Left Trigger", "fallback": "gamepad-left-trigger" },
+                "gamepad-microsoft-right-trigger": { "en-US": "Right Trigger", "fallback": "gamepad-right-trigger" },
+                "gamepad-microsoft-back": { "en-US": "Back Button", "fallback": "gamepad-face-left" },
+                "gamepad-microsoft-start": { "en-US": "Start Button", "fallback": "gamepad-face-right" },
+                "gamepad-microsoft-guide": { "en-US": "Guide Button", "fallback": "gamepad-logo" },
+                "gamepad-microsoft-left-stick-click": { "en-US": "Left Stick Click", "fallback": "gamepad-left-stick-click" },
+                "gamepad-microsoft-right-stick-click": { "en-US": "Right Stick Click", "fallback": "gamepad-right-stick-click" },
+                "gamepad-microsoft-dpad-up": "gamepad-dpad-up",
+                "gamepad-microsoft-dpad-down": "gamepad-dpad-down",
+                "gamepad-microsoft-dpad-left": "gamepad-dpad-left",
+                "gamepad-microsoft-dpad-right": "gamepad-dpad-right"
+            });
+            metadata.registerDeviceType("gamepad-xinput", {
+                "buttons": [
+                    "gamepad-microsoft-a",
+                    "gamepad-microsoft-b",
+                    "gamepad-microsoft-x",
+                    "gamepad-microsoft-y",
+                    "gamepad-left-bumper",
+                    "gamepad-right-bumper",
+                    "gamepad-left-trigger",
+                    "gamepad-right-trigger",
+                    "gamepad-microsoft-back",
+                    "gamepad-microsoft-start",
+                    "gamepad-left-stick-click",
+                    "gamepad-right-stick-click",
+                    "gamepad-dpad-up",
+                    "gamepad-dpad-down",
+                    "gamepad-dpad-left",
+                    "gamepad-dpad-right",
+                    "gamepad-microsoft-guide",
+                ],
+                "axises": [
+                    "gamepad-left-thumb-x",
+                    "gamepad-left-thumb-y",
+                    "gamepad-right-thumb-x",
+                    "gamepad-right-thumb-y",
+                ]
+            });
+            metadata.registerDevice("", "", "gamepad-xinput", { "en-US": "Xbox Style Gamepad (XInput)" });
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            metadata.registerButtons({
+                "gamepad-sony-cross": { "en-US": "Cross", "fallback": "gamepad-facepad-down" },
+                "gamepad-sony-circle": { "en-US": "Circle", "fallback": "gamepad-facepad-right" },
+                "gamepad-sony-square": { "en-US": "Square", "fallback": "gamepad-facepad-left" },
+                "gamepad-sony-triangle": { "en-US": "Triangle", "fallback": "gamepad-facepad-up" },
+                "gamepad-sony-l1": { "en-US": "L1 Bumper", "fallback": "gamepad-left-bumper" },
+                "gamepad-sony-r1": { "en-US": "R1 Bumper", "fallback": "gamepad-right-bumper" },
+                "gamepad-sony-l2": { "en-US": "L2 Trigger", "fallback": "gamepad-left-trigger" },
+                "gamepad-sony-r2": { "en-US": "R2 Trigger", "fallback": "gamepad-right-trigger" },
+                "gamepad-sony-select": { "en-US": "Select", "fallback": "gamepad-face-left" },
+                "gamepad-sony-start": { "en-US": "Start", "fallback": "gamepad-face-right" },
+                "gamepad-sony-playstation": { "en-US": "PS Button", "fallback": "gamepad-logo" },
+                "gamepad-sony-l3": { "en-US": "L3 Thumbstick", "fallback": "gamepad-left-stick-click" },
+                "gamepad-sony-r3": { "en-US": "R3 Thumbstick", "fallback": "gamepad-right-stick-click" },
+                "gamepad-sony-touchpad": { "en-US": "Touchpad Button" },
+                "gamepad-sony-dpad-up": "gamepad-dpad-up",
+                "gamepad-sony-dpad-down": "gamepad-dpad-down",
+                "gamepad-sony-dpad-left": "gamepad-dpad-left",
+                "gamepad-sony-dpad-right": "gamepad-dpad-right"
+            });
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            metadata.registerButtons({
+                "gamepad-xbox-a": "gamepad-microsoft-a",
+                "gamepad-xbox-b": "gamepad-microsoft-b",
+                "gamepad-xbox-x": "gamepad-microsoft-x",
+                "gamepad-xbox-y": "gamepad-microsoft-y",
+                "gamepad-xbox-left-bumper": "gamepad-microsoft-left-bumper",
+                "gamepad-xbox-right-bumper": "gamepad-microsoft-right-bumper",
+                "gamepad-xbox-left-trigger": "gamepad-microsoft-left-trigger",
+                "gamepad-xbox-right-trigger": "gamepad-microsoft-right-trigger",
+                "gamepad-xbox-back": "gamepad-microsoft-back",
+                "gamepad-xbox-start": "gamepad-microsoft-start",
+                "gamepad-xbox-guide": "gamepad-microsoft-guide",
+                "gamepad-xbox-left-stick-click": "gamepad-microsoft-left-stick-click",
+                "gamepad-xbox-right-stick-click": "gamepad-microsoft-right-stick-click"
+            });
+            metadata.registerDeviceType("gamepad-xbox", {
+                "buttons": [
+                    "gamepad-xbox-a",
+                    "gamepad-xbox-b",
+                    "gamepad-xbox-x",
+                    "gamepad-xbox-y",
+                    "gamepad-xbox-left-bumper",
+                    "gamepad-xbox-right-bumper",
+                    "gamepad-xbox-left-trigger",
+                    "gamepad-xbox-right-trigger",
+                    "gamepad-xbox-back",
+                    "gamepad-xbox-start",
+                    "gamepad-xbox-left-stick-click",
+                    "gamepad-xbox-right-stick-click",
+                    "gamepad-microsoft-dpad-up",
+                    "gamepad-microsoft-dpad-down",
+                    "gamepad-microsoft-dpad-left",
+                    "gamepad-microsoft-dpad-right",
+                    "gamepad-xbox-guide",
+                ],
+                "axises": [
+                    "gamepad-left-thumb-x",
+                    "gamepad-left-thumb-y",
+                    "gamepad-right-thumb-x",
+                    "gamepad-right-thumb-y",
+                ]
+            });
+            metadata.registerDevice("045e", "0202", "gamepad-xbox", { "en-US": "Xbox Controller" });
+            metadata.registerDevice("045e", "0285", "gamepad-xbox", { "en-US": "Xbox Controller S" });
+            metadata.registerDevice("045e", "0289", "gamepad-xbox", { "en-US": "Xbox Controller S" });
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            metadata.registerButtons({
+                "gamepad-xb360-a": "gamepad-microsoft-a",
+                "gamepad-xb360-b": "gamepad-microsoft-b",
+                "gamepad-xb360-x": "gamepad-microsoft-x",
+                "gamepad-xb360-y": "gamepad-microsoft-y",
+                "gamepad-xb360-left-bumper": "gamepad-microsoft-left-bumper",
+                "gamepad-xb360-right-bumper": "gamepad-microsoft-right-bumper",
+                "gamepad-xb360-left-trigger": "gamepad-microsoft-left-trigger",
+                "gamepad-xb360-right-trigger": "gamepad-microsoft-right-trigger",
+                "gamepad-xb360-back": "gamepad-microsoft-back",
+                "gamepad-xb360-start": "gamepad-microsoft-start",
+                "gamepad-xb360-guide": "gamepad-microsoft-guide",
+                "gamepad-xb360-left-stick-click": "gamepad-microsoft-left-stick-click",
+                "gamepad-xb360-right-stick-click": "gamepad-microsoft-right-stick-click"
+            });
+            metadata.registerDeviceType("gamepad-xb360", {
+                "buttons": [
+                    "gamepad-xb360-a",
+                    "gamepad-xb360-b",
+                    "gamepad-xb360-x",
+                    "gamepad-xb360-y",
+                    "gamepad-xb360-left-bumper",
+                    "gamepad-xb360-right-bumper",
+                    "gamepad-xb360-left-trigger",
+                    "gamepad-xb360-right-trigger",
+                    "gamepad-xb360-back",
+                    "gamepad-xb360-start",
+                    "gamepad-xb360-left-stick-click",
+                    "gamepad-xb360-right-stick-click",
+                    "gamepad-microsoft-dpad-up",
+                    "gamepad-microsoft-dpad-down",
+                    "gamepad-microsoft-dpad-left",
+                    "gamepad-microsoft-dpad-right",
+                    "gamepad-xb360-guide",
+                ],
+                "axises": [
+                    "gamepad-left-thumb-x",
+                    "gamepad-left-thumb-y",
+                    "gamepad-right-thumb-x",
+                    "gamepad-right-thumb-y",
+                ]
+            });
+            metadata.registerDevice("045e", "028e", "gamepad-xb360", { "en-US": "Xbox 360 Controller" });
+            metadata.registerDevice("045e", "028f", "gamepad-xb360", { "en-US": "Xbox 360 Wireless Controller" });
+            metadata.registerDevice("045e", "0291", "gamepad-xb360", { "en-US": "Xbox 360 Wireless Receiver for Windows" });
+            metadata.registerDevice("045e", "02a1", "gamepad-xb360", { "en-US": "Xbox 360 Wireless Receiver for Windows" });
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            metadata.registerButtons({
+                "gamepad-xbone-a": "gamepad-microsoft-a",
+                "gamepad-xbone-b": "gamepad-microsoft-b",
+                "gamepad-xbone-x": "gamepad-microsoft-x",
+                "gamepad-xbone-y": "gamepad-microsoft-y",
+                "gamepad-xbone-left-bumper": "gamepad-microsoft-left-bumper",
+                "gamepad-xbone-right-bumper": "gamepad-microsoft-right-bumper",
+                "gamepad-xbone-left-trigger": "gamepad-microsoft-left-trigger",
+                "gamepad-xbone-right-trigger": "gamepad-microsoft-right-trigger",
+                "gamepad-xbone-view": { "fallback": "gamepad-microsoft-back", "en-US": "View Button" },
+                "gamepad-xbone-menu": { "fallback": "gamepad-microsoft-start", "en-US": "Menu Button" },
+                "gamepad-xbone-xbox": { "fallback": "gamepad-microsoft-guide", "en-US": "Xbox Button" },
+                "gamepad-xbone-left-stick-click": "gamepad-microsoft-left-stick-click",
+                "gamepad-xbone-right-stick-click": "gamepad-microsoft-right-stick-click"
+            });
+            metadata.registerDeviceType("gamepad-xbone", {
+                "buttons": [
+                    "gamepad-xbone-a",
+                    "gamepad-xbone-b",
+                    "gamepad-xbone-x",
+                    "gamepad-xbone-y",
+                    "gamepad-xbone-left-bumper",
+                    "gamepad-xbone-right-bumper",
+                    "gamepad-xbone-left-trigger",
+                    "gamepad-xbone-right-trigger",
+                    "gamepad-xbone-view",
+                    "gamepad-xbone-menu",
+                    "gamepad-xbone-left-stick-click",
+                    "gamepad-xbone-right-stick-click",
+                    "gamepad-microsoft-dpad-up",
+                    "gamepad-microsoft-dpad-down",
+                    "gamepad-microsoft-dpad-left",
+                    "gamepad-microsoft-dpad-right",
+                    "gamepad-xbone-xbox",
+                ],
+                "axises": [
+                    "gamepad-left-thumb-x",
+                    "gamepad-left-thumb-y",
+                    "gamepad-right-thumb-x",
+                    "gamepad-right-thumb-y",
+                ]
+            });
+            metadata.registerDevice("045e", "02d1", "gamepad-xbone", { "en-US": "Xbox One Controller" });
+            metadata.registerDevice("045e", "02dd", "gamepad-xbone", { "en-US": "Xbox One Controller" }); // Firmware 2015
+            metadata.registerDevice("045e", "02e3", "gamepad-xbone", { "en-US": "Xbox One Elite Controller" });
+            metadata.registerDevice("045e", "02e6", "gamepad-xbone", { "en-US": "Wireless XBox Controller Dongle" });
+            metadata.registerDevice("045e", "02ea", "gamepad-xbone", { "en-US": "Xbox One S Controller" });
+            metadata.registerDevice("045e", "02fd", "gamepad-xbone", { "en-US": "Xbox One S Controller (Bluetooth)" });
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            metadata.registerButtons({
+                // XXX: Should probably add some "joystick-*" fallbacks eventually
+                "saitek-x52-trigger-half": { "en-US": "Joystick Half Trigger" },
+                "saitek-x52-fire": { "en-US": "Joystick Fire Button" },
+                "saitek-x52-a": { "en-US": "Joystick A Button" },
+                "saitek-x52-b": { "en-US": "Joystick B Button" },
+                "saitek-x52-c": { "en-US": "Joystick C Button" },
+                "saitek-x52-trigger-pinky": { "en-US": "Joystick Pinky Trigger" },
+                "saitek-x52-d": { "en-US": "Throttle D Button" },
+                "saitek-x52-e": { "en-US": "Throttle E Button" },
+                "saitek-x52-t1": { "en-US": "T1" },
+                "saitek-x52-t2": { "en-US": "T2" },
+                "saitek-x52-t3": { "en-US": "T3" },
+                "saitek-x52-t4": { "en-US": "T4" },
+                "saitek-x52-t5": { "en-US": "T5" },
+                "saitek-x52-t6": { "en-US": "T6" },
+                "saitek-x52-trigger-full": { "en-US": "Joystick Full Trigger" },
+                "saitek-x52-hat-alt-up": { "en-US": "Alternate Hat: Up" },
+                "saitek-x52-hat-alt-right": { "en-US": "Alternate Hat: Right" },
+                "saitek-x52-hat-alt-down": { "en-US": "Alternate Hat: Down" },
+                "saitek-x52-hat-alt-left": { "en-US": "Alternate Hat: Left" },
+                "saitek-x52-hat-throttle-up": { "en-US": "Throttle Hat: Up" },
+                "saitek-x52-hat-throttle-right": { "en-US": "Throttle Hat: Right" },
+                "saitek-x52-hat-throttle-down": { "en-US": "Throttle Hat: Down" },
+                "saitek-x52-hat-throttle-left": { "en-US": "Throttle Hat: Left" },
+                "saitek-x52-mode-1": { "en-US": "Mode Dial: 1 (Down/White)" },
+                "saitek-x52-mode-2": { "en-US": "Mode Dial: 2 (Middle/Orange)" },
+                "saitek-x52-mode-3": { "en-US": "Mode Dial: 3 (Up/Red)" },
+                "saitek-x52-mfd-function": { "en-US": "MFD Button: Function" },
+                "saitek-x52-mfd-up": { "en-US": "MFD Button: Down / Start / Stop" },
+                "saitek-x52-mfd-down": { "en-US": "MFD Button: Up / Reset" },
+                "saitek-x52-i": { "en-US": "Throttle i Button" },
+                "saitek-x52-mouse-click": { "en-US": "Left Mouse (Throttle)" },
+                "saitek-x52-mouse-wheel": { "en-US": "Mouse Wheel (Throttle)" },
+                "saitek-x52-mouse-wheel-down": { "en-US": "Mouse Wheel Forward / Down" },
+                "saitek-x52-mouse-wheel-up": { "en-US": "Mouse Wheel Back / Up" },
+                // Synthetic Buttons
+                "saitek-x52-hat-thumb-up": { "en-US": "Joystick Hat: Up" },
+                "saitek-x52-hat-thumb-right": { "en-US": "Joystick Hat: Right" },
+                "saitek-x52-hat-thumb-down": { "en-US": "Joystick Hat: Down" },
+                "saitek-x52-hat-thumb-left": { "en-US": "Joystick Hat: Left" }
+            });
+            metadata.regsiterAxises({
+                "saitek-x52-joystick-x": { "range": "11", "min": "left", "max": "right", "en-US": "Joystick X Axis", "stick": "saitek-x52-joystick" },
+                "saitek-x52-joystick-y": { "range": "11", "min": "forward", "max": "backward", "en-US": "Joystick Y Axis", "stick": "saitek-x52-joystick" },
+                "saitek-x52-throttle": { "range": "11", "min": "forward", "max": "backward", "en-US": "Throttle" },
+                "saitek-x52-i-dial": { "range": "11", "min": "ccw", "max": "cw", "en-US": "Throttle (i) Dial" },
+                "saitek-x52-e-dial": { "range": "11", "min": "ccw", "max": "cw", "en-US": "Throttle (E) Dial" },
+                "saitek-x52-joystick-twist": { "range": "11", "min": "ccw", "max": "cw", "en-US": "Joystick Twist Axis", "stick": "saitek-x52-joystick" },
+                "saitek-x52-throttle-thumb-slider": { "range": "11", "min": "forward", "max": "backward", "en-US": "Throttle Thumb Slider" },
+                "saitek-x52-mouse-x": { "range": "11", "min": "left", "max": "right", "en-US": "Throttle Mouse X Axis", "stick": "saitek-x52-mouse" },
+                "saitek-x52-mouse-y": { "range": "11", "min": "up", "max": "down", "en-US": "Throttle Mouse Y Axis", "stick": "saitek-x52-mouse" }
+            });
+            // XXX: Note: HAT button order:                     Up Right Down Left
+            // Doesn't match "standard" gamepad dpad orders:    Up Down Left Right
+            metadata.registerDeviceType("saitek-x52", {
+                "buttons": [
+                    "saitek-x52-trigger-half",
+                    "saitek-x52-fire",
+                    "saitek-x52-a",
+                    "saitek-x52-b",
+                    "saitek-x52-c",
+                    "saitek-x52-trigger-pinky",
+                    "saitek-x52-d",
+                    "saitek-x52-e",
+                    "saitek-x52-t1",
+                    "saitek-x52-t2",
+                    "saitek-x52-t3",
+                    "saitek-x52-t4",
+                    "saitek-x52-t5",
+                    "saitek-x52-t6",
+                    "saitek-x52-trigger-full",
+                    "saitek-x52-hat-alt-up",
+                    "saitek-x52-hat-alt-right",
+                    "saitek-x52-hat-alt-down",
+                    "saitek-x52-hat-alt-left",
+                    "saitek-x52-hat-throttle-up",
+                    "saitek-x52-hat-throttle-right",
+                    "saitek-x52-hat-throttle-down",
+                    "saitek-x52-hat-throttle-left",
+                    "saitek-x52-mode-1",
+                    "saitek-x52-mode-2",
+                    "saitek-x52-mode-3",
+                    "saitek-x52-mfd-function",
+                    "saitek-x52-mfd-up",
+                    "saitek-x52-mfd-down",
+                    "saitek-x52-i",
+                    "saitek-x52-mouse-click",
+                    "saitek-x52-mouse-wheel",
+                    "saitek-x52-mouse-wheel-down",
+                    "saitek-x52-mouse-wheel-up",
+                    // Synthetic Buttons
+                    "saitek-x52-hat-thumb-up",
+                    "saitek-x52-hat-thumb-right",
+                    "saitek-x52-hat-thumb-down",
+                    "saitek-x52-hat-thumb-left",
+                ],
+                "axises": [
+                    "saitek-x52-joystick-x",
+                    "saitek-x52-joystick-y",
+                    "saitek-x52-throttle",
+                    "saitek-x52-i-dial",
+                    "saitek-x52-e-dial",
+                    "saitek-x52-joystick-twist",
+                    "saitek-x52-throttle-thumb-slider",
+                    "saitek-x52-mouse-x",
+                    "saitek-x52-mouse-y",
+                ]
+            });
+            metadata.registerDevice("06a3", "075c", "saitek-x52", { "en-US": "Saitek X52 Flight Control System" });
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad) {
+        var metadata;
+        (function (metadata) {
+            metadata.registerDeviceType("dead", {
+                "axises": [],
+                "buttons": []
+            });
+            metadata.registerDeviceType("unknown-unknown", {
+                "axises": [],
+                "buttons": []
+            });
+            // registerDeviceType("gamepad-unknown", { ... }); // See gamepad-aaa-generic.ts
+            // registerDeviceType("gamepad-xinput", { ... });  // See gamepad-microsoft.ts
+            metadata.registerDevice("04f3", "0089", "dead", { "en-US": "Unknown Device" }); // Unknown/dead Samsung 940X 2-axis 0-button device.  Probably the touchpad or screen, but interacting with neither causes any axis changes.  Pen tilt?
+        })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
     (function (gamepad_1) {
+        var axises = 11;
+        var buttons = 38;
         function getEntries() {
             var deadZone = document.getElementById("deadzone").checked ? 0.15 : 0;
             var standardize = document.getElementById("standardize").checked;
@@ -11758,49 +12724,69 @@ var mmk;
         }
         function refreshGamepads() {
             var entries = getEntries();
-            var d3entries = d3.select("#mmk-gamepad-demo").selectAll(".gamepad").data(entries);
-            var d3new = d3entries.enter().append("tr").attr("class", "gamepad");
-            d3new.append("td").attr("class", "gamepad-name");
-            d3new.append("td").attr("class", "gamepad-index");
-            d3new.append("td").attr("class", "gamepad-mapping");
-            d3new.append("td").attr("class", "gamepad-connected");
-            d3new.append("td").attr("class", "gamepad-vendor");
-            d3new.append("td").attr("class", "gamepad-product");
-            d3new.append("td").attr("class", "gamepad-hint");
-            for (var i = 0; i < 8; ++i)
-                d3new.append("td").attr("class", "gamepad-axis-" + i);
-            for (var i = 0; i < 20; ++i)
-                d3new.append("td").attr("class", "gamepad-button-" + i);
-            d3entries.exit().remove();
-            d3entries.select(".gamepad-name").text(function (gp) { return gp.parsedIds.name; });
-            d3entries.select(".gamepad-index").text(function (gp) { return gp.display.index; });
-            d3entries.select(".gamepad-mapping").text(function (gp) { return gp.display.mapping; });
-            d3entries.select(".gamepad-connected").text(function (gp) { return gp.display.connected ? "true" : "false"; });
-            d3entries.select(".gamepad-vendor").text(function (gp) { return gp.parsedIds.vendor || "N/A"; });
-            d3entries.select(".gamepad-product").text(function (gp) { return gp.parsedIds.product || "N/A"; });
-            d3entries.select(".gamepad-hint").text(function (gp) { return gp.parsedIds.hint || "N/A"; });
+            var rows = d3.select("#mmk-gamepad-metadata-1-demo").selectAll(".gamepad").data(entries);
+            rows.exit().remove();
+            var newRows = rows.enter().append("tr").attr("class", "gamepad");
+            newRows.append("td").attr("class", "gamepad-name");
+            newRows.append("td").attr("class", "gamepad-index");
+            newRows.append("td").attr("class", "gamepad-mapping");
+            newRows.append("td").attr("class", "gamepad-connected");
+            newRows.append("td").attr("class", "gamepad-label");
+            newRows.append("td").attr("class", "gamepad-vendor");
+            newRows.append("td").attr("class", "gamepad-product");
+            newRows.append("td").attr("class", "gamepad-hint");
+            for (var i = 0; i < axises; ++i)
+                newRows.append("td").attr("class", "gamepad-axis-" + i);
+            updateRows(rows);
+            rows = d3.select("#mmk-gamepad-metadata-2-demo").selectAll(".gamepad").data(entries);
+            rows.exit().remove();
+            newRows = rows.enter().append("tr").attr("class", "gamepad");
+            newRows.append("td").attr("class", "gamepad-name");
+            newRows.append("td").attr("class", "gamepad-index");
+            for (var i = 0; i < buttons; ++i)
+                newRows.append("td").attr("class", "gamepad-button-" + i);
+            updateRows(rows);
+        }
+        function updateRows(rows) {
+            rows.select(".gamepad-name").text(function (gp) { return gp.parsedIds.name; });
+            rows.select(".gamepad-index").text(function (gp) { return gp.display.index; });
+            rows.select(".gamepad-mapping").text(function (gp) { return gp.display.mapping; });
+            rows.select(".gamepad-connected").text(function (gp) { return gp.display.connected ? "true" : "false"; });
+            rows.select(".gamepad-label").text(function (gp) { return mmk.gamepad.metadata.getDeviceLabel(gp.display); });
+            rows.select(".gamepad-vendor").text(function (gp) { return gp.parsedIds.vendor || "N/A"; });
+            rows.select(".gamepad-product").text(function (gp) { return gp.parsedIds.product || "N/A"; });
+            rows.select(".gamepad-hint").text(function (gp) { return gp.parsedIds.hint || "N/A"; });
             var _loop_1 = function (i) {
-                d3entries.select(".gamepad-axis-" + i)
+                rows.select(".gamepad-axis-" + i)
                     .style("background-color", function (gp) { return gamepadAxisFill(gp.display, i); })
                     .text(function (gp) { return gamepadAxisText(gp.display, i); });
             };
-            for (var i = 0; i < 8; ++i) {
+            for (var i = 0; i < axises; ++i) {
                 _loop_1(i);
             }
             var _loop_2 = function (i) {
-                d3entries.select(".gamepad-button-" + i)
+                rows.select(".gamepad-button-" + i)
                     .style("background-color", function (gp) { return gamepadButtonFill(gp.display, i); })
                     .text(function (gp) { return gamepadButtonText(gp.display, i); });
             };
-            for (var i = 0; i < 20; ++i) {
+            for (var i = 0; i < buttons; ++i) {
                 _loop_2(i);
             }
         }
         var eventRows = [];
+        function endsWith(left, right) {
+            return (left.length >= right.length) && (left.substr(left.length - right.length) === right);
+        }
         function refreshEvents() {
-            var keepValueEvents = document.getElementById("keep-value-events").checked;
-            if (!keepValueEvents)
-                eventRows = eventRows.filter(function (row) { return row.type.substr(Math.max(0, row.type.length - 6)) !== "-value"; });
+            var keepButtonValueEvents = document.getElementById("keep-button-value-events").checked;
+            var keepNearZeroEvents = document.getElementById("keep-zero-events").checked;
+            eventRows = eventRows.filter(function (row) {
+                if (!keepButtonValueEvents && endsWith(row.type, "-button-value"))
+                    return false;
+                if (!keepNearZeroEvents && Math.abs(parseFloat(row.value || "1")) < 0.1)
+                    return false;
+                return true;
+            });
             while (eventRows.length > 20)
                 eventRows.shift();
             var d3entries = d3.select("#mmk-gamepad-events-demo").selectAll(".event").data(eventRows);
@@ -11810,12 +12796,14 @@ var mmk;
             d3new.append("td").attr("class", "event-index");
             d3new.append("td").attr("class", "event-held");
             d3new.append("td").attr("class", "event-value");
+            d3new.append("td").attr("class", "event-value-label");
             d3entries.exit().remove();
             d3entries.select(".event-type").text(function (e) { return e.type; });
             d3entries.select(".event-gamepad-index").text(function (e) { return e.gamepadIndex; });
             d3entries.select(".event-index").text(function (e) { return e.index || ""; });
             d3entries.select(".event-held").text(function (e) { return e.held || ""; });
             d3entries.select(".event-value").text(function (e) { return e.value || ""; });
+            d3entries.select(".event-value-label").text(function (e) { return e.valueLabel || ""; });
         }
         function refresh() {
             refreshGamepads();
@@ -11823,18 +12811,15 @@ var mmk;
         }
         if ('d3' in window)
             addEventListener("load", function () {
-                var demo = document.getElementById("mmk-gamepad-demo");
-                if (!demo)
-                    return;
                 refresh();
                 gamepad_1.poll(refresh);
                 if ('addEventListener' in window) {
                     addEventListener("mmk-gamepad-connected", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), value: e.connected ? "connected" : "disconnected" }); });
                     addEventListener("mmk-gamepad-disconnected", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), value: e.connected ? "connected" : "disconnected" }); });
-                    addEventListener("mmk-gamepad-button-down", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2) }); });
-                    addEventListener("mmk-gamepad-button-up", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2) }); });
-                    addEventListener("mmk-gamepad-button-value", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2) }); });
-                    addEventListener("mmk-gamepad-axis-value", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.axisIndex.toString(), value: e.axisValue.toFixed(2) }); });
+                    addEventListener("mmk-gamepad-button-down", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2), valueLabel: gamepad_1.metadata.getGamepadButtonLabel(e.gamepadType, e.buttonIndex) }); });
+                    addEventListener("mmk-gamepad-button-up", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2), valueLabel: gamepad_1.metadata.getGamepadButtonLabel(e.gamepadType, e.buttonIndex) }); });
+                    addEventListener("mmk-gamepad-button-value", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.buttonIndex.toString(), held: e.held ? "held" : "released", value: e.buttonValue.toFixed(2), valueLabel: gamepad_1.metadata.getGamepadButtonLabel(e.gamepadType, e.buttonIndex) }); });
+                    addEventListener("mmk-gamepad-axis-value", function (e) { return eventRows.push({ type: e.type, gamepadIndex: e.gamepadIndex.toString(), index: e.axisIndex.toString(), value: e.axisValue.toFixed(2), valueLabel: gamepad_1.metadata.getGamepadAxisLabel(e.gamepadType, e.axisIndex) }); });
                 }
             });
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));

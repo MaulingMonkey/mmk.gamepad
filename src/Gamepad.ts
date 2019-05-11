@@ -27,6 +27,9 @@ namespace mmk.gamepad {
         readonly value: number;
     }
 
+    /** @hidden - XXX - I'm likely to extend this to include "-mmk-joystick", "-mmk-hotas", or similar? */
+    export type GamepadMappingType = "" | "standard" | "-custom";
+
     /**
      * See also:
      * - https://developer.mozilla.org/en-US/docs/Web/API/Gamepad

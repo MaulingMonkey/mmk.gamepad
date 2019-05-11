@@ -19,7 +19,7 @@ namespace mmk.gamepad {
 	//var assert = (...args : any[]) => {};
 
 	/** @hidden */
-	type RemapXformType = "01-11" | "11-01" | "axis-negative-01" | "axis-positive-01" | "hat-up-bit" | "hat-right-bit" | "hat-down-bit" | "hat-left-bit";
+	type RemapXformType = "constant" | "01-11" | "11-01" | "axis-negative-01" | "axis-positive-01" | "hat-up-bit" | "hat-right-bit" | "hat-down-bit" | "hat-left-bit";
 
 	/** @hidden */
 	interface RemapSrc {
@@ -30,11 +30,11 @@ namespace mmk.gamepad {
 
 	/** @hidden */
 	interface Remap {
+		mapping:  GamepadMappingType;
 		tested?:  string[];
 		matches:  string[];
 		axes:     RemapSrc[];
 		buttons:  RemapSrc[];
-		// TODO: Hats?
 	}
 
 	/** @hidden */
@@ -59,6 +59,11 @@ namespace mmk.gamepad {
 
 	/** @hidden */
 	const buttonXforms : {[id: string]: RemapXform} = {
+		"constant": (src, remap) => {
+			let value = remap.param || 0;
+			let pressed = false;
+			return { value, pressed, touched: pressed };
+		},
 		"11-01": (src, remap) => {
 			let value = src ? (src.value+1)/2 : 0;
 			let pressed = !remap.param ? src.pressed : (value > remap.param);
@@ -80,35 +85,10 @@ namespace mmk.gamepad {
 		"hat-left-bit":  remapXformHat(i => (5 <= i) && (i <= 7))
 	};
 
-	/** @hidden - http://www.linux-usb.org/usb.ids */
-	const vendorProductToName : {[vendor_product: string]: string} = {
-		// Microsoft
-		"045e-0202": "Xbox Controller",
-		"045e-0285": "Xbox Controller S",
-		"045e-0289": "Xbox Controller S",
-
-		"045e-028e": "Xbox 360 Controller",
-		"045e-028f": "Xbox 360 Wireless Controller",
-		"045e-0291": "Xbox 360 Wireless Receiver for Windows",
-		"045e-02a1": "Xbox 360 Wireless Receiver for Windows",
-
-		"045e-02d1": "Xbox One Controller",
-		"045e-02dd": "Xbox One Controller", // Firmware 2015
-		"045e-02e3": "Xbox One Elite Controller",
-		"045e-02e6": "Wireless XBox Controller Dongle",
-		"045e-02ea": "Xbox One S Controller",
-		"045e-02fd": "Xbox One S Controller (Bluetooth)",
-
-		// Sony
-		"054c-0268": "DualShock 3 Controller", // aka "Sixaxis" / "PlayStation 3 Controller"
-		"054c-054c": "DualShock 4 Controller",
-		"054c-09cc": "DualShock 4 Controller (2nd Gen)",
-		"054c-0ba0": "DualShock 4 Wireless Adapter",
-	};
-
 	//const stdRemaps : {[vendProdHintAxesButtons: string]: Remap} = {
 	/** @hidden */
 	const remaps : Remap[] = [{
+		mapping: "standard",
 		tested: ["Windows 7 / Opera 52.0.2871.99"],
 		matches: [
 			"054c-054c-blink-10-14", // DualShock 4
@@ -128,6 +108,7 @@ namespace mmk.gamepad {
 		// Note: Axis 6-8 are ignored (dead)
 		// Note: Button 6 and 7 are ignored (overlaps with axis 3/4 for triggers)
 	},{
+		mapping: "standard",
 		tested: ["Windows 7 / Firefox 62.0a1 (2018-05-09) - DPad busted"],
 		matches: [
 			"054c-054c-gecko-8-18", // DualShock 4
@@ -150,6 +131,7 @@ namespace mmk.gamepad {
 		// Note: Axis 6-7 are ignored (dead)
 		// Note: Button 6 and 7 are ignored (overlaps with axis 3/4 for triggers)
 	},{
+		mapping: "standard",
 		tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
 		matches: [
 			"054c-054c-gecko-8-13", // DualShock 4 Controller
@@ -167,6 +149,7 @@ namespace mmk.gamepad {
 			// No touchpad click - Firefox on Linux remaps the touchpad to the mouse!
 		]
 	},{
+		mapping: "standard",
 		tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
 		matches: [
 			"054c-0268-gecko-6-17", // DualShock 3 / "Sony PLAYSTATION(R)3 Controller"
@@ -181,6 +164,7 @@ namespace mmk.gamepad {
 			{src:"b10"}, // PS Logo Button
 		]
 	},{
+		mapping: "standard",
 		tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
 		matches: [
 			"045e-028e-gecko-8-11", // Microsoft X-Box 360 Pad
@@ -196,6 +180,7 @@ namespace mmk.gamepad {
 			{src:"b8"}, // Xbox Guide Button
 		]
 	},{
+		mapping: "standard",
 		// Did version_number get bumped again maybe?  These are mappings for a "standard" layout
 		// https://cs.chromium.org/chromium/src/device/gamepad/gamepad_standard_mappings_linux.cc?l=573-580
 		tested: ["Ubuntu 18.04 LTS / Chrome 66.0.3359.139"],
@@ -212,6 +197,56 @@ namespace mmk.gamepad {
 			{src:"b12"}, {src:"b13"}, {src:"b14"}, {src:"b15"},
 			// -- end of standard layout
 			{src:"b10"},
+		],
+	},{
+		mapping: "-custom",
+		tested: ["Windows 10 / Chrome 74.0.3729.131"],
+		matches: [
+			"06a3-075c-blink-10-32", // Saitek X52 Flight Control System
+		],
+		axes: [
+			// identity mapped
+			{src:"a0"}, {src:"a1"}, {src:"a2"}, {src:"a3"}, {src:"a4"}, {src:"a5"}, {src:"a6"}, {src:"a8"}, {src:"a7"}
+			// dropped: axis 9 (HAT)
+		],
+		buttons: [
+			// identity mapped
+			{src:"b0"}, {src:"b1"}, {src:"b2"}, {src:"b3"}, {src:"b4"},
+			{src:"b5"}, {src:"b6"}, {src:"b7"}, {src:"b8"}, {src:"b9"},
+			{src:"b10"}, {src:"b11"}, {src:"b12"}, {src:"b13"}, {src:"b14"},
+			{src:"b15"}, {src:"b16"}, {src:"b17"}, {src:"b18"}, {src:"b19"},
+			{src:"b20"}, {src:"b21"}, {src:"b22"}, {src:"b23"}, {src:"b24"},
+			{src:"b25"}, {src:"b26"}, {src:"b27"}, {src:"b28"}, {src:"b29"},
+			{src:"b30"}, {src:"b31"},
+			// Chrome is lacking buttons for mouse wheel
+			{src:"b0", xform:"constant", param: 0},
+			{src:"b0", xform:"constant", param: 0},
+			// Synthetic buttons for missing dpad buttons on Chrome
+			{src:"a9", xform:"hat-up-bit"},
+			{src:"a9", xform:"hat-right-bit"},
+			{src:"a9", xform:"hat-down-bit"},
+			{src:"a9", xform:"hat-left-bit"},
+		],
+	},{
+		mapping: "-custom",
+		tested: ["Windows 10 / FireFox 66.0.5"],
+		matches: [
+			"06a3-075c-gecko-9-38", // Saitek X52 Flight Control System
+		],
+		axes: [
+			// identity mapped
+			{src:"a0"}, {src:"a1"}, {src:"a2"}, {src:"a3"}, {src:"a4"}, {src:"a5"}, {src:"a6"}, {src:"a8"}, {src:"a7"}
+		],
+		buttons: [
+			// identity mapped
+			{src:"b0"}, {src:"b1"}, {src:"b2"}, {src:"b3"}, {src:"b4"},
+			{src:"b5"}, {src:"b6"}, {src:"b7"}, {src:"b8"}, {src:"b9"},
+			{src:"b10"}, {src:"b11"}, {src:"b12"}, {src:"b13"}, {src:"b14"},
+			{src:"b15"}, {src:"b16"}, {src:"b17"}, {src:"b18"}, {src:"b19"},
+			{src:"b20"}, {src:"b21"}, {src:"b22"}, {src:"b23"}, {src:"b24"},
+			{src:"b25"}, {src:"b26"}, {src:"b27"}, {src:"b28"}, {src:"b29"},
+			{src:"b30"}, {src:"b31"}, {src:"b32"}, {src:"b33"},
+			{src:"b34"}, {src:"b35"}, {src:"b36"}, {src:"b37"}, // NOTE: Last 4 buttons are meant to be the HAT, but they're nonfunctional on FireFox.
 		],
 	}];
 
@@ -263,6 +298,7 @@ namespace mmk.gamepad {
 	export function tryRemapStdLayout(gamepad: Gamepad | null): Gamepad | null {
 		if (!gamepad) return gamepad;
 		if (!liesAboutStandardMapping && gamepad.mapping === "standard") return gamepad; // Already remapped
+		if (gamepad.mapping === "-custom") return gamepad; // Already remapped
 
 		let remapGamepad = findStdRemap(gamepad);
 		if (!remapGamepad) return gamepad;
@@ -274,7 +310,7 @@ namespace mmk.gamepad {
 			index:     gamepad.index,
 			timestamp: gamepad.timestamp,
 			connected: gamepad.connected,
-			mapping:   "standard",
+			mapping:   remapGamepad.mapping,
 			axes:      new Array(remapGamepad.axes.length),
 			buttons:   new Array(remapGamepad.buttons.length)
 		};

@@ -53,9 +53,9 @@ namespace mmk.gamepad.metadata {
         "saitek-x52-hat-throttle-right": boolean;
         "saitek-x52-mouse-click": boolean;
         "saitek-x52-mouse-wheel": boolean;
-        "saitek-x52-mode-a": boolean;
-        "saitek-x52-mode-b": boolean;
-        "saitek-x52-mode-c": boolean;
+        "saitek-x52-mode-1": boolean;
+        "saitek-x52-mode-2": boolean;
+        "saitek-x52-mode-3": boolean;
         "saitek-x52-mouse-wheel-down": boolean;
         "saitek-x52-mouse-wheel-up": boolean;
     }
@@ -102,10 +102,9 @@ namespace mmk.gamepad.metadata {
         "saitek-x52-hat-throttle-right":    { "en-US": "Throttle Hat: Right"              },
         "saitek-x52-hat-throttle-down":     { "en-US": "Throttle Hat: Down"               },
         "saitek-x52-hat-throttle-left":     { "en-US": "Throttle Hat: Left"               },
-        // XXX Mode A-C: Is this how we want things mapped?
-        "saitek-x52-mode-a":                { "en-US": "Mode Dial: Down (White)"          },
-        "saitek-x52-mode-b":                { "en-US": "Mode Dial: Middle (Orange)"       },
-        "saitek-x52-mode-c":                { "en-US": "Mode Dial: Up (Red)"              },
+        "saitek-x52-mode-1":                { "en-US": "Mode Dial: 1 (Down/White)"        },
+        "saitek-x52-mode-2":                { "en-US": "Mode Dial: 2 (Middle/Orange)"     },
+        "saitek-x52-mode-3":                { "en-US": "Mode Dial: 3 (Up/Red)"            },
         "saitek-x52-mfd-function":          { "en-US": "MFD Button: Function"             },
         "saitek-x52-mfd-up":                { "en-US": "MFD Button: Down / Start / Stop"  },
         "saitek-x52-mfd-down":              { "en-US": "MFD Button: Up / Reset"           },
@@ -160,17 +159,17 @@ namespace mmk.gamepad.metadata {
             "saitek-x52-hat-throttle-right",
             "saitek-x52-hat-throttle-down",
             "saitek-x52-hat-throttle-left",
-            "saitek-x52-mode-a", // XXX: Is this how we want things map?
-            "saitek-x52-mode-b",
-            "saitek-x52-mode-c",
+            "saitek-x52-mode-1",
+            "saitek-x52-mode-2",
+            "saitek-x52-mode-3",
             "saitek-x52-mfd-function",
             "saitek-x52-mfd-up",
             "saitek-x52-mfd-down",
             "saitek-x52-i",
             "saitek-x52-mouse-click",
             "saitek-x52-mouse-wheel",
-            "saitek-x52-mouse-wheel-down", // N/A in Chrome
-            "saitek-x52-mouse-wheel-up",   // N/A in Chrome
+            "saitek-x52-mouse-wheel-down", // N/A in Chrome/Opera
+            "saitek-x52-mouse-wheel-up",   // N/A in Chrome/Opera
             // Synthetic Buttons
             "saitek-x52-hat-thumb-up",    // N/A in FireFox
             "saitek-x52-hat-thumb-right", // N/A in FireFox

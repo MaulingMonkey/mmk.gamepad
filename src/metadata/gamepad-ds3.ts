@@ -79,4 +79,21 @@ namespace mmk.gamepad.metadata {
     });
 
     registerDevice("054c", "0268", "gamepad-ds3", { "en-US": "DualShock 3 Controller" }); // aka "Sixaxis" / "PlayStation 3 Controller"
+
+    registerRemap({
+        "mapping": "standard",
+        "tested": ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+        "matches": [
+            "054c-0268-gecko-6-17", // DualShock 3 / "Sony PLAYSTATION(R)3 Controller"
+        ],
+        "axes": [{"src":"a0"}, {"src":"a1"}, {"src":"a3"}, {"src":"a4"}], // Left Stick X (+Right), Left Stick Y (+Down), Right Stick X (+Right), Right Stick Y (+Down)
+        "buttons": [
+            {"src":"b0"}, {"src":"b1"}, {"src":"b3"}, {"src":"b2"}, // ABXY
+            {"src":"b4"}, {"src":"b5"}, {"src":"a2", "xform":"11-01", "param": 0.125}, {"src":"a5", "xform":"11-01", "param": 0.125}, // Left Shoulder, Right Shoulder, Left Trigger, Right Trigger
+            {"src":"b8"}, {"src":"b9"}, {"src":"b11"}, {"src":"b12"}, // Select, Start, Left Thumb, Right Thumb
+            {"src":"b13"}, {"src":"b14"}, {"src":"b15"}, {"src":"b16"},
+            // -- end of standard layout
+            {"src":"b10"}, // PS Logo Button
+        ]
+    });
 }

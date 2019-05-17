@@ -18,11 +18,11 @@ namespace mmk.gamepad {
 	var assert = console.assert;
 	//var assert = (...args : any[]) => {};
 
-	/** @hidden */
-	type RemapXformType = "constant" | "01-11" | "11-01" | "axis-negative-01" | "axis-positive-01" | "hat-up-bit" | "hat-right-bit" | "hat-down-bit" | "hat-left-bit";
+	/** @hidden */ type RemapAxisType = "01-11";
+	/** @hidden */ type RemapButtonType = "constant" | "11-01" | "axis-negative-01" | "axis-positive-01" | "hat-up-bit" | "hat-right-bit" | "hat-down-bit" | "hat-left-bit";
 
 	/** @hidden */
-	interface RemapSrc {
+	interface RemapSrc<RemapXformType> {
 		src:    string; // e.g. "a0", "b0", etc.
 		xform?: RemapXformType;
 		param?: number; // Optional param corresponding to xform
@@ -33,15 +33,15 @@ namespace mmk.gamepad {
 		mapping:  GamepadMappingType;
 		tested?:  string[];
 		matches:  string[];
-		axes:     RemapSrc[];
-		buttons:  RemapSrc[];
+		axes:     RemapSrc<RemapAxisType>[];
+		buttons:  RemapSrc<RemapButtonType>[];
 	}
 
 	/** @hidden */
-	type RemapXform = (src: FlatPremapGamepadValue, remap: RemapSrc) => { value: number, pressed: boolean, touched: boolean };
+	type RemapXform<RemapType> = (src: FlatPremapGamepadValue, remap: RemapSrc<RemapType>) => { value: number, pressed: boolean, touched: boolean };
 
 	/** @hidden */
-	function remapXformHat(condition: (i: number) => boolean): RemapXform {
+	function remapXformHat(condition: (i: number) => boolean): RemapXform<RemapButtonType> {
 		return (src, remap) => {
 			let i = src ? Math.round((src.value+1)/2*7) : 8;
 			let v = condition(i);
@@ -50,7 +50,7 @@ namespace mmk.gamepad {
 	}
 
 	/** @hidden */
-	const axisXforms : {[id: string]: RemapXform} = {
+	const axisXforms : {[P in RemapAxisType]: RemapXform<RemapAxisType>} = {
 		"01-11": (src, remap) => {
 			let value = src ? (src.value*2)-1 : 0;
 			return { value, pressed: false, touched: false };
@@ -58,7 +58,7 @@ namespace mmk.gamepad {
 	};
 
 	/** @hidden */
-	const buttonXforms : {[id: string]: RemapXform} = {
+	const buttonXforms : {[P in RemapButtonType]: RemapXform<RemapButtonType>} = {
 		"constant": (src, remap) => {
 			let value = remap.param || 0;
 			let pressed = false;

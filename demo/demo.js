@@ -10967,6 +10967,11 @@ var mmk;
                 var pressed = !remap.param ? src.pressed : (value > remap.param);
                 return { value: value, pressed: pressed, touched: pressed };
             },
+            "11-10": function (src, remap) {
+                var value = src ? (-src.value + 1) / 2 : 0;
+                var pressed = !remap.param ? src.pressed : (value > remap.param);
+                return { value: value, pressed: pressed, touched: pressed };
+            },
             "axis-negative-01": function (src, remap) {
                 var value = (src && src.value < 0.0) ? -src.value : 0.0;
                 var pressed = value > (remap.param ? remap.param : 0.0);
@@ -10982,169 +10987,6 @@ var mmk;
             "hat-down-bit": remapXformHat(function (i) { return (3 <= i) && (i <= 5); }),
             "hat-left-bit": remapXformHat(function (i) { return (5 <= i) && (i <= 7); })
         };
-        //const stdRemaps : {[vendProdHintAxesButtons: string]: Remap} = {
-        /** @hidden */
-        var remaps = [{
-                mapping: "standard",
-                tested: ["Windows 7 / Opera 52.0.2871.99"],
-                matches: [
-                    "054c-054c-blink-10-14",
-                    "054c-09cc-blink-10-14",
-                    "054c-0ba0-blink-10-14",
-                ],
-                axes: [{ src: "a0" }, { src: "a1" }, { src: "a2" }, { src: "a5" }],
-                buttons: [
-                    { src: "b1" }, { src: "b2" }, { src: "b0" }, { src: "b3" },
-                    { src: "b4" }, { src: "b5" }, { src: "a3", xform: "11-01", param: 0.125 }, { src: "a4", xform: "11-01", param: 0.125 },
-                    { src: "b8" }, { src: "b9" }, { src: "b10" }, { src: "b11" },
-                    { src: "a9", xform: "hat-up-bit" }, { src: "a9", xform: "hat-down-bit" }, { src: "a9", xform: "hat-left-bit" }, { src: "a9", xform: "hat-right-bit" },
-                    // -- end of standard layout - bellow matches existing wired ds4 connection standard of chrome/blink
-                    { src: "b12" },
-                    { src: "b13" } // Touchpad click (unavailable on FireFox)
-                ]
-                // Note: Axis 6-8 are ignored (dead)
-                // Note: Button 6 and 7 are ignored (overlaps with axis 3/4 for triggers)
-            }, {
-                mapping: "standard",
-                tested: ["Windows 7 / Firefox 62.0a1 (2018-05-09) - DPad busted"],
-                matches: [
-                    "054c-054c-gecko-8-18",
-                    "054c-09cc-gecko-8-18",
-                    "054c-0ba0-gecko-8-18",
-                    "054c-054c-gecko-6-18",
-                    "054c-09cc-gecko-6-18",
-                    "054c-0ba0-gecko-6-18",
-                ],
-                axes: [{ src: "a0" }, { src: "a1" }, { src: "a2" }, { src: "a5" }],
-                buttons: [
-                    { src: "b1" }, { src: "b2" }, { src: "b0" }, { src: "b3" },
-                    { src: "b4" }, { src: "b5" }, { src: "a3", xform: "11-01", param: 0.125 }, { src: "a4", xform: "11-01", param: 0.125 },
-                    { src: "b8" }, { src: "b9" }, { src: "b10" }, { src: "b11" },
-                    { src: "b14" }, { src: "b15" }, { src: "b16" }, { src: "b17" },
-                    // -- end of standard layout - bellow matches existing wired ds4 connection standard of chrome/blink
-                    { src: "b12" },
-                    { src: "b13" } // Touchpad click (unavailable on FireFox)
-                ]
-                // Note: Axis 6-7 are ignored (dead)
-                // Note: Button 6 and 7 are ignored (overlaps with axis 3/4 for triggers)
-            }, {
-                mapping: "standard",
-                tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
-                matches: [
-                    "054c-054c-gecko-8-13",
-                    "054c-09cc-gecko-8-13",
-                    "054c-0ba0-gecko-8-13",
-                ],
-                axes: [{ src: "a0" }, { src: "a1" }, { src: "a3" }, { src: "a4" }],
-                buttons: [
-                    { src: "b0" }, { src: "b1" }, { src: "b3" }, { src: "b2" },
-                    { src: "b4" }, { src: "b5" }, { src: "a2", xform: "11-01", param: 0.125 }, { src: "a5", xform: "11-01", param: 0.125 },
-                    { src: "b8" }, { src: "b9" }, { src: "b11" }, { src: "b12" },
-                    { src: "a7", xform: "axis-negative-01" }, { src: "a7", xform: "axis-positive-01" }, { src: "a6", xform: "axis-negative-01" }, { src: "a6", xform: "axis-positive-01" },
-                    // -- end of standard layout - bellow matches existing wired ds4 connection standard of chrome/blink
-                    { src: "b10" },
-                ]
-            }, {
-                mapping: "standard",
-                tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
-                matches: [
-                    "054c-0268-gecko-6-17",
-                ],
-                axes: [{ src: "a0" }, { src: "a1" }, { src: "a3" }, { src: "a4" }],
-                buttons: [
-                    { src: "b0" }, { src: "b1" }, { src: "b3" }, { src: "b2" },
-                    { src: "b4" }, { src: "b5" }, { src: "a2", xform: "11-01", param: 0.125 }, { src: "a5", xform: "11-01", param: 0.125 },
-                    { src: "b8" }, { src: "b9" }, { src: "b11" }, { src: "b12" },
-                    { src: "b13" }, { src: "b14" }, { src: "b15" }, { src: "b16" },
-                    // -- end of standard layout
-                    { src: "b10" },
-                ]
-            }, {
-                mapping: "standard",
-                tested: ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
-                matches: [
-                    "045e-028e-gecko-8-11",
-                    "045e-02d1-gecko-8-11",
-                ],
-                axes: [{ src: "a0" }, { src: "a1" }, { src: "a3" }, { src: "a4" }],
-                buttons: [
-                    { src: "b0" }, { src: "b1" }, { src: "b2" }, { src: "b3" },
-                    { src: "b4" }, { src: "b5" }, { src: "a2", xform: "11-01", param: 0.125 }, { src: "a5", xform: "11-01", param: 0.125 },
-                    { src: "b6" }, { src: "b7" }, { src: "b9" }, { src: "b10" },
-                    { src: "a7", xform: "axis-negative-01" }, { src: "a7", xform: "axis-positive-01" }, { src: "a6", xform: "axis-negative-01" }, { src: "a6", xform: "axis-positive-01" },
-                    // -- end of standard layout
-                    { src: "b8" },
-                ]
-            }, {
-                mapping: "standard",
-                // Did version_number get bumped again maybe?  These are mappings for a "standard" layout
-                // https://cs.chromium.org/chromium/src/device/gamepad/gamepad_standard_mappings_linux.cc?l=573-580
-                tested: ["Ubuntu 18.04 LTS / Chrome 66.0.3359.139"],
-                matches: [
-                    "054c-054c-blink-4-18",
-                    "054c-09cc-blink-4-18",
-                    "054c-0ba0-blink-4-18",
-                ],
-                axes: [{ src: "a0" }, { src: "a1" }, { src: "b6", xform: "01-11" }, { src: "b7", xform: "01-11" }],
-                buttons: [
-                    { src: "b2" }, { src: "b0" }, { src: "b3" }, { src: "b1" },
-                    { src: "b4" }, { src: "b5" }, { src: "a2", xform: "11-01", param: 0.125 }, { src: "a3", xform: "11-01", param: 0.125 },
-                    { src: "b8" }, { src: "b9" }, { src: "b11" }, { src: "b16" },
-                    { src: "b12" }, { src: "b13" }, { src: "b14" }, { src: "b15" },
-                    // -- end of standard layout
-                    { src: "b10" },
-                ]
-            }, {
-                mapping: "-custom",
-                tested: ["Windows 10 / Chrome 74.0.3729.131"],
-                matches: [
-                    "06a3-075c-blink-10-32",
-                ],
-                axes: [
-                    // identity mapped
-                    { src: "a0" }, { src: "a1" }, { src: "a2" }, { src: "a3" }, { src: "a4" }, { src: "a5" }, { src: "a6" }, { src: "a8" }, { src: "a7" }
-                    // dropped: axis 9 (HAT)
-                ],
-                buttons: [
-                    // identity mapped
-                    { src: "b0" }, { src: "b1" }, { src: "b2" }, { src: "b3" }, { src: "b4" },
-                    { src: "b5" }, { src: "b6" }, { src: "b7" }, { src: "b8" }, { src: "b9" },
-                    { src: "b10" }, { src: "b11" }, { src: "b12" }, { src: "b13" }, { src: "b14" },
-                    { src: "b15" }, { src: "b16" }, { src: "b17" }, { src: "b18" }, { src: "b19" },
-                    { src: "b20" }, { src: "b21" }, { src: "b22" }, { src: "b23" }, { src: "b24" },
-                    { src: "b25" }, { src: "b26" }, { src: "b27" }, { src: "b28" }, { src: "b29" },
-                    { src: "b30" }, { src: "b31" },
-                    // Chrome is lacking buttons for mouse wheel
-                    { src: "b0", xform: "constant", param: 0 },
-                    { src: "b0", xform: "constant", param: 0 },
-                    // Synthetic buttons for missing dpad buttons on Chrome
-                    { src: "a9", xform: "hat-up-bit" },
-                    { src: "a9", xform: "hat-right-bit" },
-                    { src: "a9", xform: "hat-down-bit" },
-                    { src: "a9", xform: "hat-left-bit" },
-                ]
-            }, {
-                mapping: "-custom",
-                tested: ["Windows 10 / FireFox 66.0.5"],
-                matches: [
-                    "06a3-075c-gecko-9-38",
-                ],
-                axes: [
-                    // identity mapped
-                    { src: "a0" }, { src: "a1" }, { src: "a2" }, { src: "a3" }, { src: "a4" }, { src: "a5" }, { src: "a6" }, { src: "a8" }, { src: "a7" }
-                ],
-                buttons: [
-                    // identity mapped
-                    { src: "b0" }, { src: "b1" }, { src: "b2" }, { src: "b3" }, { src: "b4" },
-                    { src: "b5" }, { src: "b6" }, { src: "b7" }, { src: "b8" }, { src: "b9" },
-                    { src: "b10" }, { src: "b11" }, { src: "b12" }, { src: "b13" }, { src: "b14" },
-                    { src: "b15" }, { src: "b16" }, { src: "b17" }, { src: "b18" }, { src: "b19" },
-                    { src: "b20" }, { src: "b21" }, { src: "b22" }, { src: "b23" }, { src: "b24" },
-                    { src: "b25" }, { src: "b26" }, { src: "b27" }, { src: "b28" }, { src: "b29" },
-                    { src: "b30" }, { src: "b31" }, { src: "b32" }, { src: "b33" },
-                    { src: "b34" }, { src: "b35" }, { src: "b36" }, { src: "b37" },
-                ]
-            }];
         // Avoid where possible.
         /** @hidden */
         var xxxIsLinux = /\blinux\b/i.test(navigator.userAgent);
@@ -11156,26 +10998,6 @@ var mmk;
         var xxxIsChrome = xxxIsChromeBased && !xxxIsChromium;
         /** @hidden */
         var liesAboutStandardMapping = xxxIsLinux && xxxIsChromeBased;
-        /** @hidden */
-        var remapsByKey = {};
-        remaps.forEach(function (remap) {
-            remap.matches.forEach(function (id) {
-                console.assert(!(id in remapsByKey), "Remaps contains multiple entries for the same mapping");
-                remapsByKey[id] = remap;
-            });
-        });
-        /** @hidden */
-        function getRemapKey(gamepad) {
-            var id = gamepad_1.parseGamepadId(gamepad.id);
-            var key = id.vendor + "-" + id.product + "-" + id.hint + "-" + gamepad.axes.length + "-" + gamepad.buttons.length;
-            return key;
-        }
-        /** @hidden */
-        function findStdRemap(gamepad) {
-            var key = getRemapKey(gamepad);
-            var value = remapsByKey[key];
-            return value;
-        }
         function tryRemapStdLayout(gamepad) {
             if (!gamepad)
                 return gamepad;
@@ -11183,7 +11005,7 @@ var mmk;
                 return gamepad; // Already remapped
             if (gamepad.mapping === "-custom")
                 return gamepad; // Already remapped
-            var remapGamepad = findStdRemap(gamepad);
+            var remapGamepad = gamepad_1.metadata.findRemap(gamepad);
             if (!remapGamepad)
                 return gamepad;
             var flatGamepad = gamepad_1.flattenPremapGamepad(gamepad);
@@ -11815,7 +11637,7 @@ var mmk;
                 if (locHint === void 0) { locHint = navigator.languages; }
                 for (var button = buttons[id]; button;) {
                     try {
-                        for (var locHint_2 = __values(locHint), locHint_2_1 = locHint_2.next(); !locHint_2_1.done; locHint_2_1 = locHint_2.next()) {
+                        for (var locHint_2 = (e_3 = void 0, __values(locHint)), locHint_2_1 = locHint_2.next(); !locHint_2_1.done; locHint_2_1 = locHint_2.next()) {
                             var lang = locHint_2_1.value;
                             if (lang.indexOf('-') === -1)
                                 continue;
@@ -11936,6 +11758,51 @@ var mmk;
             }
             metadata.getDeviceAxises = getDeviceAxises;
         })(metadata = gamepad.metadata || (gamepad.metadata = {}));
+    })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
+})(mmk || (mmk = {}));
+/* Copyright 2017 MaulingMonkey
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+var mmk;
+(function (mmk) {
+    var gamepad;
+    (function (gamepad_6) {
+        var metadata;
+        (function (metadata) {
+            /** @hidden */ var remapsList = [];
+            /** @hidden */ var remapsByKey = {};
+            function registerRemap(remap) {
+                remapsList.push(remap);
+                remap.matches.forEach(function (id) {
+                    console.assert(!(id in remapsByKey), "Remaps contains multiple entries for the same mapping");
+                    remapsByKey[id] = remap;
+                });
+            }
+            metadata.registerRemap = registerRemap;
+            /** @hidden */
+            function getRemapKey(gamepad) {
+                var id = gamepad_6.parseGamepadId(gamepad.id);
+                var key = id.vendor + "-" + id.product + "-" + id.hint + "-" + gamepad.axes.length + "-" + gamepad.buttons.length;
+                return key;
+            }
+            function findRemap(gamepad) {
+                var key = getRemapKey(gamepad);
+                var value = remapsByKey[key];
+                return value;
+            }
+            metadata.findRemap = findRemap;
+        })(metadata = gamepad_6.metadata || (gamepad_6.metadata = {}));
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));
 /* Copyright 2017 MaulingMonkey
@@ -12090,6 +11957,65 @@ var mmk;
                 ]
             });
             metadata.registerDevice("054c", "0268", "gamepad-ds3", { "en-US": "DualShock 3 Controller" }); // aka "Sixaxis" / "PlayStation 3 Controller"
+            metadata.registerRemap({
+                "mapping": "standard",
+                "tested": [
+                    "Windows 10 / Chrome 75.0.3770.100",
+                    "Windows 10 / Opera 60.0.3255.170",
+                    "Windows 10 / Opera 62.0.3331.43"
+                ],
+                "matches": [
+                    "054c-0268-blink-10-24",
+                ],
+                "axes": [{ "src": "a0" }, { "src": "a1" }, { "src": "a2" }, { "src": "a5" }],
+                "buttons": [
+                    { "src": "b2" }, { "src": "b1" }, { "src": "b3" }, { "src": "b0" },
+                    { "src": "b6" }, { "src": "b7" }, { "src": "a3", "xform": "11-10", "param": 0.125 }, { "src": "a4", "xform": "11-10", "param": 0.125 },
+                    { "src": "b9" }, { "src": "b8" }, { "src": "b10" }, { "src": "b11" },
+                    { "src": "a9", "xform": "hat-up-bit" }, { "src": "a9", "xform": "hat-down-bit" }, { "src": "a9", "xform": "hat-left-bit" }, { "src": "a9", "xform": "hat-right-bit" },
+                    // -- end of standard layout
+                    { "src": "b12" },
+                ]
+            });
+            // Note: Axis 6 is ignored (Maps to X button pressure - O button pressure is missing, so let's not support X either)
+            // Note: Lots of buttons ignored (dead)
+            metadata.registerRemap({
+                "mapping": "standard",
+                "tested": [
+                    "Windows 10 / FireFox 67.0.2"
+                ],
+                "matches": [
+                //"054c-0268-gecko-8-28", // DualShock 3 / "Sony PLAYSTATION(R)3 Controller"
+                ],
+                "axes": [{ "src": "a0" }, { "src": "a1" }, { "src": "a2" }, { "src": "a5" }],
+                // a6: X button pressure.  No axis for O button pressure.
+                "buttons": [
+                    { "src": "b2" }, { "src": "b1" }, { "src": "b3" }, { "src": "b0" },
+                    { "src": "b6" }, { "src": "b7" }, { "src": "a3", "xform": "11-10", "param": 0.125 }, { "src": "a4", "xform": "11-10", "param": 0.125 },
+                    { "src": "b9" }, { "src": "b8" }, { "src": "b10" }, { "src": "b11" },
+                    { "src": "b13" }, { "src": "b14" }, { "src": "b15" }, { "src": "b16" },
+                    // -- end of standard layout
+                    { "src": "b12" },
+                ]
+            });
+            // Note: Axis 6-7 are ignored (Both map to X button pressure - O button pressure is missing, so let's not support X either)
+            // Note: Lots of buttons ignored (dead)
+            metadata.registerRemap({
+                "mapping": "standard",
+                "tested": ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+                "matches": [
+                    "054c-0268-gecko-6-17",
+                ],
+                "axes": [{ "src": "a0" }, { "src": "a1" }, { "src": "a3" }, { "src": "a4" }],
+                "buttons": [
+                    { "src": "b0" }, { "src": "b1" }, { "src": "b3" }, { "src": "b2" },
+                    { "src": "b4" }, { "src": "b5" }, { "src": "a2", "xform": "11-01", "param": 0.125 }, { "src": "a5", "xform": "11-01", "param": 0.125 },
+                    { "src": "b8" }, { "src": "b9" }, { "src": "b11" }, { "src": "b12" },
+                    { "src": "b13" }, { "src": "b14" }, { "src": "b15" }, { "src": "b16" },
+                    // -- end of standard layout
+                    { "src": "b10" },
+                ]
+            });
         })(metadata = gamepad.metadata || (gamepad.metadata = {}));
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));
@@ -12160,6 +12086,89 @@ var mmk;
             metadata.registerDevice("054c", "054c", "gamepad-ds4", { "en-US": "DualShock 4 Controller" });
             metadata.registerDevice("054c", "09cc", "gamepad-ds4", { "en-US": "DualShock 4 Controller (2nd Gen)" });
             metadata.registerDevice("054c", "0ba0", "gamepad-ds4", { "en-US": "DualShock 4 Wireless Adapter" });
+            metadata.registerRemap({
+                "mapping": "standard",
+                "tested": ["Windows 7 / Opera 52.0.2871.99"],
+                "matches": [
+                    "054c-054c-blink-10-14",
+                    "054c-09cc-blink-10-14",
+                    "054c-0ba0-blink-10-14",
+                ],
+                "axes": [{ "src": "a0" }, { "src": "a1" }, { "src": "a2" }, { "src": "a5" }],
+                "buttons": [
+                    { "src": "b1" }, { "src": "b2" }, { "src": "b0" }, { "src": "b3" },
+                    { "src": "b4" }, { "src": "b5" }, { "src": "a3", "xform": "11-01", "param": 0.125 }, { "src": "a4", "xform": "11-01", "param": 0.125 },
+                    { "src": "b8" }, { "src": "b9" }, { "src": "b10" }, { "src": "b11" },
+                    { "src": "a9", "xform": "hat-up-bit" }, { "src": "a9", "xform": "hat-down-bit" }, { "src": "a9", "xform": "hat-left-bit" }, { "src": "a9", "xform": "hat-right-bit" },
+                    // -- end of standard layout - bellow matches existing wired ds4 connection standard of chrome/blink
+                    { "src": "b12" },
+                    { "src": "b13" } // Touchpad click (unavailable on FireFox)
+                ]
+                // Note: Axis 6-8 are ignored (dead)
+                // Note: Button 6 and 7 are ignored (overlaps with axis 3/4 for triggers)
+            });
+            metadata.registerRemap({
+                "mapping": "standard",
+                "tested": ["Windows 7 / Firefox 62.0a1 (2018-05-09) - DPad busted"],
+                "matches": [
+                    "054c-054c-gecko-8-18",
+                    "054c-09cc-gecko-8-18",
+                    "054c-0ba0-gecko-8-18",
+                    "054c-054c-gecko-6-18",
+                    "054c-09cc-gecko-6-18",
+                    "054c-0ba0-gecko-6-18",
+                ],
+                "axes": [{ "src": "a0" }, { "src": "a1" }, { "src": "a2" }, { "src": "a5" }],
+                "buttons": [
+                    { "src": "b1" }, { "src": "b2" }, { "src": "b0" }, { "src": "b3" },
+                    { "src": "b4" }, { "src": "b5" }, { "src": "a3", "xform": "11-01", "param": 0.125 }, { "src": "a4", "xform": "11-01", "param": 0.125 },
+                    { "src": "b8" }, { "src": "b9" }, { "src": "b10" }, { "src": "b11" },
+                    { "src": "b14" }, { "src": "b15" }, { "src": "b16" }, { "src": "b17" },
+                    // -- end of standard layout - bellow matches existing wired ds4 connection standard of chrome/blink
+                    { "src": "b12" },
+                    { "src": "b13" } // Touchpad click (unavailable on FireFox)
+                ]
+                // Note: Axis 6-7 are ignored (dead)
+                // Note: Button 6 and 7 are ignored (overlaps with axis 3/4 for triggers)
+            });
+            metadata.registerRemap({
+                "mapping": "standard",
+                "tested": ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+                "matches": [
+                    "054c-054c-gecko-8-13",
+                    "054c-09cc-gecko-8-13",
+                    "054c-0ba0-gecko-8-13",
+                ],
+                "axes": [{ "src": "a0" }, { "src": "a1" }, { "src": "a3" }, { "src": "a4" }],
+                "buttons": [
+                    { "src": "b0" }, { "src": "b1" }, { "src": "b3" }, { "src": "b2" },
+                    { "src": "b4" }, { "src": "b5" }, { "src": "a2", "xform": "11-01", "param": 0.125 }, { "src": "a5", "xform": "11-01", "param": 0.125 },
+                    { "src": "b8" }, { "src": "b9" }, { "src": "b11" }, { "src": "b12" },
+                    { "src": "a7", "xform": "axis-negative-01" }, { "src": "a7", "xform": "axis-positive-01" }, { "src": "a6", "xform": "axis-negative-01" }, { "src": "a6", "xform": "axis-positive-01" },
+                    // -- end of standard layout - bellow matches existing wired ds4 connection standard of chrome/blink
+                    { "src": "b10" },
+                ]
+            });
+            metadata.registerRemap({
+                "mapping": "standard",
+                // Did version_number get bumped again maybe?  These are mappings for a "standard" layout
+                // https://cs.chromium.org/chromium/src/device/gamepad/gamepad_standard_mappings_linux.cc?l=573-580
+                "tested": ["Ubuntu 18.04 LTS / Chrome 66.0.3359.139"],
+                "matches": [
+                    "054c-054c-blink-4-18",
+                    "054c-09cc-blink-4-18",
+                    "054c-0ba0-blink-4-18",
+                ],
+                "axes": [{ "src": "a0" }, { "src": "a1" }, { "src": "b6", "xform": "01-11" }, { "src": "b7", "xform": "01-11" }],
+                "buttons": [
+                    { "src": "b2" }, { "src": "b0" }, { "src": "b3" }, { "src": "b1" },
+                    { "src": "b4" }, { "src": "b5" }, { "src": "a2", "xform": "11-01", "param": 0.125 }, { "src": "a3", "xform": "11-01", "param": 0.125 },
+                    { "src": "b8" }, { "src": "b9" }, { "src": "b11" }, { "src": "b16" },
+                    { "src": "b12" }, { "src": "b13" }, { "src": "b14" }, { "src": "b15" },
+                    // -- end of standard layout
+                    { "src": "b10" },
+                ]
+            });
         })(metadata = gamepad.metadata || (gamepad.metadata = {}));
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));
@@ -12481,6 +12490,23 @@ var mmk;
             metadata.registerDevice("045e", "02e6", "gamepad-xbone", { "en-US": "Wireless XBox Controller Dongle" });
             metadata.registerDevice("045e", "02ea", "gamepad-xbone", { "en-US": "Xbox One S Controller" });
             metadata.registerDevice("045e", "02fd", "gamepad-xbone", { "en-US": "Xbox One S Controller (Bluetooth)" });
+            metadata.registerRemap({
+                "mapping": "standard",
+                "tested": ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+                "matches": [
+                    "045e-028e-gecko-8-11",
+                    "045e-02d1-gecko-8-11",
+                ],
+                "axes": [{ "src": "a0" }, { "src": "a1" }, { "src": "a3" }, { "src": "a4" }],
+                "buttons": [
+                    { "src": "b0" }, { "src": "b1" }, { "src": "b2" }, { "src": "b3" },
+                    { "src": "b4" }, { "src": "b5" }, { "src": "a2", "xform": "11-01", "param": 0.125 }, { "src": "a5", "xform": "11-01", "param": 0.125 },
+                    { "src": "b6" }, { "src": "b7" }, { "src": "b9" }, { "src": "b10" },
+                    { "src": "a7", "xform": "axis-negative-01" }, { "src": "a7", "xform": "axis-positive-01" }, { "src": "a6", "xform": "axis-negative-01" }, { "src": "a6", "xform": "axis-positive-01" },
+                    // -- end of standard layout
+                    { "src": "b8" },
+                ]
+            });
         })(metadata = gamepad.metadata || (gamepad.metadata = {}));
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));
@@ -12614,6 +12640,60 @@ var mmk;
                 ]
             });
             metadata.registerDevice("06a3", "075c", "saitek-x52", { "en-US": "Saitek X52 Flight Control System" });
+            metadata.registerRemap({
+                "mapping": "-custom",
+                "tested": ["Windows 10 / Chrome 74.0.3729.131"],
+                "matches": [
+                    "06a3-075c-blink-10-32",
+                ],
+                "axes": [
+                    // identity mapped
+                    { "src": "a0" }, { "src": "a1" }, { "src": "a2" }, { "src": "a3" }, { "src": "a4" }, { "src": "a5" }, { "src": "a6" }, { "src": "a8" }, { "src": "a7" }
+                    // dropped: axis 9 (HAT)
+                ],
+                "buttons": [
+                    // identity mapped
+                    { "src": "b0" }, { "src": "b1" }, { "src": "b2" }, { "src": "b3" }, { "src": "b4" },
+                    { "src": "b5" }, { "src": "b6" }, { "src": "b7" }, { "src": "b8" }, { "src": "b9" },
+                    { "src": "b10" }, { "src": "b11" }, { "src": "b12" }, { "src": "b13" }, { "src": "b14" },
+                    { "src": "b15" }, { "src": "b16" }, { "src": "b17" }, { "src": "b18" }, { "src": "b19" },
+                    { "src": "b20" }, { "src": "b21" }, { "src": "b22" }, { "src": "b23" }, { "src": "b24" },
+                    { "src": "b25" }, { "src": "b26" }, { "src": "b27" }, { "src": "b28" }, { "src": "b29" },
+                    { "src": "b30" }, { "src": "b31" },
+                    // Chrome is lacking buttons for mouse wheel
+                    { "src": "b0", "xform": "constant", "param": 0 },
+                    { "src": "b0", "xform": "constant", "param": 0 },
+                    // Synthetic buttons for missing HAT buttons on Chrome
+                    { "src": "a9", "xform": "hat-up-bit" },
+                    { "src": "a9", "xform": "hat-right-bit" },
+                    { "src": "a9", "xform": "hat-down-bit" },
+                    { "src": "a9", "xform": "hat-left-bit" },
+                ]
+            });
+            metadata.registerRemap({
+                "mapping": "-custom",
+                "tested": ["Windows 10 / FireFox 66.0.5"],
+                "matches": [
+                    "06a3-075c-gecko-9-38",
+                ],
+                "axes": [
+                    // identity mapped
+                    { "src": "a0" }, { "src": "a1" }, { "src": "a2" }, { "src": "a3" }, { "src": "a4" },
+                    { "src": "a5" }, { "src": "a6" }, { "src": "a8" }, { "src": "a7" }
+                ],
+                "buttons": [
+                    // identity mapped
+                    { "src": "b0" }, { "src": "b1" }, { "src": "b2" }, { "src": "b3" }, { "src": "b4" },
+                    { "src": "b5" }, { "src": "b6" }, { "src": "b7" }, { "src": "b8" }, { "src": "b9" },
+                    { "src": "b10" }, { "src": "b11" }, { "src": "b12" }, { "src": "b13" }, { "src": "b14" },
+                    { "src": "b15" }, { "src": "b16" }, { "src": "b17" }, { "src": "b18" }, { "src": "b19" },
+                    { "src": "b20" }, { "src": "b21" }, { "src": "b22" }, { "src": "b23" }, { "src": "b24" },
+                    { "src": "b25" }, { "src": "b26" }, { "src": "b27" }, { "src": "b28" }, { "src": "b29" },
+                    { "src": "b30" }, { "src": "b31" }, { "src": "b32" }, { "src": "b33" },
+                    // Last 4 buttons are meant to be the HAT, but they're nonfunctional on FireFox.
+                    { "src": "b34" }, { "src": "b35" }, { "src": "b36" }, { "src": "b37" },
+                ]
+            });
         })(metadata = gamepad.metadata || (gamepad.metadata = {}));
     })(gamepad = mmk.gamepad || (mmk.gamepad = {}));
 })(mmk || (mmk = {}));

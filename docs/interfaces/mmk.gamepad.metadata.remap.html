@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Device | @maulingmonkey/gamepad</title>
+	<title>Remap | @maulingmonkey/gamepad</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -65,10 +65,10 @@
 					<a href="../modules/mmk.gamepad.metadata.html">metadata</a>
 				</li>
 				<li>
-					<a href="mmk.gamepad.metadata.device.html">Device</a>
+					<a href="mmk.gamepad.metadata.remap.html">Remap</a>
 				</li>
 			</ul>
-			<h1>Interface Device</h1>
+			<h1>Interface Remap</h1>
 		</div>
 	</div>
 </header>
@@ -79,7 +79,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Device</span>
+						<span class="target">Remap</span>
 					</li>
 				</ul>
 			</section>
@@ -87,35 +87,68 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="mmk.gamepad.metadata.device.html#description" class="tsd-kind-icon">description</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="mmk.gamepad.metadata.device.html#devicetype" class="tsd-kind-icon">device<wbr>Type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mmk.gamepad.metadata.remap.html#axes" class="tsd-kind-icon">axes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mmk.gamepad.metadata.remap.html#buttons" class="tsd-kind-icon">buttons</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mmk.gamepad.metadata.remap.html#mapping" class="tsd-kind-icon">mapping</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mmk.gamepad.metadata.remap.html#matches" class="tsd-kind-icon">matches</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mmk.gamepad.metadata.remap.html#tested" class="tsd-kind-icon">tested</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="description" class="tsd-anchor"></a>
-					<h3>description</h3>
-					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <a href="mmk.gamepad.metadata.loctext.html" class="tsd-signature-type">LocText</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="axes" class="tsd-anchor"></a>
+					<h3>axes</h3>
+					<div class="tsd-signature tsd-kind-icon">axes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RemapSrc</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">RemapAxisType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.5/src/metadata/_devices.ts#L27">metadata/_devices.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.5/src/metadata/_remaps.ts#L31">metadata/_remaps.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="devicetype" class="tsd-anchor"></a>
-					<h3>device<wbr>Type</h3>
-					<div class="tsd-signature tsd-kind-icon">device<wbr>Type<span class="tsd-signature-symbol">:</span> <a href="../modules/mmk.gamepad.metadata.html#devicetype" class="tsd-signature-type">DeviceType</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="buttons" class="tsd-anchor"></a>
+					<h3>buttons</h3>
+					<div class="tsd-signature tsd-kind-icon">buttons<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RemapSrc</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">RemapButtonType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.5/src/metadata/_devices.ts#L26">metadata/_devices.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.5/src/metadata/_remaps.ts#L32">metadata/_remaps.ts:32</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="mapping" class="tsd-anchor"></a>
+					<h3>mapping</h3>
+					<div class="tsd-signature tsd-kind-icon">mapping<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">GamepadMappingType</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.5/src/metadata/_remaps.ts#L28">metadata/_remaps.ts:28</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="matches" class="tsd-anchor"></a>
+					<h3>matches</h3>
+					<div class="tsd-signature tsd-kind-icon">matches<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.5/src/metadata/_remaps.ts#L30">metadata/_remaps.ts:30</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="tested" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> tested</h3>
+					<div class="tsd-signature tsd-kind-icon">tested<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/MaulingMonkey/mmk.gamepad/blob/v0.0.5/src/metadata/_remaps.ts#L29">metadata/_remaps.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -145,14 +178,23 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="mmk.gamepad.metadata.device.html" class="tsd-kind-icon">Device</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
+						<a href="mmk.gamepad.metadata.remap.html" class="tsd-kind-icon">Remap</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="mmk.gamepad.metadata.device.html#description" class="tsd-kind-icon">description</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="mmk.gamepad.metadata.remap.html#axes" class="tsd-kind-icon">axes</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="mmk.gamepad.metadata.device.html#devicetype" class="tsd-kind-icon">device<wbr>Type</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="mmk.gamepad.metadata.remap.html#buttons" class="tsd-kind-icon">buttons</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="mmk.gamepad.metadata.remap.html#mapping" class="tsd-kind-icon">mapping</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="mmk.gamepad.metadata.remap.html#matches" class="tsd-kind-icon">matches</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="mmk.gamepad.metadata.remap.html#tested" class="tsd-kind-icon">tested</a>
 							</li>
 						</ul>
 					</li>

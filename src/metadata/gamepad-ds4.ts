@@ -83,4 +83,93 @@ namespace mmk.gamepad.metadata {
     registerDevice("054c", "054c", "gamepad-ds4", { "en-US": "DualShock 4 Controller" });
     registerDevice("054c", "09cc", "gamepad-ds4", { "en-US": "DualShock 4 Controller (2nd Gen)" });
     registerDevice("054c", "0ba0", "gamepad-ds4", { "en-US": "DualShock 4 Wireless Adapter" });
+
+
+    registerRemap({
+        "mapping": "standard",
+        "tested": ["Windows 7 / Opera 52.0.2871.99"],
+        "matches": [
+            "054c-054c-blink-10-14", // DualShock 4
+            "054c-09cc-blink-10-14", // DualShock 4 (2nd Gen)
+            "054c-0ba0-blink-10-14", // DualShock 4 Wireless Adapter
+        ],
+        "axes": [{"src":"a0"}, {"src":"a1"}, {"src":"a2"}, {"src":"a5"}], // Left Stick X (+Right), Left Stick Y (+Down), Right Stick X (+Right), Right Stick Y (+Down)
+        "buttons": [
+            {"src":"b1"}, {"src":"b2"}, {"src":"b0"}, {"src":"b3"}, // ABXY
+            {"src":"b4"}, {"src":"b5"}, {"src":"a3", "xform":"11-01", "param": 0.125}, {"src":"a4", "xform":"11-01", "param": 0.125}, // Left Shoulder, Right Shoulder, Left Trigger, Right Trigger
+            {"src":"b8"}, {"src":"b9"}, {"src":"b10"}, {"src":"b11"}, // Back, Start, Left Thumb, Right Thumb
+            {"src":"a9", "xform":"hat-up-bit"}, {"src":"a9", "xform":"hat-down-bit"}, {"src":"a9", "xform":"hat-left-bit"}, {"src":"a9", "xform":"hat-right-bit"}, // DPad (Up Down Left Right)
+            // -- end of standard layout - bellow matches existing wired ds4 connection standard of chrome/blink
+            {"src":"b12"}, // Guide button
+            {"src":"b13"}  // Touchpad click (unavailable on FireFox)
+        ]
+        // Note: Axis 6-8 are ignored (dead)
+        // Note: Button 6 and 7 are ignored (overlaps with axis 3/4 for triggers)
+    });
+
+    registerRemap({
+        "mapping": "standard",
+        "tested": ["Windows 7 / Firefox 62.0a1 (2018-05-09) - DPad busted"],
+        "matches": [
+            "054c-054c-gecko-8-18", // DualShock 4
+            "054c-09cc-gecko-8-18", // DualShock 4 (2nd Gen)
+            "054c-0ba0-gecko-8-18", // DualShock 4 Wireless Adapter
+            "054c-054c-gecko-6-18", // DualShock 4                   - optimistic prepatch in case 2 dead axises are ever dropped 
+            "054c-09cc-gecko-6-18", // DualShock 4 (2nd Gen)         - optimistic prepatch in case 2 dead axises are ever dropped
+            "054c-0ba0-gecko-6-18", // DualShock 4 Wireless Adapter  - optimistic prepatch in case 2 dead axises are ever dropped
+        ],
+        "axes": [{"src":"a0"}, {"src":"a1"}, {"src":"a2"}, {"src":"a5"}], // Left Stick X (+Right), Left Stick Y (+Down), Right Stick X (+Right), Right Stick Y (+Down)
+        "buttons": [
+            {"src":"b1"}, {"src":"b2"}, {"src":"b0"}, {"src":"b3"}, // ABXY
+            {"src":"b4"}, {"src":"b5"}, {"src":"a3", "xform":"11-01", "param": 0.125}, {"src":"a4", "xform":"11-01", "param": 0.125}, // Left Shoulder, Right Shoulder, Left Trigger, Right Trigger
+            {"src":"b8"}, {"src":"b9"}, {"src":"b10"}, {"src":"b11"}, // Back, Start, Left Thumb, Right Thumb
+            {"src":"b14"}, {"src":"b15"}, {"src":"b16"}, {"src":"b17"}, // DPad - note that these are dead in current FireFox builds
+            // -- end of standard layout - bellow matches existing wired ds4 connection standard of chrome/blink
+            {"src":"b12"}, // Guide button
+            {"src":"b13"}  // Touchpad click (unavailable on FireFox)
+        ]
+        // Note: Axis 6-7 are ignored (dead)
+        // Note: Button 6 and 7 are ignored (overlaps with axis 3/4 for triggers)
+    });
+
+    registerRemap({
+        "mapping": "standard",
+        "tested": ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+        "matches": [
+            "054c-054c-gecko-8-13", // DualShock 4 Controller
+            "054c-09cc-gecko-8-13", // DualShock 4 Controller (2nd Gen)
+            "054c-0ba0-gecko-8-13", // DualShock 4 Wireless Adapter
+        ],
+        "axes": [{"src":"a0"}, {"src":"a1"}, {"src":"a3"}, {"src":"a4"}], // Left Stick X (+Right), Left Stick Y (+Down), Right Stick X (+Right), Right Stick Y (+Down)
+        "buttons": [
+            {"src":"b0"}, {"src":"b1"}, {"src":"b3"}, {"src":"b2"}, // ABXY
+            {"src":"b4"}, {"src":"b5"}, {"src":"a2", "xform":"11-01", "param": 0.125}, {"src":"a5", "xform":"11-01", "param": 0.125}, // Left Shoulder, Right Shoulder, Left Trigger, Right Trigger
+            {"src":"b8"}, {"src":"b9"}, {"src":"b11"}, {"src":"b12"}, // Back, Start, Left Thumb, Right Thumb
+            {"src":"a7", "xform":"axis-negative-01"}, {"src":"a7", "xform":"axis-positive-01"}, {"src":"a6", "xform":"axis-negative-01"}, {"src":"a6", "xform":"axis-positive-01"}, // DPad (Up Down Left Right)
+            // -- end of standard layout - bellow matches existing wired ds4 connection standard of chrome/blink
+            {"src":"b10"}, // Guide button
+            // No touchpad click - Firefox on Linux remaps the touchpad to the mouse!
+        ]
+    });
+
+    registerRemap({
+        "mapping": "standard",
+        // Did version_number get bumped again maybe?  These are mappings for a "standard" layout
+        // https://cs.chromium.org/chromium/src/device/gamepad/gamepad_standard_mappings_linux.cc?l=573-580
+        "tested": ["Ubuntu 18.04 LTS / Chrome 66.0.3359.139"],
+        "matches": [
+            "054c-054c-blink-4-18", // DualShock 4 Controller
+            "054c-09cc-blink-4-18", // DualShock 4 Controller (2nd Gen)
+            "054c-0ba0-blink-4-18", // DualShock 4 Wireless Adapter
+        ],
+        "axes": [{"src":"a0"}, {"src":"a1"}, {"src":"b6", "xform":"01-11"}, {"src":"b7", "xform":"01-11"}],
+        "buttons": [
+            {"src":"b2"}, {"src":"b0"}, {"src":"b3"}, {"src":"b1"},
+            {"src":"b4"}, {"src":"b5"}, {"src":"a2", "xform":"11-01", "param": 0.125}, {"src":"a3", "xform":"11-01", "param": 0.125},
+            {"src":"b8"}, {"src":"b9"}, {"src":"b11"}, {"src":"b16"},
+            {"src":"b12"}, {"src":"b13"}, {"src":"b14"}, {"src":"b15"},
+            // -- end of standard layout
+            {"src":"b10"},
+        ],
+    });
 }

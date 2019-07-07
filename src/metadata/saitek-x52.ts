@@ -191,4 +191,60 @@ namespace mmk.gamepad.metadata {
     });
 
     registerDevice("06a3", "075c", "saitek-x52", { "en-US": "Saitek X52 Flight Control System" });
+
+    registerRemap({
+        "mapping": "-custom",
+        "tested": ["Windows 10 / Chrome 74.0.3729.131"],
+        "matches": [
+            "06a3-075c-blink-10-32", // Saitek X52 Flight Control System
+        ],
+        "axes": [
+            // identity mapped
+            {"src":"a0"}, {"src":"a1"}, {"src":"a2"}, {"src":"a3"}, {"src":"a4"}, {"src":"a5"}, {"src":"a6"}, {"src":"a8"}, {"src":"a7"}
+            // dropped: axis 9 (HAT)
+        ],
+        "buttons": [
+            // identity mapped
+            {"src":"b0"}, {"src":"b1"}, {"src":"b2"}, {"src":"b3"}, {"src":"b4"},
+            {"src":"b5"}, {"src":"b6"}, {"src":"b7"}, {"src":"b8"}, {"src":"b9"},
+            {"src":"b10"}, {"src":"b11"}, {"src":"b12"}, {"src":"b13"}, {"src":"b14"},
+            {"src":"b15"}, {"src":"b16"}, {"src":"b17"}, {"src":"b18"}, {"src":"b19"},
+            {"src":"b20"}, {"src":"b21"}, {"src":"b22"}, {"src":"b23"}, {"src":"b24"},
+            {"src":"b25"}, {"src":"b26"}, {"src":"b27"}, {"src":"b28"}, {"src":"b29"},
+            {"src":"b30"}, {"src":"b31"},
+            // Chrome is lacking buttons for mouse wheel
+            {"src":"b0", "xform":"constant", "param": 0},
+            {"src":"b0", "xform":"constant", "param": 0},
+            // Synthetic buttons for missing HAT buttons on Chrome
+            {"src":"a9", "xform":"hat-up-bit"},
+            {"src":"a9", "xform":"hat-right-bit"},
+            {"src":"a9", "xform":"hat-down-bit"},
+            {"src":"a9", "xform":"hat-left-bit"},
+        ],
+    });
+
+    registerRemap({
+        "mapping": "-custom",
+        "tested": ["Windows 10 / FireFox 66.0.5"],
+        "matches": [
+            "06a3-075c-gecko-9-38", // Saitek X52 Flight Control System
+        ],
+        "axes": [
+            // identity mapped
+            {"src":"a0"}, {"src":"a1"}, {"src":"a2"}, {"src":"a3"}, {"src":"a4"},
+            {"src":"a5"}, {"src":"a6"}, {"src":"a8"}, {"src":"a7"}
+        ],
+        "buttons": [
+            // identity mapped
+            {"src":"b0"}, {"src":"b1"}, {"src":"b2"}, {"src":"b3"}, {"src":"b4"},
+            {"src":"b5"}, {"src":"b6"}, {"src":"b7"}, {"src":"b8"}, {"src":"b9"},
+            {"src":"b10"}, {"src":"b11"}, {"src":"b12"}, {"src":"b13"}, {"src":"b14"},
+            {"src":"b15"}, {"src":"b16"}, {"src":"b17"}, {"src":"b18"}, {"src":"b19"},
+            {"src":"b20"}, {"src":"b21"}, {"src":"b22"}, {"src":"b23"}, {"src":"b24"},
+            {"src":"b25"}, {"src":"b26"}, {"src":"b27"}, {"src":"b28"}, {"src":"b29"},
+            {"src":"b30"}, {"src":"b31"}, {"src":"b32"}, {"src":"b33"},
+            // Last 4 buttons are meant to be the HAT, but they're nonfunctional on FireFox.
+            {"src":"b34"}, {"src":"b35"}, {"src":"b36"}, {"src":"b37"},
+        ],
+    });
 }

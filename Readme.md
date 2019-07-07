@@ -57,11 +57,12 @@ The vanilla browser gamepad APIs are unusable without a lot work, except for *ma
 | Windows | Xbox One                | OK [1]   | OK [1]   | OK [1]   | OK [1] |                |
 | Windows | DualShock 4 (Micro-USB) | OK       | OK       | No DPad  |        | No touch/gyros |
 | Windows | DualShock 4 (Wireless)  | OK       | OK       | No DPad  |        | No touch/gyros |
-| Windows | DualShock 3 (Mini-USB)  |          |          |          |        | Bad HID [2]    |
+| Windows | DualShock 3 (Mini-USB)  | OK       | OK       | No DPad  |        | Needs [PS Now](https://www.playstation.com/en-gb/explore/playstation-now/ps-now-on-pc/) |
+| Windows | Nintendo Switch Pro Cont| Pending  | Pending? |          |        | [2]
 | Windows | Saitek X52              | No Scroll| No Scroll| No HAT 1 |        | [3]            |
 
 1. This gamepad displays an incorrect or generic name which we cannot work around (e.g. "Xbox 360 Controller" for XB1 controllers, or "xinput")
-2. Third party (non-Sony!) drivers may make this gamepad work - it doesn't speak standard HID properly.
+2. Host drivers don't fully initialize this, Chrome adding support.
 3. This has a custom `.mapping !== "standard"`
 
 | OS      | Gamepad                 | Chrome [4] | FireFox  | Notes                                     |

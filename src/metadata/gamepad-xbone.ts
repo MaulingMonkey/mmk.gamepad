@@ -91,4 +91,22 @@ namespace mmk.gamepad.metadata {
     registerDevice("045e", "02e6", "gamepad-xbone", { "en-US": "Wireless XBox Controller Dongle" });
     registerDevice("045e", "02ea", "gamepad-xbone", { "en-US": "Xbox One S Controller" });
     registerDevice("045e", "02fd", "gamepad-xbone", { "en-US": "Xbox One S Controller (Bluetooth)" });
+
+    registerRemap({
+        "mapping": "standard",
+        "tested": ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
+        "matches": [
+            "045e-028e-gecko-8-11", // Microsoft X-Box 360 Pad
+            "045e-02d1-gecko-8-11", // Microsoft X-Box "One" Pad
+        ],
+        "axes": [{"src":"a0"}, {"src":"a1"}, {"src":"a3"}, {"src":"a4"}], // Left Stick X (+Right), Left Stick Y (+Down), Right Stick X (+Right), Right Stick Y (+Down)
+        "buttons": [
+            {"src":"b0"}, {"src":"b1"}, {"src":"b2"}, {"src":"b3"}, // ABXY
+            {"src":"b4"}, {"src":"b5"}, {"src":"a2", "xform":"11-01", "param": 0.125}, {"src":"a5", "xform":"11-01", "param": 0.125}, // Left Shoulder, Right Shoulder, Left Trigger, Right Trigger
+            {"src":"b6"}, {"src":"b7"}, {"src":"b9"}, {"src":"b10"}, // Back, Start, Left Thumb, Right Thumb
+            {"src":"a7", "xform":"axis-negative-01"}, {"src":"a7", "xform":"axis-positive-01"}, {"src":"a6", "xform":"axis-negative-01"}, {"src":"a6", "xform":"axis-positive-01"}, // DPad (Up Down Left Right)
+            // -- end of standard layout
+            {"src":"b8"}, // Xbox Guide Button
+        ]
+    });
 }

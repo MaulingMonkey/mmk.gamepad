@@ -50,6 +50,11 @@ namespace mmk.gamepad {
 			let pressed = !remap.param ? src.pressed : (value > remap.param);
 			return { value, pressed, touched: pressed };
 		},
+		"11-10": (src, remap) => {
+			let value = src ? (-src.value+1)/2 : 0;
+			let pressed = !remap.param ? src.pressed : (value > remap.param);
+			return { value, pressed, touched: pressed };
+		},
 		"axis-negative-01": (src, remap) => {
 			let value = (src && src.value < 0.0) ? -src.value : 0.0;
 			let pressed = value > (remap.param ? remap.param : 0.0);

@@ -82,6 +82,51 @@ namespace mmk.gamepad.metadata {
 
     registerRemap({
         "mapping": "standard",
+        "tested": [
+            "Windows 10 / Chrome 75.0.3770.100",
+            "Windows 10 / Opera 60.0.3255.170",
+            "Windows 10 / Opera 62.0.3331.43"
+        ],
+        "matches": [
+            "054c-0268-blink-10-24", // DualShock 3 / "Sony PLAYSTATION(R)3 Controller"
+        ],
+        "axes": [{"src":"a0"}, {"src":"a1"}, {"src":"a2"}, {"src":"a5"}], // Left Stick X (+Right), Left Stick Y (+Down), Right Stick X (+Right), Right Stick Y (+Down)
+        "buttons": [
+            {"src":"b2"}, {"src":"b1"}, {"src":"b3"}, {"src":"b0"}, // ABXY
+            {"src":"b6"}, {"src":"b7"}, {"src":"a3", "xform":"11-10", "param": 0.125}, {"src":"a4", "xform":"11-10", "param": 0.125}, // Left Shoulder, Right Shoulder, Left Trigger, Right Trigger
+            {"src":"b9"}, {"src":"b8"}, {"src":"b10"}, {"src":"b11"}, // Select, Start, Left Thumb, Right Thumb
+            {"src":"a9", "xform":"hat-up-bit"}, {"src":"a9", "xform":"hat-down-bit"}, {"src":"a9", "xform":"hat-left-bit"}, {"src":"a9", "xform":"hat-right-bit"}, // DPad (Up Down Left Right)
+            // -- end of standard layout
+            {"src":"b12"}, // PS Logo Button
+        ]
+    });
+    // Note: Axis 6 is ignored (Maps to X button pressure - O button pressure is missing, so let's not support X either)
+    // Note: Lots of buttons ignored (dead)
+
+    registerRemap({
+        "mapping": "standard",
+        "tested": [
+            "Windows 10 / FireFox 67.0.2"
+        ],
+        "matches": [
+            //"054c-0268-gecko-8-28", // DualShock 3 / "Sony PLAYSTATION(R)3 Controller"
+        ],
+        "axes": [{"src":"a0"}, {"src":"a1"}, {"src":"a2"}, {"src":"a5"}], // Left Stick X (+Right), Left Stick Y (+Down), Right Stick X (+Right), Right Stick Y (+Down)
+        // a6: X button pressure.  No axis for O button pressure.
+        "buttons": [
+            {"src":"b2"}, {"src":"b1"}, {"src":"b3"}, {"src":"b0"}, // ABXY
+            {"src":"b6"}, {"src":"b7"}, {"src":"a3", "xform":"11-10", "param": 0.125}, {"src":"a4", "xform":"11-10", "param": 0.125}, // Left Shoulder, Right Shoulder, Left Trigger, Right Trigger
+            {"src":"b9"}, {"src":"b8"}, {"src":"b10"}, {"src":"b11"}, // Select, Start, Left Thumb, Right Thumb
+            {"src":"b13"}, {"src":"b14"}, {"src":"b15"}, {"src":"b16"}, // DPad - note that these are dead in current FireFox builds
+            // -- end of standard layout
+            {"src":"b12"}, // PS Logo Button
+        ]
+    });
+    // Note: Axis 6-7 are ignored (Both map to X button pressure - O button pressure is missing, so let's not support X either)
+    // Note: Lots of buttons ignored (dead)
+
+    registerRemap({
+        "mapping": "standard",
         "tested": ["Ubuntu 18.04 LTS / Firefox 59.0.2"],
         "matches": [
             "054c-0268-gecko-6-17", // DualShock 3 / "Sony PLAYSTATION(R)3 Controller"

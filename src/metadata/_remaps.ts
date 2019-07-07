@@ -15,7 +15,7 @@
 
 namespace mmk.gamepad.metadata {
     /** @hidden */ export type RemapAxisType = "01-11";
-    /** @hidden */ export type RemapButtonType = "constant" | "11-01" | "axis-negative-01" | "axis-positive-01" | "hat-up-bit" | "hat-right-bit" | "hat-down-bit" | "hat-left-bit";
+    /** @hidden */ export type RemapButtonType = "constant" | "11-01" | "11-10" | "axis-negative-01" | "axis-positive-01" | "hat-up-bit" | "hat-right-bit" | "hat-down-bit" | "hat-left-bit";
 
     /** @hidden */
     export interface RemapSrc<RemapXformType> {
